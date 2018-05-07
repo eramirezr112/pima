@@ -1,0 +1,45 @@
+<div ng-hide="!access">
+    <h3 class="page-header">
+        {{title}}
+        <a href="#!/roles/add" class="btn btn-success btn-sm pull-right">Nuevo Rol</a>     
+    </h3>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-condensed custom-font-size">
+            <thead>
+                <tr>
+                    <td><b># Rol</b></td>
+                    <td><b>Descripcion</b></td>
+                    <td align="right"><b>Acciones</b></td>
+                </tr>
+            </thead>
+            <tbody>
+            
+                <tr ng-repeat="rol in roles">
+
+                    <td>{{rol.rol_usuario}}</td>
+                    <td>{{rol.descripcion | capitalize}}</td>                    
+                    <td>
+                        <div ng-if="rol.rol_usuario == 1">
+                            <fieldset disabled>
+                                <a class="btn btn-warning btn-xs" href="#!/roles/edit/{{rol.rol_usuario}}" title="Editar Rol"><i class="fa fa-edit"></i></a>
+                                <a class="btn btn-danger btn-xs" ng-click="deleteRol(rol.rol_usuario)" title="Eliminar Rol"><i class="fa fa-trash"></i></a>
+                            </fieldset>
+                        </div>
+                        <div ng-if="rol.rol_usuario > 1">
+                            <a class="btn btn-warning btn-xs" href="#!/roles/edit/{{rol.rol_usuario}}" title="Editar Rol"><i class="fa fa-edit"></i></a>
+                            <a class="btn btn-danger btn-xs" ng-click="deleteRol(rol.rol_usuario)" title="Eliminar Rol"><i class="fa fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<div ng-show="!access">
+    <h3 class="page-header">
+        Acceso Denegado
+    </h3>
+    <p>Este usuario no tiene permisos para accesar a esta sección.</p>
+</div>

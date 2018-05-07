@@ -1,0 +1,24 @@
+.selected-row{
+  background:#ccff99;
+}
+
+.off{
+  border:none;
+}
+
+.table-striped > tbody > tr:hover{
+  background:#ccff99;
+}
+
+.table-striped > tbody > tr:active{
+  background:#ccff99;
+}
+
+
+.table-striped > tbody > tr:focus{
+  background:#ccff99;
+}
+
+.selected-row-tab{
+  background:#ccff99;
+}

@@ -1,0 +1,31 @@
+<div class="table-responsive">
+	<table id="tbl-tabs-ep" class="table table-condensed" style="width: 482px; margin-top:5px;">
+		<thead>
+			<tr>
+				<th class="col-small" style="border: solid thin #ddd; text-align: center;">N°</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Documento</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Monto</th>
+				<th style="border: solid thin #ddd; text-align: center;">Fecha</th>
+			</tr>
+		</thead>
+		<tbody>			
+			<tr ng-repeat="line in tab.content.lines" ng-class="{'selected-row-tab':isActiveRowTab($index)}">
+				<td class="col-small text-center">{{line.num_documento}}</td>
+				<td class="col-medium text-center">{{line.tip_documento}}</td>
+				<td class="col-medium text-right">{{line.mon_gasto | currency : "&cent;"}}</td>
+				<td class="col-medium text-center">
+					{{line.fec_documento | customDate2}} 
+					<i class="fa fa-eye pull-right" title="Ver Solicitud:{{line.num_documento}}" style="cursor: pointer;" ng-click="viewDocument($index, line.num_documento, line.tip_doc)"></i>
+				</td>
+			</tr>
+		</tbody>
+	  <tfoot>
+		<tr style="background: #ddd;">
+			<td class="col-small text-left">Regs:{{tab.content.totales.registros}}</td>
+			<td class="col-medium text-center"></td>
+			<td class="col-medium text-right"><strong>{{tab.content.totales.total | currency : "&cent;"}}</strong></td>
+			<td class="col-medium text-center"></td>
+		</tr>
+	  </tfoot>
+	</table>
+</div>

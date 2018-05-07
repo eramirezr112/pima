@@ -1,0 +1,175 @@
+<div class="modal-header">
+	<h3>{{title}}
+		<button class="btn btn-default pull-right btn-xs" ng-click="close()"> x </button>
+	</h3>
+	
+</div>
+<div class="modal-body">
+
+	<div class="row bg-success">
+		<div class="col-md-6">
+			<br />
+			<div class="row">	
+				<fieldset disabled>
+				<div class="col-md-6">
+	 			<div class="form-group">
+					<label class="sr-only custom-font-size" for="idSolicitud">Solicitud</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">Solicitud:</div>
+						<input type="text" ng-model="solicitud.numSolicitud" class="form-control input-sm" id="idSolicitud" placeholder="#Solicitud">
+					</div>
+				</div>
+				</div>
+				<div class="col-md-6">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="periodo">Periodo</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">Periodo:</div>
+						<input type="text" ng-model="solicitud.periodo.num_year" class="form-control input-sm" id="periodo" placeholder="Periodo">
+					</div>
+				</div>
+				</div>
+				</fieldset>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="programa">Programa</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Programa:</div>
+							<input type="text" ng-model="solicitud.programa.DES_PROGRAMA" class="form-control input-sm" id="programa">
+						</div>
+					</div>
+					</fieldset>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="usuario">Usuario</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Usuario:</div>
+							<input type="text" ng-model="solicitud.usuario" class="form-control input-sm" id="usuario" placeholder="Usuario">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<br />
+			<div class="row">	
+				<fieldset disabled>	
+				<div class="col-md-6">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="fecha">Fecha</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">Fecha:</div>
+						<input type="text" ng-model="solicitud.fecha" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
+					</div>
+				</div>
+				</div>
+				<div class="col-md-6">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="estado">Estado</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">Estado:</div>
+						<input type="text" ng-model="solicitud.estado" class="form-control input-sm" id="estado" placeholder="Estado">
+					</div>
+				</div>
+				</div>
+				</fieldset>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="proveedor">Proveedor</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Proveedor:</div>
+	                        <input type="text" ng-model="solicitud.proveedor.des_proveedor" class="form-control input-sm" id="proveedor">                        
+						</div>
+					</div>
+					</fieldset>			
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="moneda">Moneda</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Moneda:</div>						
+							<input type="text" ng-model="solicitud.moneda.des_moneda" class="form-control input-sm" id="moneda">
+						</div>
+					</div>
+					</fieldset>
+				</div>
+				<div class="col-md-6">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="total">Total</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Total:</div>
+							<input type="text" ng-if="solicitud.moneda.id == 1" value='{{solicitud.total | currency : "&cent;"}}' class="form-control input-sm" id="total" placeholder="Total">
+							<input type="text" ng-if="solicitud.moneda.id == 2" value='{{solicitud.total | currency : "$"}}' class="form-control input-sm" id="total" placeholder="Total">
+						</div>
+					</div>
+					</fieldset>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<label for="observaciones" class="custom-font-size">Observaciones</label>
+			<fieldset disabled>
+			<textarea class="form-control input-sm" rows="3" id="observaciones" ng-model="solicitud.observaciones"></textarea>
+			</fieldset>
+			<br />
+		</div>
+	</div>
+
+	<div class="row" style="background: #ddd;">
+		<div class="col-md-12">
+			<br />
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			    <table class="table table-condensed table-striped custom-font-size">
+			    	<thead>
+				    	<tr>
+				    		<th># Detalle</th>
+				    		<th>Cantidad</th>
+				    		<th>Cuenta</th>
+				    		<th>Detalle</th>
+				    		<th class="text-right">Precio Unit</th>
+				    		<th class="text-right">Total Linea</th>
+				    	</tr>
+			    	</thead>
+			    	<tbody>
+			    		<tr ng-repeat="detCuenta in solicitud.detalle track by $index" 
+			    			ng-click="setActive($index)">
+			    			<td>{{$index+1}}</td>
+			    			<td>
+								{{solicitud.detalle[$index].cantidad}}
+			    			</td>
+			    			<td>{{detCuenta.num_cuenta}} | {{detCuenta.des_cuenta | cut:true:50:' ...'}}</td>
+			    			<td>
+			    				{{solicitud.detalle[$index].descripcion}}
+			    			</td>
+	                		<td class="text-right" ng-if="solicitud.moneda.id == 1">{{solicitud.detalle[$index].preUnit | currency : "&cent;"}}</td>
+	                		<td class="text-right" ng-if="solicitud.moneda.id == 2">{{solicitud.detalle[$index].preUnit | currency : "$"}}</td>
+	                		<td class="text-right" ng-if="solicitud.moneda.id == 1">{{solicitud.detalle[$index].totLine | currency : "&cent;"}}</td>
+	                		<td class="text-right" ng-if="solicitud.moneda.id == 2">{{solicitud.detalle[$index].totLine | currency : "$"}}</td>
+			    		</tr>
+			    	</tbody>
+			    </table>
+			  </div>
+			</div>
+		</div>	
+		<div class="col-md-12">
+			
+		</div>
+	</div>
+ 
+</div>

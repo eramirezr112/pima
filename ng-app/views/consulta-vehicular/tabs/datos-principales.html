@@ -1,0 +1,229 @@
+<br />
+<div class="row">
+	
+	<div class="col-xs-1">
+		
+	</div>
+
+	<div class="col-md-10" style="border: solid thin #ccc;">
+		<br />
+		<div class="row">
+			<div class="col-md-4">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Provincia</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Provincia:</div>
+						<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+
+				<!--
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="programa">Programa</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Programa:</div>
+                        <select id="programa" class="form-control input-sm" style="font-size: 10px;" ng-model="solicitud.programa"
+                          ng-options="option.DES_PROGRAMA for option in solicitud.programas track by option.COD_PROGRAMA" ng-change="loadCuentas()">
+                        </select>
+					</div>
+				</div>				
+				-->
+			</div>
+			<div class="col-md-4">
+				
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Cantón</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Cantón:</div>
+						<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+
+				<!--
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="programa">Programa</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Programa:</div>
+                        <select id="programa" class="form-control input-sm" style="font-size: 10px;" ng-model="solicitud.programa"
+                          ng-options="option.DES_PROGRAMA for option in solicitud.programas track by option.COD_PROGRAMA" ng-change="loadCuentas()">
+                        </select>
+					</div>
+				</div>				
+				-->
+
+			</div>
+			<div class="col-md-4">
+				
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Placa</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Placa:</div>
+						<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-4">
+				<ul>
+					<li>
+						Copia de cédula de identidad
+						<i class="fa fa-check text-success"></i>
+					</li>
+					<li>
+						Copia de Licencia
+						<i class="fa fa-check text-success"></i>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-4">
+				<ul>
+					<li>
+						Tarjeta de Circulación
+						<i class="fa fa-check text-success"></i>
+					</li>
+					<li>
+						Riteve
+						<i class="fa fa-check text-success"></i>
+					</li>
+				</ul>
+			</div>
+			<div class="col-md-4">
+				<ul>
+					<li>
+						Certificación Registral del Vehículo
+						<i class="fa fa-check text-success"></i>
+					</li>
+					<li>
+						Certificación Bancaria para Transferencia
+						<i class="fa fa-close text-danger"></i>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<h6 class="page-header" style="margin-top: 0px; font-weight: bold;">
+				Información Bancaria
+				</h6>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				
+				<div class="form-group">
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Cuenta Cliente:</div>
+						<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>					
+
+			</div>
+			<div class="col-md-6">
+				<div class="form-group">					
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Banco:</div>
+						<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+
+				<!--
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="programa">Programa</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Programa:</div>
+                        <select id="programa" class="form-control input-sm" style="font-size: 10px;" ng-model="solicitud.programa"
+                          ng-options="option.DES_PROGRAMA for option in solicitud.programas track by option.COD_PROGRAMA" ng-change="loadCuentas()">
+                        </select>
+					</div>
+				</div>				
+				-->
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<h6 class="page-header" style="margin-top: 0px; font-weight: bold;">
+				Presupuesto
+				</h6>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="form-group">					
+							<div class="input-group custom-font-size">
+								<div class="input-group-addon custom-font-size">Programa:</div>
+								<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+							</div>
+						</div>	
+
+						<!--
+						<div class="form-group">
+							<label class="sr-only custom-font-size" for="programa">Programa</label>
+							<div class="input-group custom-font-size">
+								<div class="input-group-addon custom-font-size">Programa:</div>
+		                        <select id="programa" class="form-control input-sm" style="font-size: 10px;" ng-model="solicitud.programa"
+		                          ng-options="option.DES_PROGRAMA for option in solicitud.programas track by option.COD_PROGRAMA" ng-change="loadCuentas()">
+		                        </select>
+							</div>
+						</div>				
+						-->
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">					
+							<div class="input-group custom-font-size">
+								<div class="input-group-addon custom-font-size">Periodo:</div>
+								<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+							</div>
+						</div>	
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						
+						<div class="form-group">					
+							<div class="input-group custom-font-size">
+								<div class="input-group-addon custom-font-size">Partida:</div>
+								<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+							</div>
+						</div>	
+
+						<!--
+						<div class="form-group">
+							<label class="sr-only custom-font-size" for="programa">Programa</label>
+							<div class="input-group custom-font-size">
+								<div class="input-group-addon custom-font-size">Programa:</div>
+			                    <select id="programa" class="form-control input-sm" style="font-size: 10px;" ng-model="solicitud.programa"
+			                      ng-options="option.DES_PROGRAMA for option in solicitud.programas track by option.COD_PROGRAMA" ng-change="loadCuentas()">
+			                    </select>
+							</div>
+						</div>				
+						-->
+
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">					
+							<div class="input-group custom-font-size">
+								<div class="input-group-addon custom-font-size">Monto:</div>
+								<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div class="col-xs-1">
+		
+	</div>
+
+</div>

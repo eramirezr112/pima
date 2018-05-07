@@ -1,0 +1,98 @@
+<div ng-hide="!access">
+    <h3 class="page-header">
+        {{title}}       
+    </h3>
+
+    <div class="row" style="background: #ddd;">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="panel panel-default" style="margin:5px;">
+			<div style="width: 100%;
+						height: 100%;
+						background:rgba(255,255,255,0.5); 
+						position: absolute;
+						top: 0;
+						left: 0;
+						z-index: 100;"
+				  ng-if="isLoading">
+				<img src="../web/img/ajax-loader.gif" alt="" class="image-loader">
+			</div>            	
+              <div class="panel-body">        
+                <div class="table-responsive">
+                    
+                    <table class="table table-condensed custom-font-size">
+                      <tbody>
+                        <tr>
+                        	<th class="col-base">Nombre del Rol</th>
+                            <th class="col-base">
+                            	<input type="text" ng-model="rol.descripcion" class="form-control input-sm" id="rolDesc" placeholder="Nombre del Rol">
+                            </th>                        	
+                        </tr>
+                        <tr>
+                        	<th class="col-base">Permisos por Rol</th>
+                            <th class="col-base">
+                            	<div ng-if="isSuperAdmin">
+									<fieldset disabled>
+	                            	<div ng-repeat="permiso in permisos">
+										<div style="background:#ddd; padding: 3px;">
+											<div style="background: #5cb85c; width: 18px; padding-left: 3px; padding-right: 3px; margin-top: -3px; margin-left:-3px;" class="pull-left">
+												<input type="checkbox" ng-if="!selectedModulos[$index].checkAll" ng-click="checkAll($index)">
+												<input type="checkbox" ng-if="selectedModulos[$index].checkAll" ng-click="uncheckAll($index)" checked="true">
+											</div>
+											Módulo: {{permiso.nombre_modulo}}
+										</div>
+										<div>										
+											<div ng-repeat="opcion in permisos[$index].opciones_modulo">
+												<div style="margin-left: 25px;">
+													<input type="checkbox" checklist-model="selectedModulos[$parent.$index].opciones_modulo" checklist-value="opcion">
+													{{opcion.descripcion}}
+												</div>
+											</div>
+										</div>
+									</div>
+									</fieldset>
+								</div>	
+                            	<div ng-if="!isSuperAdmin">
+	                            	<div ng-repeat="permiso in permisos">
+										<div style="background:#ddd; padding: 3px;">
+											<div style="background: #5cb85c; width: 18px; padding-left: 3px; padding-right: 3px; margin-top: -3px; margin-left:-3px;" class="pull-left">
+												<input type="checkbox" ng-if="!selectedModulos[$index].checkAll" ng-click="checkAll($index)">
+												<input type="checkbox" ng-if="selectedModulos[$index].checkAll" ng-click="uncheckAll($index)" checked="true">
+											</div>
+											Módulo: {{permiso.nombre_modulo}}
+										</div>
+										<div>										
+											<div ng-repeat="opcion in permisos[$index].opciones_modulo">
+												<div style="margin-left: 25px;">
+													<input type="checkbox" checklist-model="selectedModulos[$parent.$index].opciones_modulo" checklist-value="opcion">
+													{{opcion.descripcion}}
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>								
+                            </th>                        	
+                        </tr>
+                        <tr>
+                        	<td></td>
+                        	<td>
+                        		<button type="button" class="btn btn-success pull-right" ng-click="updateRol()">Guardar</button>
+                        	</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                </div>
+            
+              </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<div ng-show="!access">
+    <h3 class="page-header">
+        Acceso Denegado
+    </h3>
+    <p>Este usuario no tiene permisos para accesar a esta sección.</p>
+</div>

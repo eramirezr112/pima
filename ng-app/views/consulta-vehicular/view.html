@@ -1,0 +1,183 @@
+<div class="modal-header">
+	<h3>{{title}}
+		<button class="btn btn-default pull-right btn-xs" ng-click="close()"> x </button>
+	</h3>
+	
+</div>
+<div class="modal-body">
+
+	<div class="row">
+		<div class="col-md-4">
+
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Tipo de Persona</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Tipo de Persona:</div>
+						<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+
+				<!--
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="programa">Programa</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Programa:</div>
+                        <select id="programa" class="form-control input-sm" style="font-size: 10px;" ng-model="solicitud.programa"
+                          ng-options="option.DES_PROGRAMA for option in solicitud.programas track by option.COD_PROGRAMA" ng-change="loadCuentas()">
+                        </select>
+					</div>
+				</div>				
+				-->
+		</div>	
+		<div class="col-md-1">
+
+				<div class="form-group">					
+					<input type="checkbox" ng-model="consulta.extranjero" id="extranjero">
+					<label class="custom-font-size" for="extranjero" style="margin-top:10px;">Extranjero</label>
+				</div>	
+		</div>	
+		<div class="col-md-3">
+
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Identificación</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Identificación:</div>
+						<input type="text" ng-model="solicitud.usuario" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+
+		</div>	
+		<div class="col-md-3">
+
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Estado</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Estado:</div>
+						<input type="text" ng-model="solicitud.usuario" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+
+				<!--
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="programa">Programa</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Programa:</div>
+                        <select id="programa" class="form-control input-sm" style="font-size: 10px;" ng-model="solicitud.programa"
+                          ng-options="option.DES_PROGRAMA for option in solicitud.programas track by option.COD_PROGRAMA" ng-change="loadCuentas()">
+                        </select>
+					</div>
+				</div>				
+				-->
+		</div>		
+	</div>
+ 
+ 	<div class="row">
+ 		<div class="col-md-4">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Nombre</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Nombre:</div>
+						<input type="text" ng-model="solicitud.usuario" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+ 		</div>
+ 		<div class="col-md-4">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Empresa</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Empresa:</div>
+						<input type="text" ng-model="solicitud.usuario" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+ 		</div>
+ 		<div class="col-md-3">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="tipoPersona">Céd. Representante</label>
+					<div class="input-group custom-font-size">
+						<div class="input-group-addon custom-font-size">Céd. Representante:</div>
+						<input type="text" ng-model="solicitud.usuario" class="form-control input-sm" id="tipoPersona" placeholder="">
+					</div>
+				</div>	
+ 		</div>
+ 	</div>
+
+	<div class="row">
+		<div class="col-md-11">
+			<table class="table table-condensed custom-font-size">
+				<tbody>
+					<tr class="bg-success">
+						<td>1er Apellido</td>
+						<td>2do Apellido</td>
+						<td>Nombre</td>
+						<td>Edad</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+					</tr>
+					<tr class="bg-success">
+						<td>Provincia</td>
+						<td>Cantón</td>
+						<td>Distrito</td>
+						<td>Dist. Admin.</td>
+					</tr>
+					<tr>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+						<td>
+							<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div class="form-group">
+								<div class="input-group custom-font-size" style="width: 100%">
+									<div class="input-group-addon custom-font-size">Correo:</div>
+									<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+								</div>
+							</div>	
+						</td>
+						<td colspan="2">
+							<div class="form-group">
+								<div class="input-group custom-font-size" style="width: 100%">
+									<div class="input-group-addon custom-font-size">Correo Seg:</div>
+									<input type="text" ng-model="consulta.tipoPersona" class="form-control input-sm" id="tipoPersona" placeholder="">
+								</div>
+							</div>	
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-11">
+			
+			  <uib-tabset active="active" class="custom-font-size"> 		 
+			    <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
+			      <div ng-include="tab.templateUrl"></div>
+			    </uib-tab>		    
+			  </uib-tabset>				
+
+		</div>
+	</div>
+
+</div>

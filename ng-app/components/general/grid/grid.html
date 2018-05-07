@@ -1,0 +1,120 @@
+<h3 class="page-header">
+    {{$ctrl.title}} <span style="font-size: 14px;">{{$ctrl.subTitle}}</span>
+    <!--
+    <span ng-if="isModuleEnabled(2)">
+    <a href="#!/solicitud/add" class="btn btn-success btn-sm pull-right" ng-if="checkPermision(6)">Nueva Solicitud</a>
+	-->
+    <span ng-if="$ctrl.actions.add">
+    <a href="#!/solicitud/add" class="btn btn-success btn-sm pull-right">Agregar</a>
+    </span>    
+</h3>
+
+<!--
+<div class="row">
+    <div class="col-md-12 text-right">
+        <form class="form-inline">
+            <div class="form-group">
+                <label class="custom-font-size">Buscar</label>
+                <input type="text" ng-model="search" class="form-control input-sm" placeholder="Buscar">
+            </div>
+        </form>
+    </div>
+</div>
+-->
+
+<div class="table-responsive">
+    <table class="table table-striped table-condensed custom-font-size">
+        <thead>
+            <tr>
+                <th ng-repeat="c in $ctrl.columns" ng-class="$ctrl.getHeaderClass(c, $index)">{{c | capitalize}}</th>                
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-if="totalRegistros == 0">
+                <td colspan="6" class="text-center" style="color:#ccc;">Sin Registros</td>
+            </tr>
+
+            <tr dir-paginate="d in $ctrl.infoGrid | filter:{ col1: search } | itemsPerPage:15">
+
+                <td ng-repeat="c in $ctrl.columns" ng-class="$ctrl.addClass($index, d[c])">                    
+                    <span ng-if="c != 'Acciones'">
+                    {{d[c] | isDate | isStatusLetter | capitalizeEveryWord}}
+                    </span>
+                    <span ng-if="c == 'Acciones'">
+                        <span ng-if="$ctrl.actions.edit">
+                            <a href="#!/solicitud" class="btn btn-warning btn-xs" title="Editar"><i class="fa fa-edit"></i></a>
+                        </span>
+                        <span ng-if="$ctrl.actions.view">
+                            <a href="#!{{$ctrl.locationPath}}/view/{{d['solicitud']}}" class="btn btn-default btn-xs" title="Ver"><i class="fa fa-eye"></i></a>
+                        </span>
+                        <span ng-if="$ctrl.actions.authorize && d['estado'] == 'C'">
+                            <a class="btn btn-success btn-xs" ng-click="" title="Autorizar"><i class="fa fa fa-check"></i></a>
+                        </span>
+
+                        <span ng-if="$ctrl.actions.delete">
+                            <a class="btn btn-danger btn-xs" ng-click="" title="Eliminar"><i class="fa fa-trash"></i></a>
+                        </span>
+                    </span>
+                </td>
+                <!--
+                <td align="right">                    
+
+	                <span ng-if="$ctrl.actions.edit">
+	                    <a href="#!/solicitud" class="btn btn-warning btn-xs" title="Editar"><i class="fa fa-edit"></i></a>
+	                </span>
+
+	                <span ng-if="$ctrl.actions.view">
+	                    <a href="#!/solicitud" class="btn btn-default btn-xs" title="Ver"><i class="fa fa-eye"></i></a>
+	                </span>
+
+                    <span ng-if="$ctrl.actions.authorize">
+                        <a class="btn btn-success btn-xs" ng-click="" title="Autorizar"><i class="fa fa fa-check"></i></a>
+                    </span>
+
+	                <span ng-if="$ctrl.actions.delete">
+	                    <a class="btn btn-danger btn-xs" ng-click="" title="Eliminar"><i class="fa fa-trash"></i></a>
+	                </span>
+                </td>
+                -->
+            </tr>
+<!--
+            <tr dir-paginate="solicitud in solicitudes | filter:{ des_programa: search } | itemsPerPage:15">
+                <td align="center">{{solicitud.COD_SOLICITUD}}</td>
+                <td>{{solicitud.des_programa | capitalize}}</td>
+                <td>{{solicitud.FEC_REGISTRO | customDate}}</td>
+                <td>{{solicitud.IND_ESTADO | getEstado}}</td>
+                <td align="right" ng-if="solicitud.IND_MONEDA == 1">{{solicitud.MON_TOTAL | currency : "&cent;"}}</td>
+                <td align="right" ng-if="solicitud.IND_MONEDA == 2">{{solicitud.MON_TOTAL | currency : "$"}}</td>
+                <td align="right">                    
+
+                <span ng-if="solicitud.IND_ESTADO == 1 && checkPermision(12)">
+                    <a href="#!/solicitud/edit/{{solicitud.COD_SOLICITUD}}" class="btn btn-warning btn-xs" title="Editar Solicitud"><i class="fa fa-edit"></i></a>
+                </span>
+
+                <span ng-if="solicitud.IND_ESTADO == 1 && checkPermision(8)">
+                    <a class="btn btn-success btn-xs" ng-click="verifySolicitud(solicitud.COD_SOLICITUD)" title="Enviar Solicitud"><i class="fa fa-send"></i></a>
+                </span>
+
+                <span ng-if="solicitud.IND_ESTADO == 2 && checkPermision(9)">
+                    <a class="btn btn-success btn-xs" ng-click="setEstado(solicitud.COD_SOLICITUD, solicitud.IND_ESTADO)" title="Autorizar"><i class="fa fa-check"></i></a>
+                </span>                    
+
+                <span ng-if="checkPermision(10)">
+                    <a href="#!/solicitud/view/{{solicitud.COD_SOLICITUD}}" class="btn btn-default btn-xs" title="Ver Solicitud"><i class="fa fa-eye"></i></a>
+                </span>
+
+                <span ng-if="solicitud.IND_ESTADO == 2 && checkPermision(11)">                        
+                    <a class="btn btn-danger btn-xs" ng-click="rejectSolicitud(solicitud.COD_SOLICITUD)" title="Rechazar"><i class="fa fa-close"></i></a>
+                </span>
+
+                </td>
+            </tr>
+        -->
+        </tbody>
+    </table>
+    <dir-pagination-controls
+       max-size="15"
+       direction-links="true"
+       boundary-links="true" >
+    </dir-pagination-controls>
+</div>

@@ -1,0 +1,151 @@
+<div class="modal-header">
+	<h3>{{title}}
+		<button class="btn btn-default pull-right btn-xs" ng-click="close()"> x </button>
+	</h3>
+	
+</div>
+<div class="modal-body">
+	<div class="row bg-success">
+		<div class="col-md-4">
+			<br />
+			<div class="row">	
+				<fieldset disabled>
+				<div class="col-md-6">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="nDocumento">N° Doc</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">N° Doc:</div>
+						<input type="text" ng-model="egreso.num_documento" class="form-control input-sm" id="nDocumento" placeholder="N° Documento">
+					</div>
+				</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="estado">Estado</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Estado:</div>
+							<input type="text" value="{{egreso.ind_estado | getEstadoEgreso}}" class="form-control input-sm" id="estado" placeholder="Estado">
+						</div>
+					</div>			
+				</div>
+				</fieldset>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="usuario">Usuario</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Usuario:</div>
+							<input type="text" ng-model="egreso.usuario" class="form-control input-sm" id="usuario" placeholder="Usuario">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>
+			<div class="row">
+				<fieldset disabled>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="periodo">Periodo</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Periodo:</div>
+							<input type="text" ng-model="egreso.periodo" class="form-control input-sm" id="periodo" placeholder="Periodo">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="fecha">Fecha</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Fecha:</div>
+							<input type="text" value="{{egreso.fec_documento | customDate2}}" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
+						</div>
+					</div>
+				</div>
+				</fieldset>
+			</div>		
+		</div>
+		<div class="col-md-8">
+			<br />
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="beneficiario">Beneficiario</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Beneficiario:</div>
+	                        <input type="text" ng-model="egreso.nom_beneficiario" class="form-control input-sm" id="beneficiario">                        
+						</div>
+					</div>
+					</fieldset>			
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="total">Monto</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Monto:</div>
+							<input type="text" value='{{egreso.mon_total | currency : "&cent;"}}' class="form-control input-sm" id="total" placeholder="Total">						
+						</div>
+					</div>
+					</fieldset>
+				</div>
+				<div class="col-md-6">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="registro">Registro</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Registro:</div>						
+							<input type="text" value="{{egreso.fec_registro | customDate2}}" class="form-control input-sm" id="registro">
+						</div>
+					</div>
+					</fieldset>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<label for="descripcion" class="custom-font-size">Descripción</label>
+					<fieldset disabled>
+					<textarea class="form-control input-sm" rows="3" id="descripcion" ng-model="egreso.des_documento"></textarea>
+					</fieldset>
+					<br />
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="row" style="background: #ddd;">
+		<div class="col-md-12">
+			<br />
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			    <table class="table table-condensed table-striped custom-font-size">
+			    	<thead>
+				    	<tr>
+				    		<th>Programa</th>
+				    		<th>Partida</th>
+				    		<th>Monto</th>			    		
+				    	</tr>
+			    	</thead>
+			    	<tbody>
+			    		<tr ng-repeat="detCuenta in egreso.detalle track by $index" 
+			    			ng-click="setActive($index)">
+			    			<td>{{egreso.detalle[$index].programa}}</td>
+			    			<td>
+								{{egreso.detalle[$index].cuenta}}
+			    			</td>
+	                		<td class="text-right" >{{egreso.detalle[$index].mon_detalle | currency : "&cent;"}}</td>                		
+			    		</tr>
+			    	</tbody>
+			    </table>
+			  </div>
+			</div>
+		</div>	
+		<div class="col-md-12">
+			
+		</div>
+	</div>
+</div>

@@ -1,0 +1,34 @@
+<div class="table-responsive">
+	<table id="tbl-tabs-ep" class="table table-condensed" style="width: 772px; margin-top:5px;">
+		<thead>
+			<tr>
+				<th class="col-small" style="border: solid thin #ddd; text-align: center;">N°</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Tipo</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Fecha</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Disminuir</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Aumentar</th>
+				<th style="border: solid thin #ddd; text-align: center;">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="line in tab.content.lines">
+				<td class="col-small text-center">{{line.num_modificacion}}</td>
+				<td class="col-medium text-center">{{line.tip_modificacion}}</td>
+				<td class="col-medium text-center">{{line.fec_modificacion | customDate2}}</td>
+				<td class="col-medium text-right">{{line.mon_disminuir | currency : "&cent;"}}</td>
+				<td class="col-medium text-right">{{line.mon_aumentar | currency : "&cent;"}}</td>
+				<td class="col-medium text-right">{{line.mon_total | currency : "&cent;"}}</td>
+			</tr>
+		</tbody>
+	  <tfoot>
+		<tr style="background: #ddd;">
+			<td class="col-small text-left">Regs:{{tab.content.totales.registros}}</td>
+			<td class="col-medium text-center"></td>			
+			<td class="col-medium text-center"></td>
+			<td class="col-medium text-right"><strong>{{tab.content.totales.total.mon_disminuir | currency : "&cent;"}}</strong></td>
+			<td class="col-medium text-right"><strong>{{tab.content.totales.total.mon_aumentar  | currency : "&cent;"}}</strong></td>
+			<td class="col-medium text-right"><strong>{{tab.content.totales.total.mon_total | currency : "&cent;"}}</strong></td>
+		</tr>
+	  </tfoot>
+	</table>
+</div>

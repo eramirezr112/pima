@@ -1,0 +1,295 @@
+<div class="modal-header">
+	<h3>{{title}}
+		<button class="btn btn-default pull-right btn-xs" ng-click="close()"> x </button>
+	</h3>
+	
+</div>
+<div class="modal-body">
+	<div class="row bg-success">
+		<div class="col-md-4">
+			<br />
+			<div class="row">	
+				<fieldset disabled>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="nPlanilla">N° Planilla</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">N° Planilla:</div>
+							<input type="text" ng-model="transferencia.NUM_PLANILLA" class="form-control input-sm" id="nPlanilla" placeholder="N° Planilla">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="estado">Estado</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Estado:</div>
+							<input type="text" value="{{transferencia.ind_estado | getEstadoTran}}" class="form-control input-sm" id="estado" placeholder="Estado">
+						</div>
+					</div>			
+				</div>
+				</fieldset>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="descripcion">Descripción</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Descripción:</div>
+							<input type="text" ng-model="transferencia.des_descripcion" class="form-control input-sm" id="descripcion" placeholder="Descripción">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>		
+		</div>
+		<div class="col-md-6">
+			<br />
+			<div class="row">
+				<div class="col-md-5">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="nCuenta">N° Cuenta</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">N° Cuenta:</div>
+	                        <input type="text" ng-model="transferencia.cuenta" class="form-control input-sm" id="nCuenta" placeholder="N° Cuenta">
+						</div>
+					</div>
+					</fieldset>			
+				</div>
+				<div class="col-md-7">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="typePlanilla">Tip. Planilla</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Tip. Planilla</div>
+	                        <input type="text" value="{{transferencia.tip_planilla | getTipPlanilla}}" class="form-control input-sm" id="typePlanilla" placeholder="Tipo Planilla">
+						</div>
+					</div>
+					</fieldset>			
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-5">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="nTransferencia">N° Transf</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">N° Transf:</div>						
+							<input type="text" ng-model="transferencia.NUM_DOCUMENTO" class="form-control input-sm" id="nTransferencia" placeholder="N° Transferencia">
+						</div>
+					</div>
+					</fieldset>
+				</div>
+				<div class="col-md-7">
+					<div class="col-md-6" style="margin: 0; padding: 0;">
+						<fieldset disabled>
+						<div class="form-group">
+							<label class="sr-only custom-font-size" for="cantPagos">N° Pagos:</label>
+							<div class="input-group">
+								<div class="input-group-addon custom-font-size">N° Pagos:</div>
+								<input type="text" value='{{transferencia.CAN_PAGOS}}' class="form-control input-sm" id="cantPagos">
+							</div>
+						</div>
+						</fieldset>
+					</div>
+					<div class="col-md-6" style="margin: 0; padding: 0;">
+						<fieldset disabled>
+						<div class="form-group">
+							<label class="sr-only custom-font-size" for="tca">TCA</label>
+							<div class="input-group">
+								<div class="input-group-addon custom-font-size">TCA:</div>
+								<input type="text" value='{{transferencia.mon_tipo_cambio | currency : "&cent;"}}' class="form-control input-sm text-right" id="tca">
+							</div>
+						</div>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<br />
+			<div class="row">	
+				<fieldset disabled>
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="totColones">Total &cent;</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Total &cent;:</div>
+							<input type="text" value='{{transferencia.MON_TOTAL | currency: ""}}' class="form-control input-sm" id="totColones" placeholder="Total Colones">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="totDolares">Total $</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Total $:</div>
+							<input type="text" value='{{transferencia.mon_total_monex | currency: ""}}' class="form-control input-sm" id="totDolares" placeholder="Total Dolares">
+						</div>
+					</div>
+				</div>
+				</fieldset>
+			</div>
+		</div>
+	</div>
+	<div class="row bg-success">
+		<div class="col-md-3">
+			<div class="row">
+				<div class="col-md-12">
+					<label class="custom-font-size">Confección</label>
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="fecConfeccion">Fecha</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Fecha:</div>
+							<input type="text" value="{{transferencia.FEC_CONFECCION | customDate2}}" class="form-control input-sm" id="fecConfeccion" placeholder="">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>	
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="confecciona">Confecciona</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Confecciona:</div>
+							<input type="text" ng-model="transferencia.usuario" class="form-control input-sm" id="confecciona" placeholder="Descripción">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>	
+		</div>
+		<div class="col-md-3">
+			<div class="row">		
+				<label style="margin-left:15px;" class="custom-font-size">Archivo</label>		
+				<fieldset disabled>			
+				<div class="col-md-8">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="fecArchivo">Fecha</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Fecha:</div>
+							<input type="text" value="{{transferencia.fec_genera | customDate2}}" class="form-control input-sm" id="fecArchivo" placeholder="dd/mm/yyyy hh:mm:ss">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="nArchivo">N°</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">N°:</div>
+							<input type="text" ng-model="transferencia.num_archivo" class="form-control input-sm" id="nArchivo" placeholder="">
+						</div>
+					</div>			
+				</div>
+				</fieldset>
+			</div>
+			<div class="row">
+				<div class="col-md-12">				
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="generador">Generado por</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Generado por:</div>
+							<input type="text" ng-model="transferencia.uGenera" class="form-control input-sm" id="generador" placeholder="Descripción">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>	
+		</div>
+		<div class="col-md-3">
+			<div class="row">
+				<div class="col-md-12">
+					<label>Aplicación</label>
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="fecAplicacion">Fecha</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Fecha:</div>
+							<input type="text" value="{{transferencia.FEC_APLICACION | customDate2}}" class="form-control input-sm" id="fecAplicacion" placeholder="">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>	
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="aplicadoBy">Aplicado por</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Aplicado por:</div>
+							<input type="text" ng-model="transferencia.uAplica" class="form-control input-sm" id="aplicadoBy" placeholder="">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>	
+		</div>
+		<div class="col-md-3">
+			<div class="row">
+				<div class="col-md-12">
+					<label for="observaciones" class="custom-font-size">Observaciones</label>
+					<fieldset disabled>
+					<textarea class="form-control input-sm custom-font-size" rows="3" id="observaciones" ng-model="transferencia.DES_OBSERVACIONES"></textarea>
+					</fieldset>
+					<br />
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row" style="background: #ddd;">
+		<div class="col-md-12">
+			<br />
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			    <table class="table table-condensed table-striped custom-font-size">
+			    	<thead>
+				    	<tr>
+				    		<th>Tipo</th>
+				    		<th>N° Orden</th>
+				    		<th>Identificación</th>
+				    		<th>Proveedor</th>
+				    		<th>N° Cuenta Cliente</th>
+				    		<th>Monto</th>
+				    		<th>Concepto</th>
+				    	</tr>
+			    	</thead>
+			    	<tbody>
+			    		<tr ng-repeat="detCuenta in transferencia.detalle track by $index" 
+			    			ng-click="setActive($index)">
+			    			<td>{{transferencia.detalle[$index].IND_TIPO}}</td>
+			    			<td>
+								{{transferencia.detalle[$index].COD_ORDEN}}
+			    			</td>
+			    			<td>
+								{{transferencia.detalle[$index].cedula}}
+			    			</td>
+			    			<td>
+								{{transferencia.detalle[$index].proveedor}}
+			    			</td>
+			    			<td>
+			    				{{transferencia.detalle[$index].NUM_CUENTA_CLIENTE}}
+			    			</td>
+			    			<td class="text-right">
+			    				{{transferencia.detalle[$index].MON_PAGO | currency : "&cent;"}}
+			    			</td>
+			    			<td>
+			    				{{transferencia.detalle[$index].DES_CONCEPTO}}
+			    			</td>
+			    		</tr>
+			    	</tbody>
+			    </table>
+			  </div>
+			</div>
+		</div>	
+		<div class="col-md-12">
+			
+		</div>
+	</div>
+</div>

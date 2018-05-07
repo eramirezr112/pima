@@ -1,0 +1,187 @@
+<div class="modal-header">
+	<h3>{{title}}
+		<button class="btn btn-default pull-right btn-xs" ng-click="close()"> x </button>
+	</h3>
+	
+</div>
+<div class="modal-body">
+	<div class="row bg-success">
+		<div class="col-md-4">
+			<br />
+			<div class="row">	
+				<fieldset disabled>
+				<div class="col-md-6">
+				<div class="form-group">
+					<label class="sr-only custom-font-size" for="nOrden">N° Orden</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">N° Orden:</div>
+						<input type="text" ng-model="orden.COD_ORDEN" class="form-control input-sm" id="nOrden" placeholder="N° Orden">
+					</div>
+				</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="estado">Estado</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Estado:</div>
+							<input type="text" value="{{orden.IND_ESTADO | getEstadoOP}}" class="form-control input-sm" id="estado" placeholder="Estado">
+						</div>
+					</div>			
+				</div>
+				</fieldset>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="usuario">Confecciona</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Confecciona:</div>
+							<input type="text" ng-model="orden.usuario" class="form-control input-sm" id="usuario" placeholder="Usuario">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>
+			<div class="row">
+				<fieldset disabled>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="periodo">Periodo</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Periodo:</div>
+							<input type="text" ng-model="orden.periodo" class="form-control input-sm" id="periodo" placeholder="Periodo">
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="fecha">Fecha</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Fecha:</div>
+							<input type="text" value="{{orden.FEC_REGISTRO | customDate2}}" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
+						</div>
+					</div>
+				</div>
+				</fieldset>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="programa">Programa</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Programa:</div>
+							<input type="text" ng-model="orden.programa" class="form-control input-sm" id="programa" placeholder="Programa">
+						</div>
+					</div>
+					</fieldset>				
+				</div>
+			</div>
+			<div class="row">
+				<fieldset disabled>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="nSolicitud">N° Solicitud</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">N° Solicitud:</div>
+							<input type="text" ng-model="orden.COD_SOLICITUD" class="form-control input-sm" id="nSolicitud" placeholder="N° Solicitud">
+						</div>
+					</div>
+				</div>
+				</fieldset>
+			</div>
+
+		</div>
+		<div class="col-md-8">
+			<br />
+			<div class="row">
+				<div class="col-md-12">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="proveedor">Proveedor</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Proveedor:</div>
+	                        <input type="text" ng-model="orden.des_proveedor" class="form-control input-sm" id="proveedor">                        
+						</div>
+					</div>
+					</fieldset>			
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-6">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="moneda">Moneda</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Moneda:</div>						
+							<input type="text" value="{{orden.ind_moneda | getMoneda}}" class="form-control input-sm" id="moneda">
+						</div>
+					</div>
+					</fieldset>
+				</div>
+				<div class="col-md-6">
+					<fieldset disabled>
+					<div class="form-group">
+						<label class="sr-only custom-font-size" for="total">Monto</label>
+						<div class="input-group">
+							<div class="input-group-addon custom-font-size">Monto:</div>
+							<input type="text" ng-if="orden.ind_moneda == 1" value='{{orden.MON_TOTAL | currency : "&cent;"}}' class="form-control input-sm" id="total" placeholder="Total">
+							<input type="text" ng-if="orden.ind_moneda == 2" value='{{orden.MON_TOTAL | currency : "$"}}' class="form-control input-sm" id="total" placeholder="Total">
+						</div>
+					</div>
+					</fieldset>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<label for="observaciones" class="custom-font-size">Observaciones</label>
+					<fieldset disabled>
+					<textarea class="form-control input-sm" rows="5" id="observaciones" ng-model="orden.DES_OBSERVACION"></textarea>
+					</fieldset>
+					<br />
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="row" style="background: #ddd;">
+		<div class="col-md-12">
+			<br />
+			<div class="panel panel-default">
+			  <div class="panel-body">
+			    <table class="table table-condensed table-striped custom-font-size">
+			    	<thead>
+				    	<tr>
+				    		<th>Cantidad</th>
+				    		<th>Partida</th>
+				    		<th>Monto Unitario</th>
+				    		<th>Monto</th>
+				    		<th>Cuenta Contable</th>
+				    	</tr>
+			    	</thead>
+			    	<tbody>
+			    		<tr ng-repeat="detCuenta in orden.detalle track by $index" 
+			    			ng-click="setActive($index)">
+			    			<td>{{orden.detalle[$index].CAN_PRODUCTO}}</td>
+			    			<td>
+								{{orden.detalle[$index].des_cuenta}}
+			    			</td>
+	                		<td class="text-right" ng-if="orden.ind_moneda == 1">{{orden.detalle[$index].MON_UNIDAD | currency : "&cent;"}}</td>
+	                		<td class="text-right" ng-if="orden.ind_moneda == 2">{{orden.detalle[$index].MON_UNIDAD | currency : "$"}}</td>
+	                		<td class="text-right" ng-if="orden.ind_moneda == 1">{{orden.detalle[$index].MON_DETALLE | currency : "&cent;"}}</td>
+	                		<td class="text-right" ng-if="orden.ind_moneda == 2">{{orden.detalle[$index].MON_DETALLE | currency : "$"}}</td>                		
+			    			<td>
+			    				{{orden.detalle[$index].descripcion}}
+			    			</td>
+			    		</tr>
+			    	</tbody>
+			    </table>
+			  </div>
+			</div>
+		</div>	
+		<div class="col-md-12">
+			
+		</div>
+	</div>
+</div>

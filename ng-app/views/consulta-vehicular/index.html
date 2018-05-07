@@ -1,0 +1,118 @@
+<div ng-hide="!access">
+    <h3 class="page-header">
+        {{title}}
+        <a href="#!/consulta-vehicular" class="btn btn-success btn-sm pull-right">Agregar</a>
+    </h3>
+
+    <div class="row bg-success">
+        <div class="col-md-2 custom-col-md">
+            
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="sr-only" for="provincia">Provincia</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Provincia:</div>
+                        <select id="provincia" style="width: 98px;" class="form-control input-sm" ng-model="provincia"
+                          ng-options="option.nombre for option in provincias"
+                          ng-change="resetCantones()">
+                          <option value="" selected="selected">- TODAS -</option>
+                        </select>
+                    </div>                
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3 custom-col-md">
+            
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="sr-only" for="canton">Cantón</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Cantón:</div>
+                        <select id="canton" class="form-control input-sm" ng-model="canton"
+                          ng-options="option.nombre for option in cantones  | filter:{ cod_provincia : provincia.cod }" ng-change="getDetalleFirst()">
+                          <option value="" selected="selected">- TODOS -</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3 custom-col-md">            
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="sr-only" for="periodo">Periodo</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Periodo:</div>
+                        <select id="periodo" style="width: 98px;" class="form-control input-sm" ng-model="periodo"
+                          ng-options="option.num_year for option in periodos track by option.COD_periodo" ng-change="loadCuentas()">
+                        </select>
+                    </div>
+
+                </div>
+            </form>
+            
+        </div>
+    </div>
+
+    <div class="row" style="background: #ddd;">
+        <div class="col-md-12" style="padding: 0px;">
+            <div class="panel panel-default" style="margin:5px;">
+              <div class="panel-body">        
+                <div class="table-responsive">
+                    
+                    <table id="tbl-cv" class="table table-condensed custom-font-size">
+                      <thead>
+                        <tr>
+                            <th class="col-base">Provincia</th>
+                            <th class="col-base">Canton</th>
+                            <th class="col-base">Placa</th>
+                            <th class="col-base">Identificacion</th>
+                            <th class="col-big">Nombre</th>
+                            <th class="col-medium">Registro</th>
+                            <th class="col-small">Estado</th>                            
+                            <th class="col-base">Acciones</th>                            
+                        </tr>
+                      </thead>
+                      <tbody>                        
+                        <tr ng-repeat="c in consulta | filter:{cod_periodo:periodo.cod_periodo} | filter:{cod_provincia:provincia.cod} | filter:{cod_canton:canton.cod}">
+                            <td class="col-base">{{c.provincia | capitalizeEveryWord}}</td>
+                            <td class="col-base">{{c.canton | capitalizeEveryWord}}</td>
+                            <td class="col-base">{{c.des_PLACA}}</td>
+                            <td class="col-base">{{c.num_cedula}}</td>
+                            <td class="col-big">{{c.des_nombre | capitalizeEveryWord}}</td>
+                            <td class="col-medium">{{c.fec_registro | customDate2}}</td>
+                            <td class="col-small">{{c.ind_estado | getEstadoConsultaV}}</td>
+                            <td class="col-base">
+                                <i class="fa fa-eye" style="cursor: pointer;" ng-click="viewDocument($index, c.num_cedula, 1)"></i>
+                            </td>
+                        </tr>
+                          
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                            <td class="col-base"><strong>Regs</strong></td>
+                            <td class="col-base"><strong>{{registrosEncabeza}}</strong></td>
+                            <th class="col-base"></th>
+                            <th class="col-base"></th>
+                            <th class="col-big"></th>
+                            <th class="col-medium"></th>
+                            <th class="col-small"></th> 
+                            <th class="col-base"></th> 
+                        </tr>
+                      </tfoot>
+                    </table>
+
+                </div>
+            
+              </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<div ng-show="!access">
+    <h3 class="page-header">
+        Acceso Denegado
+    </h3>
+    <p>Este usuario no tiene permisos para accesar a esta sección.</p>
+</div>

@@ -1,0 +1,142 @@
+<div ng-hide="!access">
+	<h3 class="page-header">
+	    {{title}}
+	    <a class="btn btn-success btn-sm pull-right" ng-click="" title="Actualizar"><span class="fa fa-refresh"></span></a>    
+	</h3>
+
+	<div class="row bg-success">
+		<div class="col-md-2 custom-col-md">
+			
+		    <form class="form-inline">
+		        <div class="form-group">
+					<label class="sr-only" for="periodo">Periodo</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">Periodo:</div>
+	                    <select id="periodo" style="width: 98px;" class="form-control input-sm" ng-model="periodo"
+	                      ng-options="option.num_year for option in periodos track by option.COD_periodo" ng-change="loadCuentas()">
+	                    </select>
+					</div>                
+		        </div>
+		    </form>
+		</div>
+		<div class="col-md-3 custom-col-md">
+			
+		    <form class="form-inline">
+		        <div class="form-group">
+					<label class="sr-only" for="programa">Programa</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">Programa:</div>
+	                    <select id="programa" class="form-control input-sm" ng-model="programa"
+	                      ng-options="option.DES_PROGRAMA for option in programas track by option.COD_PROGRAMA" ng-change="getDetalleFirst()">
+	                    </select>
+					</div>
+		        </div>
+		    </form>
+		</div>
+		<div class="col-md-3 custom-col-md">
+			
+		    <form class="form-inline">
+		        <div class="form-group">
+					<label class="sr-only" for="cuenta">Partida</label>
+					<div class="input-group">
+						<div class="input-group-addon custom-font-size">Partida:</div>
+	                    <select id="cuenta" class="form-control input-sm" ng-model="cuenta"
+	                      ng-options="option.des_cuenta for option in cuentas track by option.cod_cuenta" ng-change="getDetalleFirst()">
+	                    </select>	
+					</div>
+
+		        </div>
+		    </form>
+		    
+		</div>
+	</div>
+
+	<div class="row" style="background: #ddd;">
+		<div class="col-md-12" style="padding: 0px;">
+			<div class="panel panel-default" style="margin:5px;">
+			  <div class="panel-body">		  
+			  	<div class="table-responsive">
+					
+					<table id="tbl-ep" class="table table-condensed custom-font-size">
+					  <thead>
+						<tr>
+							<th class="col-small">Periodo</th>
+							<th class="col-medium">Programa</th>
+							<th class="col-small">Partida</th>
+							<th class="col-big">Descripción</th>
+							<th class="col-base">Presupuesto Ordinario</th>
+							<th class="col-base">Modificaciones</th>
+							<th class="col-base">Total Presupuesto</th>
+							<th class="col-base">Compromiso Reservado</th>
+							<th class="col-base">Compromiso Aprobado</th>
+							<th class="col-base">Ejecutado</th>
+							<th class="col-base">Disponible</th>
+							<th class="col-base">Estado</th>
+						</tr>
+					  </thead>
+					  <tbody>
+					  	<!--
+					    <tr ng-repeat="line in presupuesto | filter:{programa:programa.DES_PROGRAMA}:true"
+						-->
+						<tr ng-repeat="line in (filteredItems = (presupuesto | filter: programFilter | filter: cuentaFilter ))"
+					    	ng-click="setActive($index, line.cod_programa, line.cod_cuenta)" ng-class="{'selected-row':isActive($index)}" style="cursor: pointer;">
+					      <td class="col-small">{{line.periodo}}</td>
+					      <td class="col-medium" style="font-size: 10px;">{{line.programa | cut:true:30:' ...'}}</td>
+					      <td class="col-small">{{line.partida}}</td>
+					      <td class="col-big" title="{{line.descripcion}}">{{line.descripcion | cut:true:40:' ...'}}</td>
+					      <td class="col-base text-right">{{line.presupuesto_ordinario | currency : "&cent;"}}</td>
+					      <td class="col-base text-right">{{line.modificaciones | currency : "&cent;"}}</td>
+					      <td class="col-base text-right">{{line.total_presupuesto | currency : "&cent;"}}</td>
+					      <td class="col-base text-right">{{line.compromiso_reservado | currency : "&cent;"}}</td>
+					      <td class="col-base text-right">{{line.compromiso_aprobado | currency : "&cent;"}}</td>
+					      <td class="col-base text-right">{{line.ejecutado | currency : "&cent;"}}</td>
+					      <td class="col-base text-right">{{line.disponible | currency : "&cent;"}}</td>
+					      <td class="col-base text-right">Ejecución</td>
+					    </tr>
+					  </tbody>
+					  <tfoot>
+						<tr>
+							<td class="col-small text-right"><strong>Regs</strong></td>
+							<td class="col-medium text-left"><strong>{{registrosEncabeza}}</strong></td>
+							<th class="col-small"></th>
+							<th class="col-big"></th>
+							<td class="col-base text-right"><strong>{{totalesEncabezado.tot_presupuesto_ordinario | currency : "&cent;"}}</strong></td>
+							<td class="col-base text-right"><strong>{{totalesEncabezado.tot_modificaciones | currency : "&cent;"}}</strong></td>
+							<td class="col-base text-right"><strong>{{totalesEncabezado.tot_total_presupuesto | currency : "&cent;"}}</strong></td>
+							<td class="col-base text-right"><strong>{{totalesEncabezado.tot_compromiso_reservado | currency : "&cent;"}}</strong></td>
+							<td class="col-base text-right"><strong>{{totalesEncabezado.tot_compromiso_aprobado | currency : "&cent;"}}</strong></td>
+							<td class="col-base text-right"><strong>{{totalesEncabezado.tot_ejecutado | currency : "&cent;"}}</strong></td>
+							<td class="col-base text-right"><strong>{{totalesEncabezado.tot_disponible | currency : "&cent;"}}</strong></td>
+							<th class="col-base"></th>
+						</tr>
+					  </tfoot>
+					</table>
+
+			    </div>
+			
+			  </div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="row bg-success">
+
+		<div class="col-md-12" style="padding: 5px;">
+			
+			  <uib-tabset active="active" class="custom-font-size"> 		 
+			    <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
+			      <div ng-include="tab.templateUrl"></div>
+			    </uib-tab>		    
+			  </uib-tabset>		
+
+		</div>
+
+	</div>
+</div>
+<div ng-show="!access">
+    <h2 class="page-header">
+        Acceso Denegado
+    </h2>
+    <p>Este usuario no tiene permisos para accesar a esta sección.</p>
+</div>

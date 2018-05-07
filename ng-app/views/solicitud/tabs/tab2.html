@@ -1,0 +1,72 @@
+<br />
+<div class="row" style="margin-bottom: 15px;">
+    <div class="col-md-12 text-right custom-font-size">
+        <form class="form-inline">
+            <div class="form-group">
+                <label>Buscar</label>
+                <input type="text" ng-model="search" class="form-control input-sm" placeholder="Buscar">
+            </div>
+        </form>
+    </div>
+</div>
+<div class="table-responsive table-condensed custom-font-size">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th># Solicitud</th>
+                <th>Programa</th>
+                <th>Fecha Creación</th>
+                <th>Estado</th>
+                <td align="right"><b>Monto Total</b></td>
+                <td align="right"><b>Acciones</b></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-if="totalSolicitudes == 0">
+                <td colspan="6" class="text-center" style="color:#ccc;">No hay Solicitudes registradas</td>
+            </tr>            
+            <tr dir-paginate="solicitud in tab.content | filter:{ des_programa: search } | itemsPerPage:15" pagination-id="mySol">
+                <td align="center">{{solicitud.COD_SOLICITUD}}</td>
+                <td>{{solicitud.des_programa | capitalize}}</td>
+                <td>{{solicitud.FEC_REGISTRO | customDate}}</td>
+                <td>{{solicitud.IND_ESTADO | getEstado}}</td>
+                <td align="right" ng-if="solicitud.IND_MONEDA == 1">{{solicitud.MON_TOTAL | currency : "&cent;"}}</td>
+                <td align="right" ng-if="solicitud.IND_MONEDA == 2">{{solicitud.MON_TOTAL | currency : "$"}}</td>
+                <td align="right">
+
+                    <!-- EDITAR SOLICITUD -->
+                    <span ng-if="solicitud.IND_ESTADO == 1 && checkPermision(12)">
+                        <a href="#!/solicitud/edit/{{solicitud.COD_SOLICITUD}}" class="btn btn-warning btn-xs" title="Editar Solicitud"><i class="fa fa-edit"></i></a>
+                    </span>
+
+                    <!-- ENVIAR SOLICITUD -->
+                    <span ng-if="solicitud.IND_ESTADO == 1 && checkPermision(8)">
+                        <a class="btn btn-success btn-xs" ng-click="verifySolicitud(solicitud.COD_SOLICITUD)" title="Enviar Solicitud"><i class="fa fa-send"></i></a>
+                    </span>
+
+                    <!-- AUTORIZAR SOLICITUD -->
+                    <span ng-if="solicitud.IND_ESTADO == 2 && checkPermision(9)">
+                        <a class="btn btn-success btn-xs" ng-click="setEstado(solicitud.COD_SOLICITUD, solicitud.IND_ESTADO)" title="Autorizar"><i class="fa fa-check"></i></a>
+                    </span>
+                    
+                    <!-- VER SOLICITUD -->
+                    <span ng-if="checkPermision(10)">
+                        <a href="#!/solicitud/view/{{solicitud.COD_SOLICITUD}}" class="btn btn-default btn-xs" title="Ver Solicitud"><i class="fa fa-eye"></i></a>                        
+                    </span>
+
+                    <!-- RECHAZAR SOLICITUD -->
+                    <span ng-if="solicitud.IND_ESTADO == 2 && checkPermision(11)">                        
+                        <a class="btn btn-danger btn-xs" ng-click="rejectSolicitud(solicitud.COD_SOLICITUD)" title="Rechazar"><i class="fa fa-close"></i></a>
+                    </span>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <dir-pagination-controls
+       max-size="15"
+       direction-links="true"
+       boundary-links="true" 
+       pagination-id="mySol">
+    </dir-pagination-controls>
+</div>

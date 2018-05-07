@@ -1,0 +1,34 @@
+<ul class="nav navbar-nav navbar-right custom-font-size">
+  <li>
+    <a href="#" style="color:#fff;"><i class="fa fa-user"></i> {{$ctrl.nameUser}}</a>
+  </li>
+  <li>    
+    <div class="dropdown" style="margin-top: 15px;">
+      <span href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#fff; font-size: 14px; cursor: pointer;">
+        <i class="fa fa-cogs"></i> <span class="caret"></span>
+      </span>                
+      <ul id="dropdown-submenu" class="dropdown-menu" aria-labelledby="dLabel">
+        <li ng-repeat="option in $ctrl.menuOptions">
+          <a href="{{option.url}}">
+            <i class="fa {{option.icon}}"></i> 
+            {{option.descripcion}}
+          </a>
+        </li>
+        <!--
+        <li>
+          <a href="">                      
+            <i class="fa fa-cog"></i> 
+            Mi Perfil
+          </a>
+        </li>
+        -->
+      </ul>              
+    </div>
+  </li>            
+  <li><div href="#" style="color:#fff; margin: 18px;">|</div></li>            
+  <li>
+    <a href="../security/logout.php" style="color:#fff;">
+      <i class="fa fa-sign-out" title="Cerrar Sessión" style="font-size: 20px;"></i>
+    </a>
+  </li>            
+</ul>

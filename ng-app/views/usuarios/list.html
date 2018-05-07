@@ -1,0 +1,74 @@
+<div ng-hide="!access">
+    <h3 class="page-header">
+        {{title}}        
+    </h3>
+
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="custom-font-size">Buscar</label>
+                    <input type="text" ng-model="search" class="form-control input-sm" placeholder="Buscar">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-condensed custom-font-size">
+            <thead>
+                <tr>
+                    <td style="text-align: left;"><b># Codigo</b></td>
+                    <td style="text-align: left;"><b>Nombre</b></td>
+                    <td><b>Rol</b></td>
+                    <td><b>Estado</b></td>
+                    <td align="right"><b>Acciones</b></td>
+                </tr>
+            </thead>
+            <tbody>
+                            
+                <tr ng-repeat="usuario in usuarios | filter:{ nombre: search }">
+
+                    <td style="text-align: left;">{{usuario.codigo}}</td>
+                    <td style="text-align: left;">{{usuario.nombre}}</td>
+                    <td>
+
+                        <select id="rol" style="text-align-last:center;" 
+                                class="form-control input-sm" ng-model="usuario.rol" 
+                                ng-options="option.descripcion for option in roles track by option.rol_usuario" 
+                                ng-change="changeRole($index, usuario.codigo, usuario.rol.rol_usuario)">
+                            <option value="">- Seleccione un Rol -</option>
+                        </select>
+
+                    </td>
+                    <td>{{usuario.estado}}</td>
+                    <td>
+                        <div ng-if="usuario.isChange == 'false'">
+                        <fieldset disabled>
+                            <a class="btn btn-primary btn-xs" 
+                               title="Guardar" >
+                               <i class="fa fa-save"></i>
+                           </a>
+                        </fieldset>
+                        </div>
+                        <div ng-if="usuario.isChange == true">
+                        <a class="btn btn-primary btn-xs" 
+                           title="Guardar" 
+                           ng-click="updateUserRol($index, usuario.codigo)">
+                           <i class="fa fa-save"></i>
+                        </a>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+<div ng-show="!access">
+    <h3 class="page-header">
+        Acceso Denegado
+    </h3>
+    <p>Este usuario no tiene permisos para accesar a esta sección.</p>
+</div>
