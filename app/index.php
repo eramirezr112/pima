@@ -66,6 +66,7 @@
       </div>
     </div>
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script type="text/javascript" src="../web/js/moment.min.js"></script>
   <script type="text/javascript" src="../vendor/angular/angular.min.js"></script>
   <script type="text/javascript" src="../vendor/angular/angular-route.min.js"></script>
   <script type="text/javascript" src="../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>  
@@ -77,6 +78,7 @@
 
   <!-- CONTROLLERS -->
   <script type="text/javascript" src="../ng-app/controllers/solicitud/solicitud-controller.js"></script>
+  <script type="text/javascript" src="../ng-app/controllers/vacaciones/vacaciones-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/add-solicitud-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/edit-solicitud-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/view-solicitud-controller.js"></script>
@@ -103,6 +105,7 @@
   
   <!-- SERVICES -->
   <script type="text/javascript" src="../ng-app/services/solicitud-service.js"></script>
+  <script type="text/javascript" src="../ng-app/services/vacaciones-service.js"></script>
   <script type="text/javascript" src="../ng-app/services/programa-service.js"></script>
   <script type="text/javascript" src="../ng-app/services/proveedor-service.js"></script>
   <script type="text/javascript" src="../ng-app/services/periodo-service.js"></script>

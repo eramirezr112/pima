@@ -204,9 +204,9 @@
 					foreach ($filters['where'] as $filter) {
 						$field = key($filter);
 
-						$andRow = "";
+						$andRow = " AND ";
 						if ($nLine == 1) {
-							$andRow = "AND ";
+							$andRow = "";
 						}
 
 						$this->where_filter .= $andRow.$this->table_alias.".".$field." = '".$filter[$field]."' ";
@@ -227,6 +227,7 @@
 
 			$sql = "SELECT ".$conditions['limit']." $fields 
 					FROM ".$this->table_query." ".$this->where_filter;
+
 			$result = $this->execute($sql);
 
 			return $result;

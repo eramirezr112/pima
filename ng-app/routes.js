@@ -11,21 +11,20 @@ angular.module("Routes", ['ngRoute'])
                     },
                     usuario: function (UsuarioService) {
                         return UsuarioService.get();
-                    },                    
+                    },
                 }                
             })
             .when('/solicitud/view/:idSolicitud', {
                 templateUrl: '../ng-app/views/solicitud/view.html',
                 controller: 'ViewSolicitudController',
-                resolve: {/*
-                    periodo: function (PeriodoService) {
-                        return PeriodoService.get();
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
                     },
-                    */
                     solicitudData: function (SolicitudService, $route) {
                         var idSolicitud = $route.current.params.idSolicitud;                        
-                        //return SolicitudService.get(idSolicitud);
-                        return 0;
+                        return SolicitudService.get(idSolicitud);
+                        //return 0;
                     }
                     /*,
                     cuentas: function (CuentaService) {
@@ -33,6 +32,18 @@ angular.module("Routes", ['ngRoute'])
                     },
                     */
                 }
+            })
+            .when('/vacaciones', {
+                templateUrl: '../ng-app/views/vacaciones/list.html',
+                controller: 'SolicitudVacacionesController',
+                resolve: {
+                    vacaciones: function(VacacionesService){
+                        return VacacionesService.all();
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    }
+                }                
             })
             /*
             .when('/solicitud/add', {

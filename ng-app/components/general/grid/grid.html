@@ -42,7 +42,7 @@
                     </span>
                     <span ng-if="c == 'Acciones'">
                         <span ng-if="$ctrl.actions.edit">
-                            <a href="#!/solicitud" class="btn btn-warning btn-xs" title="Editar"><i class="fa fa-edit"></i></a>
+                            <a href="#!{{$ctrl.locationPath}}/edit/{{d['solicitud']}}" class="btn btn-warning btn-xs" title="Editar"><i class="fa fa-edit"></i></a>
                         </span>
                         <span ng-if="$ctrl.actions.view">
                             <a href="#!{{$ctrl.locationPath}}/view/{{d['solicitud']}}" class="btn btn-default btn-xs" title="Ver"><i class="fa fa-eye"></i></a>
