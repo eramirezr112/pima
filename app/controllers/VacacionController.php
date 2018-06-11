@@ -1,7 +1,7 @@
 <?php 
 
 require ('BaseController.php');
-class SolicitudController extends BaseController
+class VacacionController extends BaseController
 {
 
 	function __construct($c, $f) {
@@ -16,30 +16,26 @@ class SolicitudController extends BaseController
 		$isJefe      = $_SESSION['rol_web'];
 		$listCentros = $this->transformArrayToString($_SESSION['CENTROS_COSTO']);
 
-		$table = ['SRG_SOLICITUD_VEHICULOS', 'alias'=>'sv'];
+		$table = ['RH_SOLICITUD_VACACIONES', 'alias'=>'v'];
 
 		$columns = [
-			'cod_solicitud' => 'solicitud', 
-			//Relation Fields
-			'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)' => 'funcionario',
-			//'ssf.des_nombre' => 'Nombre',
-			'p.des_programa' => 'programa', 
-			'rcc.des_centro' => 'centro', 
-			'fec_solicitud' => 'Fec.Solicitud', 
-			'ind_estado' => 'estado'
+			'num_solicitud' =>'Solicitud',
+			'cod_funcionario' =>'solicitante',
+			'fec_confeccion' =>'fecha',
+			'dias_solicitados' =>'dias solicitados',
+			'fec_inicio' =>'desde',
+			'fec_final' =>'hasta',
+			'cod_estado' =>'estado'
 		];
 
 		$conditions = [
 			'limit' => 10,
 			'where' => [
-				['ind_estado' => 'C'],
-				['in' => 
-					['cod_centro' => $listCentros]
-				]
+				['cod_estado' => 'C']
 			]
 		];
 
-		$relations = [
+		$relations = [/*
 			'join' => [
 				array ('RH_FUNCIONARIOS', //table
 					   'cod_funcionario', //columns
@@ -53,15 +49,15 @@ class SolicitudController extends BaseController
 					   'cod_programa', //column
 					   'p' //alias
 				),
-			]
+			]*/
 		];
 
 		//$fields = $this->prepareFields($columns);
 
-		$result = $this->customExecute($table, $columns, $conditions, $relations);
+		$result = $this->customExecute($table, $columns, $conditions, null);
 		$solicitudes = $this->getArray($result);
 
-		echo json_encode(array('columns'=>$columns,'solicitudes'=>$solicitudes));
+		echo json_encode(array('columns'=>$columns,'vacaciones'=>$solicitudes));
 	}
 
 	public function getGuardadas() {
@@ -94,55 +90,49 @@ class SolicitudController extends BaseController
 
 	public function get() {
 		$params = $this->getParameters();
-		$id = intval($params["idSolicitud"]);
+		$id = $params["idSolicitud"];
 
 		// Encabezado de la solicitud
-		$sql = "SELECT sv.*, 
-					   CONCAT (f.des_nombre, SPACE(1), f.des_apellido1, SPACE(1), f.des_apellido2) as funcionario, 
-					   c.des_centro as centro, 
-					   p.des_programa as programa, 
-					   sifP.des_provincia as provincia, 
-					   sifC.des_canton as canton, 
-					   sifD.des_distrito as distrito 
-				FROM SRG_SOLICITUD_VEHICULOS as sv, 
-					 RH_FUNCIONARIOS as f, 
-					 RH_CENTROS_COSTO as c, 
-					 PRE_PROGRAMAS as p,
-					 SIF_PROVINCIAS as sifP,
-					 SIF_CANTONES as sifC,
-					 SIF_DISTRITOS as sifD 
-				WHERE sv.cod_solicitud     = $id 
-					AND sv.cod_funcionario = f.cod_funcionario 
-					AND sv.cod_centro      = c.cod_centro 
-					AND sv.cod_programa    = p.cod_programa 
-					AND sv.cod_prov = sifP.cod_provincia 
-					AND sv.cod_cant = sifC.cod_canton
-					AND sv.cod_dist = sifD.cod_distrito";
+		$sql = "SELECT se.*, u.des_usuario, p.des_proveedor, pr.DES_PROGRAMA 
+				FROM frm_solic_pedido_enca as se, frm_proveedores  as p, 
+				     frm_programas as pr, seg_usuarios as u   
+				WHERE se.cod_solicitud = $id  
+				AND se.cod_programa = pr.cod_programa 
+				AND se.cod_proveedor = p.cod_proveedor 
+				AND se.cod_periodo = pr.cod_periodo 
+				AND se.COD_USUARIO = u.cod_usuario";		
 		$result = $this->execute($sql);
 		$solicitud = $this->getArray($result);
 
-		// Funcionarios de la solicitud
-		$sql = "SELECT sf.*
-				FROM SRG_SOLICITUD_FUNCIONARIOS as sf 
-				WHERE cod_solicitud = $id";
-		$result = $this->execute($sql);
-		$funcionarios = $this->getArray($result);
-
-		echo json_encode(array('solicitud'=>$solicitud, 'funcionarios' => $funcionarios));
-	}
-
-	public function approveSolicitud(){
-		$params = $this->getParameters();
-		$id = intval($params["codSolicitud"]);
-
-		$sql = "UPDATE SRG_SOLICITUD_VEHICULOS set ind_estado = 'A' WHERE cod_solicitud = $id";
-		$result = $this->execute($sql);
-
-		if ($result) {
-			echo json_encode(array('response'=>1));
-		} else {
-			echo json_encode(array('response'=>0));
+		// Detalle de la solicitud
+		$columns = array(
+			"CAST(d.CAN_PRODUCTO AS INT) as cantidad, ",
+			"d.COD_CUENTA as cod_cuenta, ",
+			"d.DES_DETALLE as descripcion, ",
+			"d.MON_DETALLE as totLine, ",
+			"d.MON_DETALLE_MONEX as monDetalleMonex, ",
+			"d.MON_UNIDAD as preUnit "
+		);
+		$listColumns = "";
+		foreach ($columns as $column) {
+			$listColumns .= $column;
 		}
+
+		$sqlDetalle = "SELECT $listColumns, ep.mon_disponible, c.cod_cuenta, c.num_cuenta, c.des_cuenta 
+					   FROM frm_solic_pedido_deta as d, frm_solic_pedido_enca as se, 
+					   		frm_ejecucion_presupuesto_encabe as ep,
+					   		frm_cuentas as c
+					   WHERE d.cod_solicitud = $id 
+					   	   AND se.cod_solicitud = d.cod_solicitud
+					   	   AND ep.cod_periodo = se.cod_periodo 
+					   	   AND ep.cod_programa = se.cod_programa 
+					   	   AND ep.cod_cuenta = c.cod_cuenta 
+					   	   AND ep.cod_cuenta = d.cod_cuenta 					   	   
+					   order by d.COD_DETALLE ASC";		
+		$resultDetalle = $this->execute($sqlDetalle);
+		$allLines = $this->getArray($resultDetalle);
+
+		echo json_encode(array('solicitud'=>$solicitud, 'detalle' => $allLines));
 	}
 
 	public function getMaxNum() {

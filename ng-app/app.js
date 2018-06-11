@@ -36,6 +36,8 @@ angular.module("pnlsys", [
     'SistemaService',
     'Usuarios',
     'grid',
+    'Vacaciones',
+    'VacacionesService'
 ])
 .filter('getEstado', function () {
     return function (input) {
@@ -126,4 +128,33 @@ angular.module("pnlsys", [
     return function (input) {
         return $filter('date')(input, 'dd/MM/yyyy hh:mm');
     }
-});
+})
+.filter('capitalizeEveryWord', function() {
+      return function(input){        
+        var text = input.toString();
+        if (text != null) {
+
+
+            if(text.indexOf(' ') !== -1){
+              var inputPieces,
+                  i;
+
+              text = text.toLowerCase();
+              inputPieces = text.split(' ');
+
+              for(i = 0; i < inputPieces.length; i++){
+                inputPieces[i] = capitalizeString(inputPieces[i]);
+              }
+
+              return inputPieces.toString().replace(/,/g, ' ');
+            }
+            else {
+              text = text.toLowerCase();
+              return capitalizeString(text);
+            }
+        }
+        function capitalizeString(inputString){
+          return inputString.substring(0,1).toUpperCase() + inputString.substring(1);
+        }
+      };
+    });

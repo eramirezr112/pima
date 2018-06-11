@@ -1,7 +1,9 @@
 <h3 class="page-header">
 	{{title}}
-	<a href="#!/solicitud" class="btn btn-default pull-right btn-xs">&lt;&lt;&lt; Regresar a la lista</a>
+	<a href="#!/solicitud" class="btn btn-default btn-xs pull-right">&lt;&lt;&lt; Regresar a la lista</a>
+	<button type="button" class="btn btn-success btn-xs pull-right" style="margin-right: 10px;" ng-click="aprobarSolicitud()">Aprobar Solicitud</button>	
 </h3>
+
 <div class="row bg-success">
 	<div class="col-md-6">
 		<br />
@@ -12,46 +14,20 @@
 				<label class="sr-only custom-font-size" for="idSolicitud">Solicitud</label>
 				<div class="input-group">
 					<div class="input-group-addon custom-font-size">Solicitud:</div>
-					<input type="text" ng-model="solicitud.numSolicitud" class="form-control input-sm" id="idSolicitud" placeholder="#Solicitud">
+					<input type="text" value="{{solicitud.num_solicitud}}" class="form-control input-sm" id="idSolicitud" placeholder="#Solicitud">
 				</div>
 			</div>
 			</div>
 			<div class="col-md-6">
 			<div class="form-group">
-				<label class="sr-only custom-font-size" for="periodo">Periodo</label>
+				<label class="sr-only custom-font-size" for="fecha">Fecha</label>
 				<div class="input-group">
-					<div class="input-group-addon custom-font-size">Periodo:</div>
-					<input type="text" ng-model="solicitud.periodo.num_year" class="form-control input-sm" id="periodo" placeholder="Periodo">
+					<div class="input-group-addon custom-font-size">Fecha:</div>
+					<input type="text" value="{{solicitud.fec_solicitud | toDate}}" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
 				</div>
 			</div>
 			</div>
 			</fieldset>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<fieldset disabled>
-				<div class="form-group">
-					<label class="sr-only custom-font-size" for="programa">Programa</label>
-					<div class="input-group">
-						<div class="input-group-addon custom-font-size">Programa:</div>
-						<input type="text" ng-model="solicitud.programa.DES_PROGRAMA" class="form-control input-sm" id="programa">
-					</div>
-				</div>
-				</fieldset>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<fieldset disabled>
-				<div class="form-group">
-					<label class="sr-only custom-font-size" for="usuario">Usuario</label>
-					<div class="input-group">
-						<div class="input-group-addon custom-font-size">Usuario:</div>
-						<input type="text" ng-model="solicitud.usuario" class="form-control input-sm" id="usuario" placeholder="Usuario">
-					</div>
-				</div>
-				</fieldset>				
-			</div>
 		</div>
 	</div>
 	<div class="col-md-6">
@@ -60,10 +36,10 @@
 			<fieldset disabled>	
 			<div class="col-md-6">
 			<div class="form-group">
-				<label class="sr-only custom-font-size" for="fecha">Fecha</label>
+				<label class="sr-only custom-font-size" for="fecha">Fecha Aprobación</label>
 				<div class="input-group">
-					<div class="input-group-addon custom-font-size">Fecha:</div>
-					<input type="text" ng-model="solicitud.fecha" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
+					<div class="input-group-addon custom-font-size">Fecha Aprobación:</div>
+					<input type="text" value="{{solicitud.fec_autorizacion | toDate}}" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
 				</div>
 			</div>
 			</div>
@@ -72,94 +48,173 @@
 				<label class="sr-only custom-font-size" for="estado">Estado</label>
 				<div class="input-group">
 					<div class="input-group-addon custom-font-size">Estado:</div>
-					<input type="text" ng-model="solicitud.estado" class="form-control input-sm" id="estado" placeholder="Estado">
+					<input type="text" value="{{solicitud.ind_estado | statusCode}}" class="form-control input-sm" id="estado" placeholder="Estado">
 				</div>
 			</div>
 			</div>
 			</fieldset>
 		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<fieldset disabled>
-				<div class="form-group">
-					<label class="sr-only custom-font-size" for="proveedor">Proveedor</label>
-					<div class="input-group">
-						<div class="input-group-addon custom-font-size">Proveedor:</div>
-                        <input type="text" ng-model="solicitud.proveedor.des_proveedor" class="form-control input-sm" id="proveedor">                        
-					</div>
-				</div>
-				</fieldset>			
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-6">
-				<fieldset disabled>
-				<div class="form-group">
-					<label class="sr-only custom-font-size" for="moneda">Moneda</label>
-					<div class="input-group">
-						<div class="input-group-addon custom-font-size">Moneda:</div>						
-						<input type="text" ng-model="solicitud.moneda.des_moneda" class="form-control input-sm" id="moneda">
-					</div>
-				</div>
-				</fieldset>
-			</div>
-			<div class="col-md-6">
-				<fieldset disabled>
-				<div class="form-group">
-					<label class="sr-only custom-font-size" for="total">Total</label>
-					<div class="input-group">
-						<div class="input-group-addon custom-font-size">Total:</div>
-						<input type="text" ng-if="solicitud.moneda.id == 1" value='{{solicitud.total | currency : "&cent;"}}' class="form-control input-sm" id="total" placeholder="Total">
-						<input type="text" ng-if="solicitud.moneda.id == 2" value='{{solicitud.total | currency : "$"}}' class="form-control input-sm" id="total" placeholder="Total">
-					</div>
-				</div>
-				</fieldset>
-			</div>
+	</div>
+</div>
+<div class="row bg-success">
+	
+	<div class="col-md-4">
+		<div class="panel panel-default"> 
+			<div class="panel-heading"> 
+				<h3 class="panel-title custom-font-size"><b>Solicitante</b></h3> 
+			</div> 
+			<div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+				<table class="table table-condensed" style="margin:0px;">
+					<tr>
+						<td class="text-left" style="vertical-align: middle;">
+							Programa:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.programa | capitalizeEveryWord}}" class="form-control input-sm" id="programa" placeholder="Nombre Programa">
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-left"  style="vertical-align: middle;">
+							Centro:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.centro | capitalizeEveryWord}}" class="form-control input-sm" id="centro" placeholder="Nombre Centro">
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-left"  style="vertical-align: middle;">
+							Funcionario:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.funcionario | capitalizeEveryWord}}" class="form-control input-sm" id="funcionario" placeholder="Nombre de Funcionario">
+							</fieldset>
+						</td>
+					</tr>
+				</table>
+			</div> 
 		</div>
 	</div>
-	<div class="col-md-12">
-		<label for="observaciones" class="custom-font-size">Observaciones</label>
-		<fieldset disabled>
-		<textarea class="form-control input-sm custom-font-size" rows="3" id="observaciones" ng-model="solicitud.observaciones"></textarea>
-		</fieldset>
+	
+	<div class="col-md-4">		
+		<div class="panel panel-default"> 
+			<div class="panel-heading"> 
+				<h3 class="panel-title custom-font-size"><b>Días y Horas</b></h3> 
+			</div> 
+			<div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+				<table class="table table-condensed" style="margin:0px;">
+					<tr>
+						<td class="text-left" style="vertical-align: middle;">
+							Salida:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.fec_salida | toDate}}" class="form-control input-sm" id="fecSalida" placeholder="Nombre Programa">
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-left"  style="vertical-align: middle;">
+							Ingreso:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.fec_ingreso | toDate}}" class="form-control input-sm" id="fecIngreso" placeholder="Nombre Centro">
+							</fieldset>
+						</td>
+					</tr>
+					<tr style="visibility: hidden;">
+						<td colspan="2">
+							<fieldset disabled>	
+								<input class="form-control input-sm" placeholder="None">
+							</fieldset>
+						</td>
+					</tr>
+				</table>
+			</div> 
+		</div>
+	</div>
+	
+	<div class="col-md-4">		
+		<div class="panel panel-default"> 
+			<div class="panel-heading"> 
+				<h3 class="panel-title custom-font-size"><b>Localidad</b></h3> 
+			</div> 
+			<div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+				<table class="table table-condensed" style="margin:0px;">
+					<tr>
+						<td class="text-left" style="vertical-align: middle;">
+							Provincia:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.provincia | capitalizeEveryWord}}" class="form-control input-sm" id="provincia" placeholder="Nombre Provincia">
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-left"  style="vertical-align: middle;">
+							Cantón:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.canton | capitalizeEveryWord}}" class="form-control input-sm" id="estado" placeholder="Nombre Canton">
+							</fieldset>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-left"  style="vertical-align: middle;">
+							Distrito:
+						</td>
+						<td>
+							<fieldset disabled>	
+								<input type="text" value="{{solicitud.distrito | capitalizeEveryWord}}" class="form-control input-sm" id="estado" placeholder="Nombre del Distrito">
+							</fieldset>
+						</td>
+					</tr>
+				</table>
+			</div> 
+		</div>
+	</div>
+
+</div>
+<div class="row bg-success">
+	<div class="col-md-6">
+		<label for="objetivo" class="custom-font-size">Objetivo de la salida</label>
+		<textarea class="form-control input-sm custom-font-size" rows="3" id="objetivo">{{solicitud.des_objetivo}}</textarea>
+		<br />
+	</div>
+	<div class="col-md-6">
+		<label for="observaciones" class="custom-font-size">Observación del viaje</label>
+		<textarea class="form-control input-sm custom-font-size" rows="3" id="observaciones">{{solicitud.des_observacion_viaje}}</textarea>		
 		<br />
 	</div>
 </div>
 <div class="row" style="background: #ddd;">
 	<div class="col-md-12">
 		<br />
-		<div class="panel panel-default">
-		  <div class="panel-body">
-		    <table class="table table-condensed table-striped custom-font-size">
-		    	<thead>
-			    	<tr>
-			    		<th># Detalle</th>
-			    		<th>Cantidad</th>
-			    		<th>Cuenta</th>
-			    		<th>Detalle</th>
-			    		<th class="text-right">Precio Unit</th>
-			    		<th class="text-right">Total Linea</th>
-			    	</tr>
-		    	</thead>
-		    	<tbody>
-		    		<tr ng-repeat="detCuenta in solicitud.detalle track by $index" 
-		    			ng-click="setActive($index)">
-		    			<td>{{$index+1}}</td>
-		    			<td>
-							{{solicitud.detalle[$index].cantidad}}
-		    			</td>
-		    			<td>{{detCuenta.num_cuenta}} | {{detCuenta.des_cuenta | cut:true:50:' ...'}}</td>
-		    			<td>
-		    				{{solicitud.detalle[$index].descripcion}}
-		    			</td>
-                		<td class="text-right" ng-if="solicitud.moneda.id == 1">{{solicitud.detalle[$index].preUnit | currency : "&cent;"}}</td>
-                		<td class="text-right" ng-if="solicitud.moneda.id == 2">{{solicitud.detalle[$index].preUnit | currency : "$"}}</td>
-                		<td class="text-right" ng-if="solicitud.moneda.id == 1">{{solicitud.detalle[$index].totLine | currency : "&cent;"}}</td>
-                		<td class="text-right" ng-if="solicitud.moneda.id == 2">{{solicitud.detalle[$index].totLine | currency : "$"}}</td>
-		    		</tr>
-		    	</tbody>
-		    </table>
-		  </div>
+		<div class="panel panel-default"> 		
+			<div class="panel-heading"> 
+				<h3 class="panel-title custom-font-size"><b>Funcionarios</b></h3> 
+			</div> 
+			<div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+				<table class="table">
+					<tr>
+						<th class="text-center">Número</th>
+						<th class="text-center">Funcionario</th>
+						<th class="text-center">Observación</th>
+					</tr>
+					<tr ng-repeat="funcionario in funcionarios">
+						<td>{{funcionario.cod_funcionario}}</td>
+						<td>{{funcionario.des_funcionario | capitalizeEveryWord}}</td>
+						<td>{{funcionario.observacion}}</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 	</div>	
 	<div class="col-md-12">

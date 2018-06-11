@@ -1,7 +1,7 @@
-angular.module("SolicitudService", []).factory("SolicitudService", function($http){
+angular.module("VacacionesService", []).factory("VacacionesService", function($http){
 
     var apiBase = '../app/api.php?c=';
-    var controllerName = 'solicitud';
+    var controllerName = 'vacacion';
     var path = apiBase + controllerName;
 
     return {
@@ -9,7 +9,8 @@ angular.module("SolicitudService", []).factory("SolicitudService", function($htt
             var action = 'all';
             var config = {
                 headers : {'Accept' : 'application/json'}
-            };            
+            };  
+            //console.log(path+'&f='+action);          
             return $http.get(path+'&f='+action, config);
         },
         getGuardadas: function(){
@@ -52,18 +53,7 @@ angular.module("SolicitudService", []).factory("SolicitudService", function($htt
                 params: data,
                 headers : {'Accept' : 'application/json'}
             };
-            return $http.get(path+'&f='+action, config);
-        },
-        approveSolicitud: function (codSolicitud) {
-            var action = 'approveSolicitud';
-            var data = {
-                codSolicitud: codSolicitud
-            };
-            var config = {
-                params: data,
-                headers : {'Accept' : 'application/json'}
-            };            
-            return $http.get(path+'&f='+action, config);
+            return $http.get(path+'&f='+action, config);            
         },
         getMaxNum: function () {
             var action = 'getMaxNum';

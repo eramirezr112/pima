@@ -50,20 +50,34 @@ function gridController() {
 grid.controller('gridController', [gridController])
     .filter('isDate', function ($filter) {
         return function (input) {
+
+            var formats = [
+                moment.ISO_8601,
+                "DD/MM/YYYY"
+            ];
+
+            var result = moment(input, formats, true).isValid();
+
+            if (result) {
+                return $filter('date')(input, 'dd/MM/yyyy');
+            } else {
+                return input;
+            }
+            /*
             var dateWrapper = new Date(input);
             if (!isNaN(dateWrapper.getTime()) && ((dateWrapper.getTime()).toString()).length == 13) {
                 return $filter('date')(input, 'dd/MM/yyyy');
             } else {            
                 return input;
             }
-            
+            */
         }
     })
     .filter('isStatusLetter', function ($filter) {
 
         return function (input) {
 
-            if ( input != null && (input.toString()).length == 1){
+            if ( input != null && (input.toString()).length == 1 && !input.match(/^-{0,1}\d+$/)){
 
                 var output = "";
                 if (input === 'E') {
@@ -84,33 +98,4 @@ grid.controller('gridController', [gridController])
                 return input;
             }
         }
-    })
-    .filter('capitalizeEveryWord', function() {
-      return function(input){        
-        var text = input.toString();
-        if (text != null) {
-
-
-            if(text.indexOf(' ') !== -1){
-              var inputPieces,
-                  i;
-
-              text = text.toLowerCase();
-              inputPieces = text.split(' ');
-
-              for(i = 0; i < inputPieces.length; i++){
-                inputPieces[i] = capitalizeString(inputPieces[i]);
-              }
-
-              return inputPieces.toString().replace(/,/g, ' ');
-            }
-            else {
-              text = text.toLowerCase();
-              return capitalizeString(text);
-            }
-        }
-        function capitalizeString(inputString){
-          return inputString.substring(0,1).toUpperCase() + inputString.substring(1);
-        }
-      };
     });
