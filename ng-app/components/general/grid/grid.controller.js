@@ -1,4 +1,4 @@
-function gridController() {
+function gridController($timeout) {
     var ctrl = this;
 
     ctrl.$onInit = function() {
@@ -45,9 +45,13 @@ function gridController() {
         return colClass;
     };
 
+    ctrl.approve = function (cod) {        
+        ctrl.approveAction(cod);
+    };
+
 }
 
-grid.controller('gridController', [gridController])
+grid.controller('gridController', ['$timeout', gridController])
     .filter('isDate', function ($filter) {
         return function (input) {
 

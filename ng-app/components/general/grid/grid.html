@@ -48,7 +48,7 @@
                             <a href="#!{{$ctrl.locationPath}}/view/{{d['solicitud']}}" class="btn btn-default btn-xs" title="Ver"><i class="fa fa-eye"></i></a>
                         </span>
                         <span ng-if="$ctrl.actions.authorize && d['estado'] == 'C'">
-                            <a class="btn btn-success btn-xs" ng-click="" title="Autorizar"><i class="fa fa fa-check"></i></a>
+                            <a class="btn btn-success btn-xs" data-ng-click="$ctrl.approve({codEdit:d['solicitud']})" title="Autorizar"><i class="fa fa fa-check"></i></a>
                         </span>
 
                         <span ng-if="$ctrl.actions.delete">

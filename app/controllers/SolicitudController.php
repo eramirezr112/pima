@@ -12,9 +12,14 @@ class SolicitudController extends BaseController
 
 		session_start();
 		$isAdmin = $this->checkPermision(7);
-		$codUsuario  = $_SESSION['cod_usuario'];;
+		$codUsuario  = $_SESSION['cod_usuario'];
 		$isJefe      = $_SESSION['rol_web'];
-		$listCentros = $this->transformArrayToString($_SESSION['CENTROS_COSTO']);
+
+		// NO es ADMIN
+		$listCentros = null;
+		if ($codUsuario != 0) {
+			$listCentros = $this->transformArrayToString($_SESSION['CENTROS_COSTO']);
+		}
 
 		$table = ['SRG_SOLICITUD_VEHICULOS', 'alias'=>'sv'];
 
@@ -29,15 +34,25 @@ class SolicitudController extends BaseController
 			'ind_estado' => 'estado'
 		];
 
-		$conditions = [
-			'limit' => 10,
-			'where' => [
-				['ind_estado' => 'C'],
-				['in' => 
-					['cod_centro' => $listCentros]
+		// NO es ADMIN
+		if ($codUsuario != 0) {
+			$conditions = [
+				'limit' => 10,
+				'where' => [
+					['ind_estado' => 'C'],
+					['in' => 
+						['cod_centro' => $listCentros]
+					]
 				]
-			]
-		];
+			];
+		} else { // ES ADMIN
+			$conditions = [
+				'limit' => 10,
+				'where' => [
+					['ind_estado' => 'C']
+				]
+			];
+		}
 
 		$relations = [
 			'join' => [
