@@ -9,6 +9,32 @@ angular.module('Solicitud', ['ui.bootstrap', 'angularUtils.directives.dirPaginat
         $scope.columns     = solicitudes.data.columns;
         // Rol de Usuario
         $scope.rolUsuario = usuario.data.usuario.rol_web;
+
+        $scope.codEdit = null;
+        $scope.approve = function (id) {
+
+            var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
+            if (r == true) {
+                var codSolicitud = id;
+
+                SolicitudService.approveSolicitud(codSolicitud).then(function (result) {
+                   
+                    var response = result.data.response;
+
+                    if (response == 1) {
+                        alert('La solicitud ha sido aprobada');
+                        $location.path('../');
+                    } else {
+                        alert('La solicitud No puede aprobarse en estos momentos');
+                    }
+
+                });
+            } else {
+                return false;
+            }
+
+        };
+
         //console.log($scope.solicitudes);
 
         //$rootScope.$on('$routeChangeSuccess', function(scope, current, pre) {          

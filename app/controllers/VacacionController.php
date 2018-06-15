@@ -13,8 +13,7 @@ class VacacionController extends BaseController
 		session_start();
 		$isAdmin = $this->checkPermision(7);
 		$codUsuario  = $_SESSION['cod_usuario'];;
-		$isJefe      = $_SESSION['rol_web'];
-		$listCentros = $this->transformArrayToString($_SESSION['CENTROS_COSTO']);
+		$isJefe      = $_SESSION['rol_web'];		
 
 		$table = ['RH_SOLICITUD_VACACIONES', 'alias'=>'v'];
 

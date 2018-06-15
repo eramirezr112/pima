@@ -6,10 +6,6 @@ angular.module('ViewSolicitud', [])
         $scope.solicitud    = solicitudData.data.solicitud[0];
         $scope.funcionarios = solicitudData.data.funcionarios;
 
-        console.log($scope.solicitud);
-        console.log($scope.funcionarios);
-        
-
         $scope.aprobarSolicitud = function () {
             
             var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
