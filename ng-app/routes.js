@@ -2,6 +2,15 @@ angular.module("Routes", ['ngRoute'])
     .config(['$routeProvider', function($routeProvider){
 
         $routeProvider
+            .when('/home', {
+                templateUrl: '../ng-app/views/home/index.html',
+                controller: 'HomeController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                }                
+            })
             .when('/solicitud', {
                 templateUrl: '../ng-app/views/solicitud/list.html',
                 controller: 'SolicitudController',
@@ -230,7 +239,7 @@ angular.module("Routes", ['ngRoute'])
                     }
                 }                
             })*/
-            .otherwise('/solicitud');
+            .otherwise('/home');
 
     }])
     .directive('activeLink', ['$location', function (location) {
