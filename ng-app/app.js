@@ -1,5 +1,6 @@
 angular.module("pnlsys", [
 	'Routes', 
+    'Home',
 	'Solicitud',
 	'SolicitudService',
     'AddSolicitud',

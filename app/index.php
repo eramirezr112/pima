@@ -77,6 +77,7 @@
   <script type="text/javascript" src="../ng-app/routes.js"></script>
 
   <!-- CONTROLLERS -->
+  <script type="text/javascript" src="../ng-app/controllers/home/home-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/solicitud-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/vacaciones/vacaciones-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/add-solicitud-controller.js"></script>
