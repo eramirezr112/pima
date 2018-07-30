@@ -1,11 +1,13 @@
-angular.module('ViewSolicitud', [])
-    .controller('ViewSolicitudController', ['$scope', '$filter', '$location', 'usuario', 'solicitudData', 'SolicitudService', function($scope, $filter, $location, usuario, solicitudData, SolicitudService) {
+angular.module('ViewVacacion', [])
+    .controller('ViewVacacionController', ['$scope', '$filter', '$location', 'usuario', 'vacacionData', 'VacacionesService', function($scope, $filter, $location, usuario, vacacionData, VacacionesService) {
        
-        $scope.title = "Solicitud de uso de Vehiculos Oficiales";
+        $scope.title = "Solicitud de Vacaciones";
 
-        $scope.solicitud    = solicitudData.data.solicitud[0];
-        $scope.funcionarios = solicitudData.data.funcionarios;
+        $scope.solicitud    = vacacionData.data.solicitud;
+        console.log($scope.solicitud);
+        //$scope.funcionarios = solicitudData.data.funcionarios;
 
+        /*
         $scope.aprobarSolicitud = function () {
             
             var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
@@ -18,7 +20,7 @@ angular.module('ViewSolicitud', [])
 
                     if (response == 1) {
                         alert('La solicitud ha sido aprobada');
-                        $location.path('solicitud');
+                        $location.path('../');
                     } else {
                         alert('La solicitud No puede aprobarse en estos momentos');
                     }
@@ -29,6 +31,7 @@ angular.module('ViewSolicitud', [])
             }
 
         };
+        */
 
     }])
     .filter('toDate', function ($filter) {

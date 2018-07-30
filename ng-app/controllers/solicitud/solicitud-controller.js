@@ -23,7 +23,7 @@ angular.module('Solicitud', ['ui.bootstrap', 'angularUtils.directives.dirPaginat
 
                     if (response == 1) {
                         alert('La solicitud ha sido aprobada');
-                        $location.path('../');
+                        window.location.reload();
                     } else {
                         alert('La solicitud No puede aprobarse en estos momentos');
                     }

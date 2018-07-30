@@ -38,6 +38,7 @@ angular.module("pnlsys", [
     'Usuarios',
     'grid',
     'Vacaciones',
+    'ViewVacacion',
     'VacacionesService'
 ])
 .filter('getEstado', function () {
