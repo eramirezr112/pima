@@ -80,6 +80,7 @@
   <script type="text/javascript" src="../ng-app/controllers/home/home-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/solicitud-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/vacaciones/vacaciones-controller.js"></script>
+  <script type="text/javascript" src="../ng-app/controllers/vacaciones/view-vacacion-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/add-solicitud-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/edit-solicitud-controller.js"></script>
   <script type="text/javascript" src="../ng-app/controllers/solicitud/view-solicitud-controller.js"></script>

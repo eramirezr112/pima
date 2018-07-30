@@ -18,7 +18,7 @@ class VacacionController extends BaseController
 		$table = ['RH_SOLICITUD_VACACIONES', 'alias'=>'v'];
 
 		$columns = [
-			'num_solicitud' =>'Solicitud',
+			'num_solicitud' =>'solicitud',
 			'cod_funcionario' =>'solicitante',
 			'fec_confeccion' =>'fecha',
 			'dias_solicitados' =>'dias solicitados',
@@ -91,6 +91,7 @@ class VacacionController extends BaseController
 		$params = $this->getParameters();
 		$id = $params["idSolicitud"];
 
+		/*
 		// Encabezado de la solicitud
 		$sql = "SELECT se.*, u.des_usuario, p.des_proveedor, pr.DES_PROGRAMA 
 				FROM frm_solic_pedido_enca as se, frm_proveedores  as p, 
@@ -130,8 +131,8 @@ class VacacionController extends BaseController
 					   order by d.COD_DETALLE ASC";		
 		$resultDetalle = $this->execute($sqlDetalle);
 		$allLines = $this->getArray($resultDetalle);
-
-		echo json_encode(array('solicitud'=>$solicitud, 'detalle' => $allLines));
+		*/
+		echo json_encode(array('solicitud'=>$id, 'detalle' => []));
 	}
 
 	public function getMaxNum() {

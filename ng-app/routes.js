@@ -54,6 +54,20 @@ angular.module("Routes", ['ngRoute'])
                     }
                 }                
             })
+            .when('/vacaciones/view/:idSolicitud', {
+                templateUrl: '../ng-app/views/vacaciones/view.html',
+                controller: 'ViewVacacionController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                    vacacionData: function (VacacionesService, $route) {
+                        var idSolicitud = $route.current.params.idSolicitud;                        
+                        return VacacionesService.get(idSolicitud);
+
+                    }
+                }
+            })
             /*
             .when('/solicitud/add', {
                 templateUrl: '../ng-app/views/solicitud/add.html',
