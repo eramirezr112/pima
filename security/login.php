@@ -88,8 +88,10 @@
 
                     // Se obtiene la lista de funcionarios a cargo del Gerente
                     $query = "SELECT cc.cod_encargado FROM rh_centros_costo as cc 
-                              WHERE cc.cod_centro_padre is NULL AND cc.cod_centro != '04'";
-                    $stmt = $db->executeSecure($query); 
+                              WHERE cc.cod_centro_padre is NULL AND cc.cod_centro != ?";
+
+                    $values = array('04');
+                    $stmt = $db->executeSecure($query, $values); 
                     $listFuncionarios = $db->getArray($stmt);
 
                     foreach ($listFuncionarios as $f) {
@@ -99,8 +101,10 @@
                     // Se obtiene los funcionarios que pertenecen al centro de costo de gerencia (cod_centro = 07)
                     // (U)
                     $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                              WHERE f.cod_centro = '".trim($user["COD_CENTRO"])."' AND f.ind_estado != 0";
-                    $stmt = $db->executeSecure($query); 
+                              WHERE f.cod_centro = ? AND f.ind_estado != ?";
+
+                    $values = array(trim($user["COD_CENTRO"]), 0);
+                    $stmt = $db->executeSecure($query, $values); 
                     $listFuncionariosLocales = $db->getArray($stmt);
 
                     foreach ($listFuncionariosLocales as $f) {
@@ -115,8 +119,10 @@
                         
                         // Se obtiene los funcionarios que pertenecen al centro de costo del auditor
                         $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                                  WHERE f.cod_centro = '".trim($user["COD_CENTRO"])."' AND f.ind_estado != 0";
-                        $stmt = $db->executeSecure($query); 
+                                  WHERE f.cod_centro = ? AND f.ind_estado != ?";
+
+                        $values = array(trim($user["COD_CENTRO"]), 0);
+                        $stmt = $db->executeSecure($query, $values); 
                         $listFuncionariosLocales = $db->getArray($stmt);
 
                         foreach ($listFuncionariosLocales as $f) {
@@ -131,8 +137,10 @@
                          */
 
                         $query = "SELECT cc.cod_centro FROM rh_centros_costo as cc 
-                                  WHERE cc.cod_centro_padre is NULL AND cc.cod_encargado = ".$user["COD_FUNCIONARIO"];
-                        $stmt = $db->executeSecure($query); 
+                                  WHERE cc.cod_centro_padre is NULL AND cc.cod_encargado = ?";
+
+                        $values = array($user["COD_FUNCIONARIO"]);
+                        $stmt = $db->executeSecure($query, $values); 
                         $isCodEncargado = $db->getArray($stmt);
 
                         //DIRECTOR
@@ -144,10 +152,11 @@
 
                             $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                       WHERE f.cod_centro like '".trim($isCodEncargado[0]['cod_centro'])."%' 
-                                      AND f.ind_estado != 0 
-                                      AND f.COD_FUNCIONARIO != ".$user["COD_FUNCIONARIO"];
+                                      AND f.ind_estado != ? 
+                                      AND f.COD_FUNCIONARIO != ?";
                             
-                            $stmt = $db->executeSecure($query); 
+                            $values = array(0, $user["COD_FUNCIONARIO"]);
+                            $stmt = $db->executeSecure($query, $values);  
                             $listFuncionariosLocales = $db->getArray($stmt);
 
                             foreach ($listFuncionariosLocales as $f) {
@@ -165,9 +174,10 @@
                         } else {
 
                             $query = "SELECT DISTINCT(ad.cod_centro) FROM rh_autorizados_direccion as ad 
-                                      WHERE ad.cod_funcionario = ".$user["COD_FUNCIONARIO"];
+                                      WHERE ad.cod_funcionario = ?";
 
-                            $stmt = $db->executeSecure($query); 
+                            $values = array($user["COD_FUNCIONARIO"]);
+                            $stmt = $db->executeSecure($query, $values);  
                             $isCodAutorizado = $db->getArray($stmt);
 
                             //AUTORIZADO
@@ -181,8 +191,9 @@
 
                                 // Se consulta si el autorizado es un Lider de proceso
                                 $query = "SELECT cc.cod_centro FROM rh_centros_costo as cc 
-                                          WHERE cc.cod_encargado = ".$user["COD_FUNCIONARIO"];
-                                $stmt = $db->executeSecure($query); 
+                                          WHERE cc.cod_encargado = ?";
+                                $values = array($user["COD_FUNCIONARIO"]);
+                                $stmt = $db->executeSecure($query, $values);  
 
                                 // COMENTARIO
                                 /*
@@ -210,10 +221,11 @@
 
                                     $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                               WHERE f.cod_centro like '".trim($user["COD_CENTRO"])."%' 
-                                              AND f.ind_estado != 0 
-                                              AND f.COD_FUNCIONARIO != ".$user["COD_FUNCIONARIO"];                                    
+                                              AND f.ind_estado != ? 
+                                              AND f.COD_FUNCIONARIO != ?";                                    
 
-                                    $stmt = $db->executeSecure($query); 
+                                    $values = array(0, $user["COD_FUNCIONARIO"]);
+                                    $stmt = $db->executeSecure($query, $values);  
                                     $funcionariosLiderProceso = $db->getArray($stmt);
 
                                     // COMENTARIO
@@ -234,9 +246,12 @@
                                     */
 
                                     $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                                              WHERE f.cod_centro like '".trim($cc['cod_centro'])."%' AND f.ind_estado != 0 AND f.COD_FUNCIONARIO != ".$user["COD_FUNCIONARIO"];
-                                    
-                                    $stmt = $db->executeSecure($query); 
+                                              WHERE f.cod_centro like '".trim($cc['cod_centro'])."%' 
+                                              AND f.ind_estado != ? 
+                                              AND f.COD_FUNCIONARIO != ?";
+
+                                    $values = array(0, $user["COD_FUNCIONARIO"]);
+                                    $stmt = $db->executeSecure($query, $values);
                                     $list = $db->getArray($stmt);
 
                                     foreach ($list as $lC) {
@@ -281,13 +296,14 @@
 
                                 $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                           WHERE f.cod_centro like '".trim($user["COD_CENTRO"])."%' 
-                                          AND f.ind_estado != 0 
-                                          AND f.COD_FUNCIONARIO != ".$user["COD_FUNCIONARIO"];
+                                          AND f.ind_estado != ? 
+                                          AND f.COD_FUNCIONARIO != ?";
                                 
                                 // COMENTARIO
                                 //echo $query;
 
-                                $stmt = $db->executeSecure($query); 
+                                $values = array(0, $user["COD_FUNCIONARIO"]);
+                                $stmt = $db->executeSecure($query, $values);
                                 $listFuncionariosLocales = $db->getArray($stmt);
 
                                 foreach ($listFuncionariosLocales as $f) {

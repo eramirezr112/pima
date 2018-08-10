@@ -6,8 +6,11 @@
 		public $data = "";
 		
 		const DB_SERVER = "72.55.156.230";
+		//const DB_SERVER = "172.29.137.19";
 		const DB_USER = "usuariomovil";
+		//const DB_USER = "sifpima";
 		const DB_PASSWORD = "android1793";
+		//const DB_PASSWORD = "ad2426";
 		const DB = "SIFPIMA";
 
 		var $conn;
