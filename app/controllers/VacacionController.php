@@ -19,7 +19,8 @@ class VacacionController extends BaseController
 
 		$columns = [
 			'num_solicitud' =>'solicitud',
-			'cod_funcionario' =>'solicitante',
+			//'cod_funcionario' =>'solicitante',
+			'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)' => 'solicitante',
 			'fec_confeccion' =>'fecha',
 			'dias_solicitados' =>'dias solicitados',
 			'fec_inicio' =>'desde',
@@ -28,18 +29,21 @@ class VacacionController extends BaseController
 		];
 
 		$conditions = [
-			'limit' => 10,
+			//'limit' => 10,
 			'where' => [
-				['cod_estado' => 'C']
+				['cod_estado' => 'C'],
+				['in' => 
+					['cod_funcionario' => $_SESSION['FUNCIONARIOS_A_CARGO']]
+				]				
 			]
 		];
 
-		$relations = [/*
+		$relations = [
 			'join' => [
 				array ('RH_FUNCIONARIOS', //table
 					   'cod_funcionario', //columns
 					   'ssf' //alias
-				),
+				)/*,
 				array ('RH_CENTROS_COSTO', //table
 					   'cod_centro', //column
 					   'rcc' //alias
@@ -47,13 +51,13 @@ class VacacionController extends BaseController
 				array ('PRE_PROGRAMAS', //table
 					   'cod_programa', //column
 					   'p' //alias
-				),
-			]*/
+				),*/
+			]
 		];
 
 		//$fields = $this->prepareFields($columns);
 
-		$result = $this->customExecute($table, $columns, $conditions, null);
+		$result = $this->customExecute($table, $columns, $conditions, $relations);
 		$solicitudes = $this->getArray($result);
 
 		echo json_encode(array('columns'=>$columns,'vacaciones'=>$solicitudes));
