@@ -189,3 +189,7 @@ background:none;
 .col-align-center{
     text-align: center;
 }
+
+.page-content {
+    padding:0px 15px;
+}

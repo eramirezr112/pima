@@ -131,6 +131,11 @@ angular.module("pnlsys", [
         return $filter('date')(input, 'dd/MM/yyyy hh:mm');
     }
 })
+.filter('customDate3', function ($filter) {
+    return function (input) {
+        return $filter('date')(input, 'dd/MM/yyyy');
+    }
+})
 .filter('capitalizeEveryWord', function() {
       return function(input){        
         var text = input.toString();

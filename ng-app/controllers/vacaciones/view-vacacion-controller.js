@@ -3,8 +3,10 @@ angular.module('ViewVacacion', [])
        
         $scope.title = "Solicitud de Vacaciones";
 
-        $scope.solicitud    = vacacionData.data.solicitud;
-        console.log($scope.solicitud);
+        $scope.solicitud    = vacacionData.data.solicitud[0];
+        $scope.saldoActual  = vacacionData.data.saldoActual;
+        $scope.diasGastados = vacacionData.data.diasGastados;
+        console.log(vacacionData.data);
         //$scope.funcionarios = solicitudData.data.funcionarios;
 
         /*

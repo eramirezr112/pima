@@ -360,13 +360,21 @@
                 //AUTORIZADO
                 if (sizeof($isCodAutorizado) > 0) {
 
+/*                    echo "ES AUTORIZADO EN: ";
+                    foreach ($isCodAutorizado as $cA) {
+                        echo $cA['cod_centro'].", ";
+                    }                    
+                    echo "<pre>";
+                    print_r($isCodAutorizado);
+                    echo "</pre>";*/
                     $funcionarios_del_autorizado = array();
                     foreach ($isCodAutorizado as $cc) {
 
                         $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                   WHERE f.cod_centro like '".trim($cc['cod_centro'])."%' 
                                   AND f.ind_estado != ? 
-                                  AND f.COD_FUNCIONARIO != ?";
+                                  AND f.COD_FUNCIONARIO != ? 
+                                  AND f.COD_FUNCIONARIO not in (SELECT rhcc.cod_encargado FROM rh_centros_costo as rhcc WHERE rhcc.cod_centro = '".trim($cc['cod_centro'])."')";
                         $values = array(0, $user["COD_FUNCIONARIO"]);
                         $stmt = $db->executeSecure($query, $values);
                         $list = $db->getArray($stmt);
@@ -377,27 +385,31 @@
                         
                         foreach ($funcionarios_del_autorizado as $f) {
                             $funcionarios_in_charge_2 .= $f. ", ";
-                        }  
-                        $funcionarios_in_charge_2 = substr($funcionarios_in_charge_2, -2);
+                        }                          
                     }
 
                 }
 
                 // SE UNIFICAN LAS LISTAS
                 if ($funcionarios_in_charge_2 != "") {
-                    echo "LISTA 1 <br />";
-                    echo "================================ <br>";
-                    echo "<pre>";
-                    print_r($funcionarios_in_charge);
-                    echo "</pre>";
+                    
+                    $funcionarios_in_charge_2 = substr($funcionarios_in_charge_2, 0, -2);
 
-                    echo "LISTA 2 <br />";
-                    echo "================================ <br>";
-                    echo "<pre>";
-                    print_r($funcionarios_in_charge_2);
-                    echo "</pre>";
+                    if ($funcionarios_in_charge != $funcionarios_in_charge_2) {
+/*                        echo "LISTA 1 <br />";
+                        echo "================================ <br>";
+                        echo "<pre>";
+                        print_r($funcionarios_in_charge);
+                        echo "</pre>";
 
-                    $funcionarios_in_charge .= ", ".$funcionarios_in_charge_2;
+                        echo "LISTA 2 <br />";
+                        echo "================================ <br>";
+                        echo "<pre>";
+                        print_r($funcionarios_in_charge_2);
+                        echo "</pre>";*/
+
+                        $funcionarios_in_charge .= ", ".$funcionarios_in_charge_2;
+                    }
                 }
 
 
@@ -433,12 +445,12 @@
             $_SESSION['login_token']  = $key;
             
             // COMENTARIO
-            
+/*            
             echo '<pre>';
             print_r($_SESSION);
             echo '</pre>';
             exit;
-            
+*/            
             header("Location: ../app");
         } else {
             session_destroy();
