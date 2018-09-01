@@ -1,5 +1,5 @@
-angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagination'])
-    .controller('SolicitudVacacionesController', ['$scope', '$http', 'vacaciones', 'usuario', 'VacacionesService', '$location', function($scope, $http, vacaciones, usuario, VacacionesService, $location) {
+angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagination', 'ngMaterial'])
+    .controller('SolicitudVacacionesController', ['$scope', '$http', '$mdDialog', 'vacaciones', 'usuario', 'VacacionesService', '$location', function($scope, $http, $mdDialog, vacaciones, usuario, VacacionesService, $location) {
 
         $scope.locationPath = $location.path();
         $scope.actions  = {'add':false, 'edit':false, 'view':true, 'delete':false, 'authorize':true};
@@ -9,6 +9,61 @@ angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagina
         $scope.columns    = vacaciones.data.columns;
         // Rol de Usuario
         $scope.rolUsuario = usuario.data.usuario.rol_web;
+
+        $scope.codEdit = null;
+        $scope.approve = function (id) {
+
+            var confirm = $mdDialog.confirm({
+                    onComplete: function afterShowAnimation() {
+                        var $dialog = angular.element(document.querySelector('md-dialog'));
+                        var $actionsSection = $dialog.find('md-dialog-actions');
+                        var $cancelButton = $actionsSection.children()[0];
+                        var $confirmButton = $actionsSection.children()[1];
+                        angular.element($confirmButton).addClass('btn-accept md-raised');
+                        angular.element($cancelButton).addClass('btn-cancel md-raised');
+                    }
+                })
+                .title('¿Realmente desea aprobar esta Solicitud?')
+                .ariaLabel('Lucky day')
+                .targetEvent(id)
+                .ok('Si')
+                .cancel('No');
+
+            $mdDialog.show(confirm).then(function() {
+                console.log("Aprueba Solicitud! " + id);
+                //console.log(vacacionData.data);
+            }, function() {
+                console.log("CANCELA Solicitud XXX! " + id);
+                //console.log(vacacionData.data);
+            });
+
+            /*
+            var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
+            if (r == true) {
+                var codSolicitud = id;
+
+                console.log("Solicitud: "+codSolicitud+" Ha sido aprobada");
+                /*
+                SolicitudService.approveSolicitud(codSolicitud).then(function (result) {
+                   
+                    var response = result.data.response;
+
+                    if (response == 1) {
+                        alert('La solicitud ha sido aprobada');
+                        window.location.reload();
+                    } else {
+                        alert('La solicitud No puede aprobarse en estos momentos');
+                    }
+
+                });
+                *//*
+            } else {
+                return false;
+            }
+            */
+
+        };
+
         //console.log($scope.solicitudes);
 
         //$rootScope.$on('$routeChangeSuccess', function(scope, current, pre) {          

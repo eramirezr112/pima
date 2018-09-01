@@ -53,7 +53,19 @@ angular.module("VacacionesService", []).factory("VacacionesService", function($h
                 params: data,
                 headers : {'Accept' : 'application/json'}
             };
-            return $http.get(path+'&f='+action, config);            
+            return $http.get(path+'&f='+action, config);
+        },
+        approve: function (solicitud) {
+            var action = 'approve';
+            var data = {
+                newSaldoPeriodo: solicitud.newSaldoPeriodo,
+                codFuncionario: solicitud.codFuncionario
+            };
+            var config = {
+                params: data,
+                headers : {'Accept' : 'application/json'}
+            };
+            return $http.get(path+'&f='+action, config);
         },
         getMaxNum: function () {
             var action = 'getMaxNum';

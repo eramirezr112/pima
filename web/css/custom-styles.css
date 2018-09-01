@@ -193,3 +193,60 @@ background:none;
 .page-content {
     padding:0px 15px;
 }
+
+.main-title {
+    margin: 12px 0px;
+}
+
+.md-button.btn-default {  
+  font-size: 11px;
+}
+
+.md-button.btn-success {
+  color : #fff;
+  background-color: #5cb85c;
+  font-size: 11px;
+}
+
+.md-button.btn-success:not([disabled]):hover {
+  background-color: #4cae4c;
+}
+
+.md-button.btn-success[disabled] {
+  color : rgba(0, 0, 0, 0.26);
+  background-color: transparent;
+}
+
+
+.md-primary.md-confirm-button.md-button.md-ink-ripple.md-default-theme.btn-accept {
+    color:#fff;
+    background-color: #FEAC4A;
+}
+.md-primary.md-confirm-button.md-button.md-ink-ripple.md-default-theme.btn-accept:hover{
+    background-color: #ffae34;
+}
+
+.md-primary.md-cancel-button.md-button.md-ink-ripple.md-default-theme.btn-cancel {
+    color:#fff;
+    background-color: #29ABDD;
+}
+
+.md-primary.md-cancel-button.md-button.md-ink-ripple.md-default-theme.btn-cancel:hover{
+    background-color: #3ba3cb;
+}
+
+
+/*
+.md-button.md-default-theme.btn-accept.md-raised, .md-button.btn-accept.md-raised {
+    background-color: #FEAC4A;
+}
+
+.md-button.btn-accept:not([disabled]):hover {
+  background-color: #4cae4c;
+}
+
+.md-button.btn-accept[disabled] {
+  color : rgba(0, 0, 0, 0.26);
+  background-color: transparent;
+}
+*/

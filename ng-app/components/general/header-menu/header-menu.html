@@ -27,8 +27,10 @@
   </li>            
   <li><div href="#" style="color:#fff; margin: 18px;">|</div></li>            
   <li>
-    <a href="../security/logout.php" style="color:#fff;">
-      <i class="fa fa-sign-out" title="Cerrar Sessión" style="font-size: 20px;"></i>
-    </a>
+    <md-button ng-style="{background:'#222627'}" ng-click="$ctrl.closeSession($event)">
+     <md-icon md-font-icon="fa fa-sign-out" ng-style="{color: '#fff', 'font-size':'20px', height:'20px'}">
+     </md-icon>
+    </md-button>    
+    
   </li>            
 </ul>

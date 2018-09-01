@@ -141,6 +141,16 @@ class VacacionController extends BaseController
         echo json_encode(array('solicitud'=>$solicitud, 'saldoActual'=>$saldoActual, 'diasGastados'=>$diasGastados));
     }
 
+    public function approve() {
+        $params = $this->getParameters();
+        $codFuncionario = $params["codFuncionario"];
+
+        $newSaldoPeriodo = json_decode($params["newSaldoPeriodo"]);
+        
+
+        echo json_encode(array('newSaldoPeriodo'=>$newSaldoPeriodo));
+    }
+
     public function getMaxNum() {
         $sql = "SELECT MAX(cod_solicitud) as cod_solicitud FROM frm_solic_pedido_enca";
         $result = $this->execute($sql);

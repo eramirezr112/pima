@@ -16,6 +16,7 @@
     <!-- Bootstrap core CSS -->
     <link href="../vendor/twbs/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../vendor/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../node_modules/angular-material/angular-material.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="../web/css/home.css">
     <link rel="stylesheet" href="../web/css/table-style.css">
@@ -67,7 +68,11 @@
     </div>
   <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
   <script type="text/javascript" src="../web/js/moment.min.js"></script>
-  <script type="text/javascript" src="../vendor/angular/angular.min.js"></script>
+  <script type="text/javascript" src="../node_modules/angular/angular.min.js"></script>
+  <script type="text/javascript" src="../node_modules/angular-animate/angular-animate.min.js"></script>
+  <script type="text/javascript" src="../node_modules/angular-aria/angular-aria.min.js"></script>
+  <script type="text/javascript" src="../node_modules/angular-material/angular-material.min.js"></script>
+  <!--<script type="text/javascript" src="../vendor/angular/angular.min.js"></script>-->
   <script type="text/javascript" src="../vendor/angular/angular-route.min.js"></script>
   <script type="text/javascript" src="../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>  
   <script type="text/javascript" src="../vendor/angular-utils-pagination/dirPagination.js"></script>
