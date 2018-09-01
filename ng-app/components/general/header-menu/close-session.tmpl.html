@@ -1,0 +1,22 @@
+<md-dialog aria-label="Cerrar Sessión">
+  <form ng-cloak>
+    <md-toolbar style="background: #222627; ">
+      
+        <h3 class="md-title text-center">Cerrar Sessión</h3>
+      
+    </md-toolbar>
+
+
+    <div layout="row" layout-align="center center">
+      
+        <md-button ng-click="cancel('not useful')" class="md-primary md-cancel-button md-button ng-scope md-default-theme md-ink-ripple btn-cancel md-raised">
+          No
+        </md-button>
+        <md-button ng-click="answer('useful')" class="md-primary md-confirm-button md-button md-ink-ripple md-default-theme btn-accept md-raised">
+          Si
+        </md-button>
+      
+    </div>
+
+  </form>
+</md-dialog>

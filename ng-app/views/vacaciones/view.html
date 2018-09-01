@@ -1,8 +1,178 @@
-<h3 class="page-header">
-	{{title}}
-	<a href="#!/vacaciones" class="btn btn-default btn-xs pull-right">&lt;&lt;&lt; Regresar a la lista</a>
-	<button type="button" class="btn btn-success btn-xs pull-right" style="margin-right: 10px;" ng-click="aprobarSolicitud()">Aprobar Solicitud</button>	
-</h3>
+<div class="page-header">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="main-title">{{title}}</h3>
+        </div>
+        <div class="col-md-6 text-right">
+            <md-button class="btn-success md-raised" ng-click="showConfirm($event)" >
+                Aprobar Solicitud
+            </md-button>
+            <md-button class="btn-default md-raised" ng-click="backToList()" >
+                &lt;&lt;&lt; Regresar a la lista
+            </md-button>
 
-<div class="row bg-success">
+        </div>
+    </div>
+    <!--
+    <a href="#!/vacaciones" class="btn btn-default btn-xs pull-right">&lt;&lt;&lt; Regresar a la lista</a>    
+    <button type="button" class="btn btn-success btn-xs pull-right" style="margin-right: 10px;" ng-click="aprobarSolicitud()">Aprobar Solicitud</button>
+    -->
+
+</div>
+<div class="page-content">
+    <fieldset disabled>
+    <div class="row custom-font-size" style="background: #d7e3e1">
+        <div class="col-md-8" style="padding: 20px; padding-top: 10px;">
+            <div class="row">
+                <div class="row">
+                    <div class="col-md-12">
+                        <b>Información de la solicitud</b>
+                        <div style="border-bottom: solid thin #ddd; width: 100%; margin-bottom: 10px;"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="idSolicitud">Solicitud</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Solicitud:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                <input type="text" value="{{solicitud.num_solicitud}}" class="form-control input-sm" id="idSolicitud">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="expediente">Expediente</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Expediente:</div>
+                                <input type="text" value="{{solicitud.num_expediente}}" class="form-control input-sm" id="expediente">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="estado">Estado</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Estado:</div>
+                                <input type="text" value="{{solicitud.cod_estado | isStatusLetter}}" class="form-control input-sm" id="estado">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="funcionario">Funcionario</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Funcionario:&nbsp;&nbsp;</div>
+                                <input type="text" value="{{solicitud.funcionario | capitalizeEveryWord}}" class="form-control input-sm" id="funcionario">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="fecha">Fecha</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Fecha:&nbsp;</div>
+                                <input type="text" value="{{solicitud.fec_confeccion | customDate2}}" class="form-control input-sm" id="fecha">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="centroCosto">Centro Costo</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Centro Costo:</div>
+                                <input type="text" value="{{solicitud.cod_centro}}" class="form-control input-sm" id="centroCosto">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="autoriza">Autoriza</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Autroriza:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                <input type="text" value="{{solicitud.cod_autoriza}}" class="form-control input-sm" id="autoriza">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="sr-only custom-font-size" for="fechaAutoriza">Fecha</label>
+                            <div class="input-group">
+                                <div class="input-group-addon custom-font-size">Fecha:&nbsp;</div>
+                                <input type="text" value="{{solicitud.fec_autoriza | customDate2}}" class="form-control input-sm" id="fechaAutoriza">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="background: #e9e9e9;">
+                <div class="row">
+                    <div class="col-md-8" style="padding: 20px; padding-top: 5px;">
+                        <p>
+                        Disfrutará de <span style="font-size:16px;"><strong>{{solicitud.dias_solicitados}}</strong></span> días de vacaciones 
+                        del(os) periodo(s):
+                        </p>
+                        <p>Comprendidos desde el día <span style="font-size:16px;"><strong>{{solicitud.fec_inicio | customDate3}}</strong></span> al día <span style="font-size:16px;"><strong>{{solicitud.fec_final | customDate3}}</strong></span></p>
+
+                    </div>
+                    <div class="col-md-4" style="padding: 20px; padding-top: 5px; padding-bottom:5px;">
+                        <div style="width: 100%; height: 105px; overflow-y: scroll;">
+                            <table style="width: 100%" class="table table-condensed table-bordered">
+                                <tr>
+                                    <th style="text-align: center;">Periodo</th>
+                                    <th style="text-align: center;">Días Gastados</th>
+                                </tr>
+                                <tr ng-repeat="dG in diasGastados">
+                                    <td>{{dG.NUM_PERIODO}}</td>
+                                    <td>{{dG.NUM_DIAS}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row" style="padding-top: 10px;">
+                <div class="col-md-12">
+                    <b>Saldo Actual</b>
+                    <div style="border-bottom: solid thin #ddd; width: 100%; margin-bottom: 10px;"></div>
+                    <div style="width: 100%; height: 270px; overflow-y: scroll;">
+                        <table style="width: 100%" class="table table-condensed table-bordered">
+                            <tr>
+                                <th style="text-align: center;">Periodo</th>
+                                <th style="text-align: center;">Saldo</th>
+                            </tr>
+                            <tr ng-repeat="sA in saldoActual">
+                                <td>{{sA.NUM_PERIODO}}</td>
+                                <td>{{sA.NUM_SALDO_PERIODO}}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <table style="background:#ddd;" class="table table-condensed table-bordered">
+                        <tr>
+                            <th>Total</th>
+                            <td>0.00</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="background: #e1e1e1;">
+        <div class="row" style="padding-top: 10px;">
+            <div class="col-md-12 custom-font-size" style="padding: 20px; padding-top:0px;">
+                <b>Observaciones</b>
+                <div style="border-bottom: solid thin #eee; width: 100%; margin-bottom: 10px;"></div>
+                <textarea class="form-control input-sm custom-font-size" rows="3" id="observaciones">{{solicitud.des_observaciones}}</textarea>
+            </div>
+        </div>
+    </div>
+    </fieldset>
 </div>
