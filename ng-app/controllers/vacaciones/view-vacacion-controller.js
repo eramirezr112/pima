@@ -6,7 +6,7 @@ angular.module('ViewVacacion', ['ngMaterial'])
         $scope.solicitud    = vacacionData.data.solicitud[0];
         $scope.saldoActual  = vacacionData.data.saldoActual;
         $scope.diasGastados = vacacionData.data.diasGastados;        
-        $scope.newSaldoPeriodo = [];
+        console.log($scope.solicitud.cod_funcionario);
         $scope.showConfirm = function(ev) {
             var confirm = $mdDialog.confirm({
                     onComplete: function afterShowAnimation() {
@@ -25,6 +25,7 @@ angular.module('ViewVacacion', ['ngMaterial'])
                 .cancel('No');
 
             $mdDialog.show(confirm).then(function() {
+                $scope.newSaldoPeriodo = [];
                 console.log("Aprueba Solicitud!");
                 console.log(vacacionData.data);                
                 
@@ -39,6 +40,9 @@ angular.module('ViewVacacion', ['ngMaterial'])
                     
                     // Periodo al que se le rebajaran los dias
                     var saldoPeriodo = $scope.getSaldoByPeriodo(periodDG);
+                    console.log("Saldo Periodo");
+                    console.log("==============================");
+                    console.log(saldoPeriodo);
                     // Saldo actual del periodo en revision
                     var numSaldoPeriodo = parseFloat(saldoPeriodo.NUM_SALDO_PERIODO);
 
@@ -56,7 +60,7 @@ angular.module('ViewVacacion', ['ngMaterial'])
                     console.log($scope.solicitud.cod_funcionario);
 
                     var data = {
-                        newSaldoPeriodo: $scope.newSaldoPeriodo,
+                        newSaldoPeriodo: [$scope.newSaldoPeriodo],
                         codFuncionario: $scope.solicitud.cod_funcionario
                     };
 

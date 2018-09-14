@@ -23,8 +23,13 @@
     $values = array($user, $realPass);
     $stmt = $db->executeSecure($query, $values);    
     $data = $db->getArray($stmt);
+
     if (is_array($data) && sizeof($data) > 0) {
         session_start();
+
+        //Set type of connection
+        $_SESSION["CONNECTION_TYPE"] = $db->conn->databaseType;
+
         $user = $data[0];
         $is_admin_login = false;
         if (sizeof($user) <= 7){
@@ -62,12 +67,7 @@
                 }
                 // Verifica si el usuario que ingresa es GERENTE
                 $type_empleado = getTypeEmpleado($db, $user["COD_FUNCIONARIO"]);
-                // COMENTARIO
-                /*
-                echo '<pre>';
-                print_r($type_empleado);
-                echo '</pre>';
-                */
+
                 $funcionarios_in_charge = "";
                 // GERENTE
                 if ($type_empleado['isGerente']) {
@@ -360,13 +360,6 @@
                 //AUTORIZADO
                 if (sizeof($isCodAutorizado) > 0) {
 
-/*                    echo "ES AUTORIZADO EN: ";
-                    foreach ($isCodAutorizado as $cA) {
-                        echo $cA['cod_centro'].", ";
-                    }                    
-                    echo "<pre>";
-                    print_r($isCodAutorizado);
-                    echo "</pre>";*/
                     $funcionarios_del_autorizado = array();
                     foreach ($isCodAutorizado as $cc) {
 
@@ -396,17 +389,6 @@
                     $funcionarios_in_charge_2 = substr($funcionarios_in_charge_2, 0, -2);
 
                     if ($funcionarios_in_charge != $funcionarios_in_charge_2) {
-/*                        echo "LISTA 1 <br />";
-                        echo "================================ <br>";
-                        echo "<pre>";
-                        print_r($funcionarios_in_charge);
-                        echo "</pre>";
-
-                        echo "LISTA 2 <br />";
-                        echo "================================ <br>";
-                        echo "<pre>";
-                        print_r($funcionarios_in_charge_2);
-                        echo "</pre>";*/
 
                         $funcionarios_in_charge .= ", ".$funcionarios_in_charge_2;
                     }
@@ -445,12 +427,7 @@
             $_SESSION['login_token']  = $key;
             
             // COMENTARIO
-/*            
-            echo '<pre>';
-            print_r($_SESSION);
-            echo '</pre>';
-            exit;
-*/            
+          
             header("Location: ../app");
         } else {
             session_destroy();
@@ -463,6 +440,7 @@
     } else {
         header("Location: ../");
     }
+
     function getTypeEmpleado($conexion, $codFuncionario) {
         $query = "SELECT e.cod_empleado 
                 FROM sif_empleados_pima as e 
