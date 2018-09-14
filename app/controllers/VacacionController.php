@@ -11,16 +11,22 @@ class VacacionController extends BaseController
     public function all() {
 
         session_start();
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+        $nameSolicitante = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        if ($connectionType == "odbc_mssql") {
+            $nameSolicitante = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+        }
+
         $isAdmin = $this->checkPermision(7);
-        $codUsuario  = $_SESSION['cod_usuario'];;
-        $isJefe      = $_SESSION['rol_web'];        
+        $codUsuario  = $_SESSION['cod_usuario'];
+        $isJefe      = $_SESSION['rol_web'];
 
         $table = ['RH_SOLICITUD_VACACIONES', 'alias'=>'v'];
 
         $columns = [
-            'num_solicitud' =>'solicitud',
-            //'cod_funcionario' =>'solicitante',
-            'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)' => 'solicitante',
+            'num_solicitud' =>'solicitud',            
+            "$nameSolicitante" => 'solicitante',
             'fec_confeccion' =>'fecha',
             'dias_solicitados' =>'dias solicitados',
             'fec_inicio' =>'desde',
@@ -139,16 +145,6 @@ class VacacionController extends BaseController
         $diasGastados = $this->getArray($result);
 
         echo json_encode(array('solicitud'=>$solicitud, 'saldoActual'=>$saldoActual, 'diasGastados'=>$diasGastados));
-    }
-
-    public function approve() {
-        $params = $this->getParameters();
-        $codFuncionario = $params["codFuncionario"];
-
-        $newSaldoPeriodo = json_decode($params["newSaldoPeriodo"]);
-        
-
-        echo json_encode(array('newSaldoPeriodo'=>$newSaldoPeriodo));
     }
 
     public function getMaxNum() {

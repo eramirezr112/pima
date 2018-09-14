@@ -1,248 +1,279 @@
 <?php  
-	
-	class DBConfig
-	{
+    
+    class DBConfig
+    {
 
-		public $data = "";
-		
-		const DB_SERVER = "72.55.156.230";
-		//const DB_SERVER = "172.29.137.19";
-		const DB_USER = "usuariomovil";
-		//const DB_USER = "sifpima";
-		const DB_PASSWORD = "android1793";
-		//const DB_PASSWORD = "ad2426";
-		const DB = "SIFPIMA";
+        public $data = "";
+        /*
+        // AMBIENTE PRODUCCION
+        const DB_TYPE_CONNECTION = "mssqlnative";
+        const DB_SERVER = "172.29.137.19";
+        const DB_USER = "sifpima";
+        const DB_PASSWORD = "ad2426";
+        const DB = "SIFPIMA";
+        */
+        
+        /*
+        // AMBIENTE PRUEBAS (SQL 2000)
+        const DB_TYPE_CONNECTION = "odbc_mssql";
+        const DB_SERVER = "192.168.0.4";
+        const DB_USER = "websifpima";
+        const DB_PASSWORD = "ad2426";
+        const DB = "Test";
+        */
 
-		var $conn;
-		private $table_name = '';
-		private $table_alias = '';
-		private $table_query = '';
-		private $where_filter = '';
+        
+        // AMBIENTE LOCAL
+        const DB_TYPE_CONNECTION = "mssqlnative";
+        const DB_SERVER = "72.55.156.230";
+        const DB_USER = "usuariomovil";
+        const DB_PASSWORD = "android1793";
+        const DB = "SIFPIMA";
+        
 
-		function __construct() {			
-			$this->conn = $this->dbConnect(); 
-		}
+        var $conn;
+        private $table_name = '';
+        private $table_alias = '';
+        private $table_query = '';
+        private $where_filter = '';
 
-		private function dbConnect()
-		{
-			include ("adodb5/adodb.inc.php");
+        function __construct() {            
+            $this->conn = $this->dbConnect(); 
+        }
 
-			$db = ADONewConnection('mssqlnative');
-			$db->setConnectionParameter('characterSet','UTF-8');
-			$db->setFetchMode(ADODB_FETCH_ASSOC);
-			$db->connect(self::DB_SERVER,self::DB_USER,self::DB_PASSWORD,self::DB);
+        private function dbConnect()
+        {
+            include ("adodb5/adodb.inc.php");
 
-			return $db;			
-		}
+            switch (self::DB_TYPE_CONNECTION) {
+                case 'mssqlnative':
+                    $db = ADONewConnection(self::DB_TYPE_CONNECTION);
+                    $db->setConnectionParameter('characterSet','UTF-8');
+                    $db->setFetchMode(ADODB_FETCH_ASSOC);
+                    $db->connect(self::DB_SERVER,self::DB_USER,self::DB_PASSWORD,self::DB);
+                    break;
+                case 'odbc_mssql':
+                    $db = ADONewConnection(self::DB_TYPE_CONNECTION);
+                    $dsn = "Driver={SQL Server};Server=".self::DB_SERVER.";Database=".self::DB.";";
+                    $db->setFetchMode(ADODB_FETCH_ASSOC);
+                    $db->Connect($dsn, self::DB_USER, self::DB_PASSWORD);                
+                    break;
+                default:
+                    # code...
+                    break;
+            }
 
-		public function execute($query) {
-			$rs = $this->conn->Execute($query);
-		    if (!$rs) {
-		        print 'error' . $this->conn->ErrorMsg() . '<br>';
-		    } else {
-		    	return $rs;	
-		    }			
-			
-		}
+            return $db;         
+        }
 
-		public function executeSecure($query, $values) {
+        public function execute($query) {
+            $rs = $this->conn->Execute($query);
+            if (!$rs) {
+                print 'error' . $this->conn->ErrorMsg() . '<br>';
+            } else {
+                return $rs; 
+            }           
+            
+        }
 
-			$stmt = $this->conn->Prepare($query);			
-         	$rs   = $this->conn->Execute($stmt, $values, 1);
-			
-		    if (!$rs) {
-		        print 'error' . $this->conn->ErrorMsg() . '<br>';
-		    } else {
-		    	return $rs;	
-		    }			
-			
-		}
+        public function executeSecure($query, $values) {
 
-		public function setTable($tbl_data, $relations=null) {
+            $stmt = $this->conn->Prepare($query);           
+            $rs   = $this->conn->Execute($stmt, $values, 1);
+            
+            if (!$rs) {
+                print 'error' . $this->conn->ErrorMsg() . '<br>';
+            } else {
+                return $rs; 
+            }           
+            
+        }
 
-			$this->table_name  = $tbl_data[0];
+        public function setTable($tbl_data, $relations=null) {
 
-			$relation_tables = "";
-			if ($relations != null) {
+            $this->table_name  = $tbl_data[0];
 
-				if (array_key_exists('alias', $tbl_data)) {
-					$this->table_alias = $tbl_data['alias'];
-				} else {
-					$this->table_alias = $tbl_data[0];
-				}
+            $relation_tables = "";
+            if ($relations != null) {
 
-				$this->where_filter = "WHERE ";
+                if (array_key_exists('alias', $tbl_data)) {
+                    $this->table_alias = $tbl_data['alias'];
+                } else {
+                    $this->table_alias = $tbl_data[0];
+                }
 
-				$relation_tables = ", ";
-				$cR = 1;
-				foreach ($relations['join'] as $relation) {
-					$table = $relation[0];
-					$field = $relation[1];
-					$alias = $relation[2];
+                $this->where_filter = "WHERE ";
 
-					$relation_tables .= $table." as ".$alias.", ";
+                $relation_tables = ", ";
+                $cR = 1;
+                foreach ($relations['join'] as $relation) {
+                    $table = $relation[0];
+                    $field = $relation[1];
+                    $alias = $relation[2];
 
-					if(is_array($field)) {
+                    $relation_tables .= $table." as ".$alias.", ";
 
-						$nCR = 1;
-						foreach ($field as $f) {
-						
-							if ($nCR == 1 && $cR == 1) {
-								$this->where_filter .= $this->table_alias.".".$f." = ".$alias.".".$f. " ";
-							} else {
-								$this->where_filter .= "AND ".$this->table_alias.".".$f." = ".$alias.".".$f. " ";
-							}
-							$nCR++;
+                    if(is_array($field)) {
 
-						}
+                        $nCR = 1;
+                        foreach ($field as $f) {
+                        
+                            if ($nCR == 1 && $cR == 1) {
+                                $this->where_filter .= $this->table_alias.".".$f." = ".$alias.".".$f. " ";
+                            } else {
+                                $this->where_filter .= "AND ".$this->table_alias.".".$f." = ".$alias.".".$f. " ";
+                            }
+                            $nCR++;
 
-					} else {
-						if ($cR == 1) {
-							$this->where_filter .= $this->table_alias.".".$field." = ".$alias.".".$field. " ";
-						} else {
-							$this->where_filter .= "AND ".$this->table_alias.".".$field." = ".$alias.".".$field. " ";
-						}						
-					}
+                        }
 
-					$cR++;
-				}
+                    } else {
+                        if ($cR == 1) {
+                            $this->where_filter .= $this->table_alias.".".$field." = ".$alias.".".$field. " ";
+                        } else {
+                            $this->where_filter .= "AND ".$this->table_alias.".".$field." = ".$alias.".".$field. " ";
+                        }                       
+                    }
 
-				$relation_tables = substr_replace($relation_tables, "", -2);
+                    $cR++;
+                }
 
-				if (array_key_exists('alias', $tbl_data)) {
-					$this->table_alias = $tbl_data['alias'];
-					$queryRelations = $tbl_data[0]." as ". $tbl_data['alias'].$relation_tables;
-					$this->table_query = $queryRelations;
-				} else {
-					$this->table_alias = $tbl_data[0];
-					$queryRelations = $tbl_data[0].$relation_tables;
-					$this->table_query = $queryRelations;
-				}
+                $relation_tables = substr_replace($relation_tables, "", -2);
 
-			} else {
+                if (array_key_exists('alias', $tbl_data)) {
+                    $this->table_alias = $tbl_data['alias'];
+                    $queryRelations = $tbl_data[0]." as ". $tbl_data['alias'].$relation_tables;
+                    $this->table_query = $queryRelations;
+                } else {
+                    $this->table_alias = $tbl_data[0];
+                    $queryRelations = $tbl_data[0].$relation_tables;
+                    $this->table_query = $queryRelations;
+                }
 
-				if (array_key_exists('alias', $tbl_data)) {
-					$this->table_alias = $tbl_data['alias'];
-					$this->table_query = $tbl_data[0]." as ". $tbl_data['alias'];				
-				} else {
-					$this->table_alias = $tbl_data[0];
-					$this->table_query = $tbl_data[0];
-				}
-			}				
-		}
+            } else {
 
-		public function getTable() {
-			return $this->table_name;
-		}
+                if (array_key_exists('alias', $tbl_data)) {
+                    $this->table_alias = $tbl_data['alias'];
+                    $this->table_query = $tbl_data[0]." as ". $tbl_data['alias'];               
+                } else {
+                    $this->table_alias = $tbl_data[0];
+                    $this->table_query = $tbl_data[0];
+                }
+            }               
+        }
 
-		public function prepareFields($columns, $relations=null) {
-						
-			$fields = "";
-			if($relations != null) {
+        public function getTable() {
+            return $this->table_name;
+        }
 
-				foreach ($columns as $key => $value) {
+        public function prepareFields($columns, $relations=null) {
+                        
+            $fields = "";
+            if($relations != null) {
 
-					$coldata = explode(".", $key);
+                foreach ($columns as $key => $value) {
 
-					if(sizeof($coldata) == 2) {
-						$fields .= $coldata[0].".".$coldata[1]." as '$value', ";
-					} else {
+                    $coldata = explode(".", $key);
 
-						if (preg_match('/\bCONCAT\b/',$key)) {
-							$fields .= "$key as '$value', ";
-						} else {
-							$fields .= $this->table_alias.".$key as '$value', ";
-						}						
-						
-					}
-				}
+                    if(sizeof($coldata) == 2) {
+                        $fields .= $coldata[0].".".$coldata[1]." as '$value', ";
+                    } else {
 
-			} else {
+                        if (preg_match('/\bCONCAT\b/',$key) || preg_match('/\b.\b/',$key)) {
+                            $fields .= "$key as '$value', ";
+                        } else {
+                            $fields .= $this->table_alias.".$key as '$value', ";
+                        }                       
+                        
+                    }
+                }
 
-				foreach ($columns as $key => $value) {
-					$fields .= $this->table_alias.".$key as '$value', ";
-				}				
+            } else {
 
-			}
-			
-			$fields = substr_replace($fields, "", -2);
+                foreach ($columns as $key => $value) {
+                    $fields .= $this->table_alias.".$key as '$value', ";
+                }               
 
-			return $fields;
-		}
+            }
+            
+            $fields = substr_replace($fields, "", -2);
 
-		public function getConditions($cond) {
-			$conditions = [
-				'limit' => ""
-			];
+            return $fields;
+        }
 
-			if (array_key_exists('limit', $cond)) {
-				$conditions['limit'] = "TOP ".$cond['limit'];
-			}
+        public function getConditions($cond) {
+            $conditions = [
+                'limit' => ""
+            ];
 
-			return $conditions;
-		}
+            if (array_key_exists('limit', $cond)) {
+                $conditions['limit'] = "TOP ".$cond['limit'];
+            }
 
-		public function setFilters($filters) {
+            return $conditions;
+        }
 
-			if (array_key_exists('where', $filters)) {
+        public function setFilters($filters) {
 
-				if ($this->where_filter != "") {
+            if (array_key_exists('where', $filters)) {
 
-					foreach ($filters['where'] as $filter) {
-						$field = key($filter);
-						if ($field == "in") {							
-							foreach ($filter as $inRow) {								
-								$fieldIn = key($inRow);								
-								$this->where_filter .= "AND ".$this->table_alias.".".$fieldIn." in (".$inRow[$fieldIn].") ";	
-							}
-						} else {
-							$this->where_filter .= "AND ".$this->table_alias.".".$field." = '".$filter[$field]."' ";	
-						}
-						
-					}
+                if ($this->where_filter != "") {
 
-				} else {
-					$this->where_filter = "WHERE ";
-					$nLine = 1;
-					foreach ($filters['where'] as $filter) {
-						$field = key($filter);
+                    foreach ($filters['where'] as $filter) {
+                        $field = key($filter);
+                        if ($field == "in") {                           
+                            foreach ($filter as $inRow) {                               
+                                $fieldIn = key($inRow);                             
+                                $this->where_filter .= "AND ".$this->table_alias.".".$fieldIn." in (".$inRow[$fieldIn].") ";    
+                            }
+                        } else {
+                            $this->where_filter .= "AND ".$this->table_alias.".".$field." = '".$filter[$field]."' ";    
+                        }
+                        
+                    }
 
-						$andRow = " AND ";
-						if ($nLine == 1) {
-							$andRow = "";
-						}
+                } else {
+                    $this->where_filter = "WHERE ";
+                    $nLine = 1;
+                    foreach ($filters['where'] as $filter) {
+                        $field = key($filter);
 
-						$this->where_filter .= $andRow.$this->table_alias.".".$field." = '".$filter[$field]."' ";
+                        $andRow = " AND ";
+                        if ($nLine == 1) {
+                            $andRow = "";
+                        }
 
-						$nLine++;
-					}
-				}
+                        $this->where_filter .= $andRow.$this->table_alias.".".$field." = '".$filter[$field]."' ";
 
-			}
-		}
+                        $nLine++;
+                    }
+                }
 
-		public function customExecute($tbl, $columns, $filters=null, $relations=null) {
+            }
+        }
 
-			$this->setTable($tbl, $relations);
-			$fields     = $this->prepareFields($columns, $relations);
-			$conditions = $this->getConditions($filters);
-			$this->setFilters($filters);
+        public function customExecute($tbl, $columns, $filters=null, $relations=null) {
 
-			$sql = "SELECT ".$conditions['limit']." $fields 
-					FROM ".$this->table_query." ".$this->where_filter;
+            $this->setTable($tbl, $relations);
+            $fields     = $this->prepareFields($columns, $relations);
+            $conditions = $this->getConditions($filters);
+            $this->setFilters($filters);
 
-			$result = $this->execute($sql);
+            $sql = "SELECT ".$conditions['limit']." $fields 
+                    FROM ".$this->table_query." ".$this->where_filter;
 
-			return $result;
-		}
+            $result = $this->execute($sql);
 
-		public function getArray($stmt) {
-			
-			$data = $stmt->getArray();
-			return $data;
-		}
+            return $result;
+        }
 
-	}
+        public function getArray($stmt) {
+            
+            $data = $stmt->getArray();
+            return $data;
+        }
+
+    }
 
 
 ?>
