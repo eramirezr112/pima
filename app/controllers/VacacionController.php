@@ -246,98 +246,58 @@ class VacacionController extends BaseController
         echo json_encode(array('query'=>$qDetalle));
     }
 
-    public function update() {
+    public function approve() {
+        session_start();
+        $codAprobador = $_SESSION['COD_FUNCIONARIO'];
+
         $params = $this->getParameters();
+        
+        $codFuncionario = $params['codFuncionario'];
+        $id = $params['numSolicitud'];
 
-        // Update Encabezado
-        //========================================      
-        $encabezado = json_decode($params['encabezado']);
-        $codSolicitud   = $encabezado->cod_solicitud;
-        $codPeriodo     = $encabezado->cod_periodo;
-        $codPrograma    = $encabezado->cod_programa;
-        $fecRegistro    = $encabezado->fec_registro;
-        $codUsuario     = $encabezado->cod_usuario;
-        $desObservacion = $encabezado->des_observacion;
-        $indEstado      = $encabezado->ind_estado;
-        $monTotal       = $encabezado->mon_total;
-        $monSaldo       = $encabezado->mon_total;
-        $indMoneda      = $encabezado->ind_moneda;      
-        $codProveedor   = $encabezado->cod_proveedor;
-        $tipoCambio     = $encabezado->tipo_cambio;
+        $newSaldoPeriodo = json_decode($params['newSaldoPeriodo']);
 
-        $monTotalMonex = 'NULL';
-        $monSaldoMonex = 'NULL';
-        $columnMonSaldoMonex = "";
-        $columnTipoCambio = "";
-        $valueTipoCambio = "";
-        if($indMoneda == 2) {
-            $monTotalMonex = $monTotal * $tipoCambio;
-            $monSaldoMonex = $monTotalMonex;            
-            $columnTipoCambio = "mon_tipo_cambio = $tipoCambio, ";
-            $columnMonSaldoMonex = ", mon_saldo_monex";
-        }       
+        $listQuerys = array();
+        
+        foreach ($newSaldoPeriodo as $sPeriodo) {
 
-        if ($codProveedor != 0) {           
-            $setProveedor = "cod_proveedor = $codProveedor, ";
-        } else {
-            $setProveedor = "cod_proveedor = NULL, ";           
+            $strUpdate = "UPDATE RH_VACACIONES_ACREDITACION ";
+
+            $numSaldoPeriodo = number_format(floatval($sPeriodo->NUM_SALDO_PERIODO),2);
+            $numVacGastadas  = number_format(floatval($sPeriodo->NUM_VAC_GASTADAS),2);
+
+            $nNumSaldoPeriodo = $numSaldoPeriodo - $sPeriodo->DAYS_REQUEST;
+            $nNumVacGastadas  = $numVacGastadas + $sPeriodo->DAYS_REQUEST;
+
+            $strUpdate .= "SET NUM_SALDO_PERIODO = ".number_format($nNumSaldoPeriodo,2).", NUM_VAC_GASTADAS = ".number_format($nNumVacGastadas,2)." ";
+
+            $strUpdate .= "WHERE NUM_PERIODO = ".$sPeriodo->NUM_PERIODO." AND COD_FUNCIONARIO = $codFuncionario;";
+
+            array_push($listQuerys, $strUpdate);
+        
         }
 
-        $qEncabezado = "UPDATE frm_solic_pedido_enca 
-                        SET cod_periodo = $codPeriodo, 
-                            cod_programa = $codPrograma, 
-                            $setProveedor 
-                            fec_registro = GETDATE(), 
-                            des_observacion = '$desObservacion', 
-                            ind_estado = $indEstado, 
-                            mon_total = $monTotal, 
-                            ind_moneda = $indMoneda,
-                            mon_saldo = $monSaldo,
-                            $columnTipoCambio
-                            mon_total_monex = $monTotalMonex,
-                            mon_saldo_monex = $monSaldoMonex  
-                        WHERE cod_solicitud = $codSolicitud";
+        $status = true;
 
-        $this->execute($qEncabezado);
-
-        // Delete last registers
-        $delete = "DELETE FROM frm_solic_pedido_deta WHERE cod_solicitud = $codSolicitud";
-        $this->execute($delete);
-
-        // Update Detalle
-        //========================================
-        $detalle = json_decode($params['detalle']);
-        $dataDetalle = $detalle->data;
-        $qDetalle = "INSERT INTO frm_solic_pedido_deta (cod_solicitud, cod_detalle, cod_cuenta, des_detalle, can_producto, mon_unidad, mon_detalle, mon_detalle_monex, mon_saldo $columnMonSaldoMonex) VALUES ";
-        $listValues = "";
-        $nLine = 1; 
-        foreach ($dataDetalle as $key => $line) {
-
-            $cantidad = $line->cantidad;    
-            $codCuenta = $line->cod_cuenta; 
-            $desCuenta = $line->des_cuenta; 
-            $descripcion = $line->descripcion;  
-            $monDisponible = $line->mon_disponible; 
-            $numCuenta = $line->num_cuenta; 
-            $preUnit = $line->preUnit;  
-            $totLine = $line->totLineh;
-            $monDetalleMonex = 'NULL';
-            $monSaldoMonex = "";
-            if($indMoneda == 2) {
-                $monDetalleMonex = $totLine * $tipoCambio;
-                $monSaldoMonex = ", $monDetalleMonex";
+        foreach ($listQuerys as $query) {
+            if(!$this->execute($query)) {
+                $status = false;
             }
-            $listValues .= "($codSolicitud, $nLine, $codCuenta, '$descripcion', $cantidad, $preUnit, $totLine, $monDetalleMonex, $totLine $monSaldoMonex), "; 
-
-            $nLine++;
         }
 
-        $listValues = substr_replace($listValues, ";", -2);
-        $qDetalle .= $listValues;
+        if ($status) {
 
-        $this->execute($qDetalle);
+            $sql = "UPDATE RH_SOLICITUD_VACACIONES SET cod_estado = 'A', cod_jefatura = $codAprobador, fec_jefatura = GETDATE() WHERE num_solicitud = $id";
+            if(!$this->execute($sql)) {
+                $status = false;
+            }
 
-        echo json_encode(array('query'=>$qDetalle));
+            array_push($listQuerys, $sql);
+
+        }
+
+        echo json_encode(array('status'=>$status, 'query' => $listQuerys));
+
     }
 
     public function changeStatus() {

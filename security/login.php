@@ -427,7 +427,6 @@
             $_SESSION['login_token']  = $key;
             
             // COMENTARIO
-          
             header("Location: ../app");
         } else {
             session_destroy();

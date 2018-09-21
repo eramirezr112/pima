@@ -11,6 +11,13 @@ class SolicitudController extends BaseController
 	public function all() {
 
 		session_start();
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+        $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        if ($connectionType == "odbc_mssql") {
+            $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+        }
+
 		$isAdmin = $this->checkPermision(7);
 		$codUsuario  = $_SESSION['cod_usuario'];
 		$isJefe      = $_SESSION['rol_web'];
@@ -26,7 +33,7 @@ class SolicitudController extends BaseController
 		$columns = [
 			'cod_solicitud' => 'solicitud', 
 			//Relation Fields
-			'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)' => 'funcionario',
+			"$nameFuncionario" => 'funcionario',
 			//'ssf.des_nombre' => 'Nombre',
 			'p.des_programa' => 'programa', 
 			'rcc.des_centro' => 'centro', 

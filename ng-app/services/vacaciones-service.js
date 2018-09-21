@@ -59,7 +59,8 @@ angular.module("VacacionesService", []).factory("VacacionesService", function($h
             var action = 'approve';
             var data = {
                 newSaldoPeriodo: solicitud.newSaldoPeriodo,
-                codFuncionario: solicitud.codFuncionario
+                codFuncionario: solicitud.codFuncionario,
+                numSolicitud: solicitud.numSolicitud
             };
             var config = {
                 params: data,
