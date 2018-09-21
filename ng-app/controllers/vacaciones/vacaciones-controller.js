@@ -117,8 +117,7 @@ angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagina
                 });
 
             }, function() {
-                console.log("CANCELA Solicitud XXX! " + id);
-                //console.log(vacacionData.data);
+
             });
 
         };
