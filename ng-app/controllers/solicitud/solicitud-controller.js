@@ -6,6 +6,7 @@ angular.module('Solicitud', ['ui.bootstrap', 'angularUtils.directives.dirPaginat
 
         //$scope.totalSolicitudes = solicitudes.data.solicitudes.length;
         $scope.solicitudes = solicitudes.data.solicitudes;
+        console.log(solicitudes.data);
         $scope.columns     = solicitudes.data.columns;
         // Rol de Usuario
         $scope.rolUsuario = usuario.data.usuario.rol_web;

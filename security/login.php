@@ -52,6 +52,7 @@
             $_SESSION['rol_web']        = $user['rol_web'];
             $_SESSION['modulos_acceso'] = $permits[0]['acceso_modulo'];
             $_SESSION['opt_sin_acceso'] = $permits[0]['opciones_sin_acceso'];
+
             if ($is_admin_login == false) {             
                 $funcionario = array();
                 $funcionario['COD_FUNCIONARIO']         = $user["COD_FUNCIONARIO"];
@@ -65,12 +66,16 @@
                 foreach ($funcionario as $key => $value) {
                     $_SESSION[$key] = $value;
                 }
+
                 // Verifica si el usuario que ingresa es GERENTE
                 $type_empleado = getTypeEmpleado($db, $user["COD_FUNCIONARIO"]);
 
                 $funcionarios_in_charge = "";
                 // GERENTE
                 if ($type_empleado['isGerente']) {
+
+                    $_SESSION['TIPO_FUNCIONARIO'] = 'GERENTE';
+
                     // Se obtiene la lista de funcionarios a cargo del Gerente
                     $query = "SELECT cc.cod_encargado FROM rh_centros_costo as cc 
                               WHERE cc.cod_centro_padre is NULL AND cc.cod_centro != ?";
@@ -80,8 +85,8 @@
                     foreach ($listFuncionarios as $f) {
                         $funcionarios_in_charge .= $f['cod_encargado']. ", ";
                     }
+
                     // Se obtiene los funcionarios que pertenecen al centro de costo de gerencia (cod_centro = 07)
-                    // (U)
                     $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                               WHERE f.cod_centro = ? AND f.ind_estado != ?";
                     $values = array(trim($user["COD_CENTRO"]), 0);
@@ -91,10 +96,13 @@
                         $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
                     }
                     $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
+
                 } else {
                     // AUDITOR
                     if ($type_empleado['isAuditor']) {
-                        
+
+                        $_SESSION['TIPO_FUNCIONARIO'] = 'AUDITOR';
+
                         // Se obtiene los funcionarios que pertenecen al centro de costo del auditor
                         $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                   WHERE f.cod_centro = ? AND f.ind_estado != ?";
@@ -105,6 +113,7 @@
                             $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
                         }
                         $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
+
                     } else {
                         /**
                          * Usuarios: Directores, Lideres de Proceso 
@@ -114,12 +123,14 @@
                         $values = array($user["COD_FUNCIONARIO"]);
                         $stmt = $db->executeSecure($query, $values); 
                         $isCodEncargado = $db->getArray($stmt);
+
                         //DIRECTOR
                         if (sizeof($isCodEncargado) > 0) {
-                            /*
-                            echo "ES DIRECTOR <br />";
-                            echo "============================== <br />";
-                            */
+
+                            $_SESSION['TIPO_FUNCIONARIO'] = getTypeDirector($db, $isCodEncargado[0]['cod_centro']);
+                            //$_SESSION['TIPO_FUNCIONARIO'] = "DIR. SERVICIOS GENERALES";
+                            //$_SESSION['TIPO_FUNCIONARIO'] = "DIR. FINANCIERO";
+
                             $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                       WHERE f.cod_centro like '".trim($isCodEncargado[0]['cod_centro'])."%' 
                                       AND f.ind_estado != ? 
@@ -135,6 +146,8 @@
 
                         // LIDERES DE PROCESO Y SUB-PROCESO
                         } else {
+
+                            $_SESSION['TIPO_FUNCIONARIO'] = 'JEFE';
 
                             // Se verifica si el usuario es lider con subprocesos
                             $query = "SELECT cc.cod_centro FROM rh_centros_costo as cc 
@@ -160,190 +173,26 @@
                                     $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
                                 }
                                 $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
-                            } else {            
 
-                                // COMENTARIO
-                                
-                                //echo "ES LIDER DE PROCESO <br />";
-                                //echo "============================== <br />";
+                            } else {
                                 
                                 $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                           WHERE f.cod_centro like '".trim($user["COD_CENTRO"])."%' 
                                           AND f.ind_estado != ? 
                                           AND f.COD_FUNCIONARIO != ?";
                                 
-                                // COMENTARIO
-                                //echo $query;
-                                   
                                 $values = array(0, $user["COD_FUNCIONARIO"]);
                                 $stmt = $db->executeSecure($query, $values);
                                 $listFuncionariosLocales = $db->getArray($stmt);
                                 foreach ($listFuncionariosLocales as $f) {
                                     $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
                                 }
+
                                 $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
         
                             }
 
-                            /*
-                            $query = "SELECT DISTINCT(ad.cod_centro) FROM rh_autorizados_direccion as ad 
-                                      WHERE ad.cod_funcionario = ?";
-                            $values = array($user["COD_FUNCIONARIO"]);
-                            $stmt = $db->executeSecure($query, $values);  
-                            $isCodAutorizado = $db->getArray($stmt);
-                            //AUTORIZADO
-                            if (sizeof($isCodAutorizado) > 0) {
-                            */
-                            if (true) {
-                                /*  
-                                // COMENTARIO
-                                
-                                echo "ES AUTORIZADO <br />";
-                                echo "============================== <br />";
-                                
-                                // Se consulta si el autorizado es un Lider de proceso
-                                $query = "SELECT cc.cod_centro FROM rh_centros_costo as cc 
-                                          WHERE cc.cod_encargado = ?";
-                                $values = array($user["COD_FUNCIONARIO"]);
-                                $stmt = $db->executeSecure($query, $values);  
-                                // COMENTARIO
-                                
-                                //echo "<br />";
-                                //echo $query;
-                                //echo "<br />";
-                                //echo "<br />";
-                                
-                                $isEncargado = $db->getArray($stmt);
-                                $funcionariosLiderProceso = array();
-                                if (sizeof($isEncargado) > 0) {
-                                    // COMENTARIO
-                                    
-                                    //echo "Y LIDER DE PROCESO <br />";
-                                    //echo "============================== <br />";
-                                    //echo "<pre>";
-                                    //print_r($isEncargado);
-                                    //echo "</pre>";
-                                    
-                                    $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                                              WHERE f.cod_centro like '".trim($user["COD_CENTRO"])."%' 
-                                              AND f.ind_estado != ? 
-                                              AND f.COD_FUNCIONARIO != ?";                                    
-                                    $values = array(0, $user["COD_FUNCIONARIO"]);
-                                    $stmt = $db->executeSecure($query, $values);  
-                                    $funcionariosLiderProceso = $db->getArray($stmt);
-                                    // COMENTARIO
-                                    
-                                    //echo "<pre>";
-                                    //print_r($funcionariosLiderProceso);
-                                    //echo "</pre>";
-                                    
-                                }
-                                $funcionarios_del_autorizado = array();
-                                foreach ($isCodAutorizado as $cc) {
-                                    // COMENTARIO
-                                    
-                                    //echo $cc['cod_centro']."<br >";
-                                    //echo "================================= <br />";
-                                    
-                                    $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                                              WHERE f.cod_centro like '".trim($cc['cod_centro'])."%' 
-                                              AND f.ind_estado != ? 
-                                              AND f.COD_FUNCIONARIO != ?";
-                                    $values = array(0, $user["COD_FUNCIONARIO"]);
-                                    $stmt = $db->executeSecure($query, $values);
-                                    $list = $db->getArray($stmt);
-                                    foreach ($list as $lC) {
-                                        
-                                        array_push($funcionarios_del_autorizado, $lC['COD_FUNCIONARIO']);
-                                    }
-                                    // COMENTARIO
-                                    
-                                    //echo "<pre>";
-                                    //print_r($funcionarios_del_autorizado);
-                                    //echo "</pre>";
-                                    
-                                    foreach ($funcionarios_del_autorizado as $f) {
-                                        $funcionarios_in_charge .= $f. ", ";
-                                    }  
-                                    $funcionarios_in_charge = substr($funcionarios_in_charge, 0);                                  
-                                }
-                                
-                                // Se adjunta la lista de funcionarios como Lider de Proceso
-                                if (sizeof($funcionariosLiderProceso) > 0) {
-                                    foreach ($funcionariosLiderProceso as $f) {
-                                        $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
-                                    }
-                                    $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
-                                    echo $funcionarios_in_charge;
-                                }
-                                */
-                            // LIDER DE PROCESO (MOVER esto al else DIRECTOR)
-                            } else {
-
-                                /*
-                                // Se verifica si el usuario es lider con subprocesos
-                                $query = "SELECT cc.cod_centro FROM rh_centros_costo as cc 
-                                          WHERE cc.cod_centro_padre is not NULL 
-                                          AND cc.cod_centro in (SELECT bb.cod_centro_padre FROM rh_centros_costo as bb)  
-                                          AND cc.cod_encargado = ?";
-                                $values = array($user["COD_FUNCIONARIO"]);
-                                $stmt = $db->executeSecure($query, $values);  
-                 
-                                $isLiderSubproceso = $db->getArray($stmt);
-          
-                                if (sizeof($isLiderSubproceso) > 0) {
-
-                                    $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                                              WHERE f.cod_centro like '".trim($isLiderSubproceso[0]["cod_centro"])."%' 
-                                              AND f.ind_estado != ? 
-                                              AND f.COD_FUNCIONARIO != ?";
-           
-                                    $values = array(0, $user["COD_FUNCIONARIO"]);
-                                    $stmt = $db->executeSecure($query, $values);
-                                    $listFuncionariosLocales = $db->getArray($stmt);                                      
-                                    foreach ($listFuncionariosLocales as $f) {
-                                        $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
-                                    }
-                                    $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
-                                } else {            
-
-                                    // COMENTARIO
-                                    
-                                    //echo "ES LIDER DE PROCESO <br />";
-                                    //echo "============================== <br />";
-                                    
-                                    $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                                              WHERE f.cod_centro like '".trim($user["COD_CENTRO"])."%' 
-                                              AND f.ind_estado != ? 
-                                              AND f.COD_FUNCIONARIO != ?";
-                                    
-                                    // COMENTARIO
-                                    //echo $query;
-                                       
-                                    $values = array(0, $user["COD_FUNCIONARIO"]);
-                                    $stmt = $db->executeSecure($query, $values);
-                                    $listFuncionariosLocales = $db->getArray($stmt);
-                                    foreach ($listFuncionariosLocales as $f) {
-                                        $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
-                                    }
-                                    $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
-            
-                                }
-                                */
-                            }
                         }
-                        /*
-                        $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
-                                  WHERE f.cod_centro like '".$user["COD_CENTRO"]."%' AND f.ind_estado != 0 AND f.COD_FUNCIONARIO != ".$user["COD_FUNCIONARIO"];
-                        $stmt = $db->executeSecure($query); 
-                        $listFuncionariosLocales = $db->getArray($stmt);
-                        */
-                        /*
-                        foreach ($listFuncionariosLocales as $f) {
-                            $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
-                        }
-                        $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
-                        */
                     }
                 }
 
@@ -357,6 +206,7 @@
                 $values = array($user["COD_FUNCIONARIO"]);
                 $stmt = $db->executeSecure($query, $values);  
                 $isCodAutorizado = $db->getArray($stmt);
+
                 //AUTORIZADO
                 if (sizeof($isCodAutorizado) > 0) {
 
@@ -425,6 +275,11 @@
             }
             $key = getUniqueLoginAccess();
             $_SESSION['login_token']  = $key;
+
+            // echo "<pre>";
+            //     print_r($_SESSION);
+            // echo "</pre>";
+            // exit;
             
             // COMENTARIO
             header("Location: ../app");
@@ -470,6 +325,45 @@
         }
         return $data;
     }
+
+    function getTypeDirector($conexion, $codEncargado){
+
+        $listConfiguradores = array (60, 25);
+
+        $listTypesDirectores = array();
+
+        foreach ($listConfiguradores as $codConfigurador) {
+
+            $query = "SELECT val_dato, cod_configurador 
+                      FROM SIF_CONFIGURADORES 
+                      WHERE cod_configurador = ?;";
+            $filter_values = array($codConfigurador);
+            $stmt = $conexion->executeSecure($query, $filter_values); 
+            $dato = $conexion->getArray($stmt);
+
+            array_push($listTypesDirectores, $dato[0]);
+
+        }
+
+        $typeDirector = "DIRECTOR";
+        foreach ($listTypesDirectores as $tDir) {
+
+            // CONFIGURADOR 60
+            if ( (trim($tDir['val_dato']) == $codEncargado) && (trim($tDir['cod_configurador']) == $listConfiguradores[0]) ) {
+                $typeDirector = "DIR. FINANCIERO";
+
+            // CONFIGURADOR 25                
+            } else if ( ($tDir['val_dato'] == $codEncargado) && ($tDir['cod_configurador'] == $listConfiguradores[1]) ) {
+                $typeDirector = "DIR. SERVICIOS GENERALES";
+            }
+
+        }
+
+        return $typeDirector;
+
+        //SELECT val_dato FROM SIF_CONFIGURADORES WHERE cod_configurador = 25;        
+    }
+
     /**
      * Get the truly password access for the user
      * @param $pass password provided by th web form
