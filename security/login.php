@@ -354,14 +354,12 @@
 
             // CONFIGURADOR 25                
             } else if ( ($tDir['val_dato'] == $codEncargado) && ($tDir['cod_configurador'] == $listConfiguradores[1]) ) {
-                $typeDirector = "DIR. SERVICIOS GENERALES";
+                $typeDirector = "JEFE SERVICIOS GENERALES";
             }
 
         }
 
         return $typeDirector;
-
-        //SELECT val_dato FROM SIF_CONFIGURADORES WHERE cod_configurador = 25;        
     }
 
     /**

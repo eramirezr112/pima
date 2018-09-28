@@ -22,12 +22,6 @@ class SolicitudController extends BaseController
         $codUsuario  = $_SESSION['cod_usuario'];
         $isJefe      = $_SESSION['rol_web'];
 
-        // NO es ADMIN
-        $listCentros = null;
-        if ($codUsuario != 0) {
-            $listCentros = $this->transformArrayToString($_SESSION['CENTROS_COSTO']);
-        }
-
         $table = ['SRG_SOLICITUD_VEHICULOS', 'alias'=>'sv'];
 
         $columns = [
@@ -44,18 +38,36 @@ class SolicitudController extends BaseController
 
         // NO es ADMIN
         if ($codUsuario != 0) {
-            $conditions = [
-                'where' => [
-                    ['ind_estado' => 'C'],
-                    ['in' => 
-                        ['cod_funcionario' => $_SESSION['FUNCIONARIOS_A_CARGO']]
+
+            //Excepcion: Se valida si es el Jefe de Unidad de Trasportes
+            $codJefeUnidadTrasportes = $this->getJefeUnidadTransportes();
+            $funcionariosACargo = $_SESSION['FUNCIONARIOS_A_CARGO'];
+            if ($_SESSION['COD_FUNCIONARIO'] == $codJefeUnidadTrasportes) {
+                $funcionariosACargo .= ", ".$this->getFuncionariosUnidadTrasportes();
+            }
+
+            //Exception: Si es gerente se elimina el filtro de funcionarios a cargo.
+            if ($_SESSION["TIPO_FUNCIONARIO"] == "GERENTE") {
+                $conditions = [
+                    'where' => [
+                        ['ind_estado' => 'C']
                     ]
-                ]
-            ];
+                ];
+            } else {
+                $conditions = [
+                    'where' => [
+                        ['ind_estado' => 'C'],
+                        ['in' => 
+                            ['cod_funcionario' => $funcionariosACargo]
+                        ]
+                    ]
+                ];                
+            }
+
 
             if ($_SESSION["TIPO_FUNCIONARIO"] == "JEFE" || 
                 $_SESSION["TIPO_FUNCIONARIO"] == "DIR. FINANCIERO" || 
-                $_SESSION["TIPO_FUNCIONARIO"] == "DIR. SERVICIOS GENERALES") {
+                $_SESSION["TIPO_FUNCIONARIO"] == "JEFE SERVICIOS GENERALES") {
 
                 $special_condition = ['special_condition' => 
                                          ['CONVERT(CHAR(8), sv.fec_salida, 112) = CONVERT(CHAR(8), sv.fec_ingreso, 112)'],
@@ -67,14 +79,6 @@ class SolicitudController extends BaseController
 
             }
 
-            /*
-            if ($_SESSION["TIPO_FUNCIONARIO"] == "DIR. FINANCIERO" || 
-                $_SESSION["TIPO_FUNCIONARIO"] == "DIR. SERVICIOS GENERALES") {
-
-                $dataHorasInhabiles = $this->getSolicitudesHorasInhabiles();
-
-            }
-            */
 
         } else { // ES ADMIN
             $conditions = [
@@ -101,17 +105,14 @@ class SolicitudController extends BaseController
             ]
         ];
 
-        //$fields = $this->prepareFields($columns);
-
         $result = $this->customExecute($table, $columns, $conditions, $relations);
         $sqlString = $this->getQueryString();
         $solicitudes = $this->getArray($result);
 
         // NO es ADMIN
         if ($codUsuario != 0) {
-
             if ($_SESSION["TIPO_FUNCIONARIO"] == "DIR. FINANCIERO" || 
-                $_SESSION["TIPO_FUNCIONARIO"] == "DIR. SERVICIOS GENERALES") {
+                $_SESSION["TIPO_FUNCIONARIO"] == "JEFE SERVICIOS GENERALES") {
 
                 $dataHorasInhabiles = $this->getSolicitudesHorasInhabiles($sqlString);
                 foreach ($dataHorasInhabiles['solicitudes'] as $row) {
@@ -121,16 +122,43 @@ class SolicitudController extends BaseController
             }
 
         }
-        
-        //$solicitudes = "";
 
         $data_result = array('columns'=>$columns, 
                              'solicitudes'=>$solicitudes, 
                              'sql' => $sqlString,
-                             //'infoHorasInhabiles' => $dataHorasInhabiles
+                             'dataHorasInhabiles' => $dataHorasInhabiles
                             );
 
         echo json_encode($data_result);
+    }
+
+    /**
+     * Funciom que se encarga de obtener el cod_funcionario del Jefe de Unidad de transportes
+     * @return cod_funcionario
+    */
+    private function getJefeUnidadTransportes() {
+        
+        $sql = "SELECT val_dato as codFuncionario FROM SIF_CONFIGURADORES WHERE cod_configurador = 28;";
+        $result = $this->execute($sql);
+        $data = $this->getArray($result);
+
+        return $data[0]['codFuncionario'];
+
+    }
+
+    private function getFuncionariosUnidadTrasportes(){
+        $sql = "SELECT val_dato as codFuncionario FROM SIF_CONFIGURADORES WHERE cod_configurador in (52, 53);";
+        $result = $this->execute($sql);
+        $data = $this->getArray($result);
+
+        $str_list = "";
+        foreach ($data as $funcionario) {
+            $str_list .= $funcionario['codFuncionario']. ", ";
+        }
+
+        $str_list = substr_replace($str_list, "", -2);
+
+        return $str_list;
     }
 
     private function replaceQueryString($query) {
