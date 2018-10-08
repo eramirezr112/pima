@@ -6,7 +6,8 @@ angular.module('ViewVacacion', ['ngMaterial'])
         $scope.solicitud    = vacacionData.data.solicitud[0];
         $scope.saldoActual  = vacacionData.data.saldoActual;
         $scope.diasGastados = vacacionData.data.diasGastados;        
-        console.log($scope.solicitud.cod_funcionario);
+        console.log("NUM_SOLICITUD = " + $scope.solicitud.num_solicitud);
+        console.log("COD_FUNCIONARIO = " + $scope.solicitud.cod_funcionario);
         $scope.showConfirm = function(ev) {
             var confirm = $mdDialog.confirm({
                     onComplete: function afterShowAnimation() {
@@ -61,11 +62,37 @@ angular.module('ViewVacacion', ['ngMaterial'])
 
                     var data = {
                         newSaldoPeriodo: [$scope.newSaldoPeriodo],
-                        codFuncionario: $scope.solicitud.cod_funcionario
+                        codFuncionario: $scope.solicitud.cod_funcionario,
+                        numSolicitud: $scope.solicitud.num_solicitud
                     };
 
-                    VacacionesService.approve(data).then(function (result) {
-                        console.log(result);
+                    VacacionesService.approve(data).then(function (response) {
+                        console.log(response);
+                        if (response.data.status) {
+                            console.log("La solicitud fue aprobada satisfactoriamente");
+
+                            var confirmResult = $mdDialog.confirm({
+                                    onComplete: function afterShowAnimation() {
+                                        var $dialog = angular.element(document.querySelector('md-dialog'));
+                                        var $actionsSection = $dialog.find('md-dialog-actions');
+                                        var $cancelButton = $actionsSection.children()[0];
+                                        var $confirmButton = $actionsSection.children()[1];
+                                        angular.element($confirmButton).addClass('btn-accept md-raised');
+                                    }
+                                })
+                                .title('La solicitud fue aprobada satisfactoriamente')
+                                .ariaLabel('Lucky day')
+                                .targetEvent(ev)
+                                .ok('Aceptar');
+
+                            $mdDialog.show(confirmResult).then(function() {
+                                console.log("Mensaje Aprobaciom - REDIRECCIONAR");
+                                $scope.backToList();
+                            });
+
+                        } else {
+                            console.log("HA OCURRIDO UN ERROR! No se ha completado la aprobación");
+                        }
                     });
 
                 } else {

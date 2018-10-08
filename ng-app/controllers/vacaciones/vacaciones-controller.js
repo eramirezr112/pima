@@ -7,6 +7,17 @@ angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagina
         //$scope.totalSolicitudes = solicitudes.data.solicitudes.length;
         $scope.vacaciones = vacaciones.data.vacaciones;
         $scope.columns    = vacaciones.data.columns;
+
+        // Se preparan las columnas a mostrar
+        $scope.preparedColumns = [];
+        angular.forEach($scope.columns, function(value, key) {            
+            var newColumn = {
+                visible: true,
+                text: value
+            };
+            $scope.preparedColumns.push(newColumn);
+        });
+
         // Rol de Usuario
         $scope.rolUsuario = usuario.data.usuario.rol_web;
 
@@ -31,200 +42,115 @@ angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagina
 
             $mdDialog.show(confirm).then(function() {
                 console.log("Aprueba Solicitud! " + id);
-                //console.log(vacacionData.data);
-            }, function() {
-                console.log("CANCELA Solicitud XXX! " + id);
-                //console.log(vacacionData.data);
-            });
 
-            /*
-            var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
-            if (r == true) {
-                var codSolicitud = id;
+                VacacionesService.get(id).then(function (vacacionData) {
 
-                console.log("Solicitud: "+codSolicitud+" Ha sido aprobada");
-                /*
-                SolicitudService.approveSolicitud(codSolicitud).then(function (result) {
-                   
-                    var response = result.data.response;
+                    $scope.solicitud    = vacacionData.data.solicitud[0];
+                    $scope.saldoActual  = vacacionData.data.saldoActual;
+                    $scope.diasGastados = vacacionData.data.diasGastados; 
 
-                    if (response == 1) {
-                        alert('La solicitud ha sido aprobada');
-                        window.location.reload();
-                    } else {
-                        alert('La solicitud No puede aprobarse en estos momentos');
-                    }
+                    $scope.newSaldoPeriodo = [];
+                    
+                    console.log(vacacionData.data);                
+                    
+                    var isEnableToApprove = true;
+                    // Se valida que el saldo actual por periodo cubra los dias solicitados (Dias Gastados)
+                    for (var dG = 0; dG < $scope.diasGastados.length; dG++) {
 
-                });
-                *//*
-            } else {
-                return false;
-            }
-            */
+                        // Periodo de los dias a gastar
+                        var periodDG = $scope.diasGastados[dG].NUM_PERIODO;
+                        // Dias a gastar
+                        var numDiasGastados = parseFloat($scope.diasGastados[dG].NUM_DIAS);
+                        
+                        // Periodo al que se le rebajaran los dias
+                        var saldoPeriodo = $scope.getSaldoByPeriodo(periodDG);
+                        console.log("Saldo Periodo");
+                        console.log("==============================");
+                        console.log(saldoPeriodo);
+                        // Saldo actual del periodo en revision
+                        var numSaldoPeriodo = parseFloat(saldoPeriodo.NUM_SALDO_PERIODO);
 
-        };
-
-        //console.log($scope.solicitudes);
-
-        //$rootScope.$on('$routeChangeSuccess', function(scope, current, pre) {          
-        
-        //});
-
-        /*
-        $scope.setEstado = function (codSolicitud, status) {
-            var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
-            if (r == true) {
-            	var newStatus = status+1;
-            	SolicitudService.changeStatus(codSolicitud, newStatus).then(function (result) {
-            		window.location.reload();
-            	});
-            } else {
-                return false;
-            }
-        };
-
-        $scope.verifySolicitud = function (codSolicitud) {
-
-            var r = confirm("¿Esta seguro que desea Enviar esta solicitud?");
-            if (r == true) {
-
-                SolicitudService.verifySolicitud(codSolicitud).then(function (result) {
-                    var status = result.data.status;
-                    if (status == "OK") {
-
-                        var codPeriodo  = result.data.codPeriodo;
-                        var codPrograma = result.data.codPrograma;
-                        var moneda      = result.data.moneda;
-
-                        SolicitudService.startAfectacionPresupuestaria(codSolicitud, codPeriodo, codPrograma, moneda).then(function (result) {
-                            
-                            SolicitudService.changeStatus(codSolicitud, 2).then(function (g) {
-                                window.location.reload();
-                            });
-
-                        })
-
-                    } else {
-
-                        var listLines = "";
-                        for (var l = 0; l < result.data.lineErrors.length; l++) {
-                            listLines += result.data.lineErrors[l] + ",";
+                        if (!(numSaldoPeriodo >= numDiasGastados)) {
+                            isEnableToApprove = false; 
+                        } else {
+                            $scope.addToNewSaldoPeriodo(saldoPeriodo, numDiasGastados);
                         }
 
-                        var str = listLines;
-                        str = str.substring(0, str.length - 1);
-
-                        alert("ATENCION: La Solicitud de Pedido NO puede ser enviada debido a que la(s) linea(s) " + str + " del detalle superan el monto disponible.\n\nFavor proceda a realizar la corrección(es) respectiva(s) y vuelva a intentarlo.");
                     }
-                });
 
-            } else {
-                return false;
-            }            
+                    if (isEnableToApprove) {
+                        console.log("Habilitado para Aprobar");
+                        console.log($scope.newSaldoPeriodo);
+                        console.log($scope.solicitud.cod_funcionario);
 
-        };
+                        var data = {
+                            newSaldoPeriodo: [$scope.newSaldoPeriodo],
+                            codFuncionario: $scope.solicitud.cod_funcionario,
+                            numSolicitud: $scope.solicitud.num_solicitud
+                        };
 
-        $scope.rejectSolicitud = function (codSolicitud) {
-            var r = confirm("¿Esta seguro que desea Rechazar esta solicitud?");
-            if (r == true) {
-                SolicitudService.rejectAfectacionPresupuestaria(codSolicitud).then(function (result) {
-                    SolicitudService.changeStatus(codSolicitud, 4).then(function (g) {
-                        window.location.reload();
-                    });
-                });
-            } else {
-                return false;
-            }            
-        }
+                        VacacionesService.approve(data).then(function (response) {
+                            console.log(response);
+                            if (response.data.status) {
+                                console.log("La solicitud fue aprobada satisfactoriamente");
 
-        $scope.denegateSolicitud = function (codSolicitud) {
-            var r = confirm("¿Esta seguro que desea Denegar esta solicitud?");
+                                var confirmResult = $mdDialog.confirm({
+                                        onComplete: function afterShowAnimation() {
+                                            var $dialog = angular.element(document.querySelector('md-dialog'));
+                                            var $actionsSection = $dialog.find('md-dialog-actions');
+                                            var $cancelButton = $actionsSection.children()[0];
+                                            var $confirmButton = $actionsSection.children()[1];
+                                            angular.element($confirmButton).addClass('btn-accept md-raised');
+                                        }
+                                    })
+                                    .title('La solicitud fue aprobada satisfactoriamente')
+                                    .ariaLabel('Lucky day')
+                                    .targetEvent(id)
+                                    .ok('Aceptar');
 
-            if (r == true) {
-                SolicitudService.validateFactura(codSolicitud).then(function(r){
+                                $mdDialog.show(confirmResult).then(function() {
+                                    
+                                    VacacionesService.all().then(function (vacaciones) {
+                                        $scope.vacaciones = vacaciones.data.vacaciones;
+                                    });
 
-                    var cantidad = r.data.cantidad[0].cantidad;
+                                });
 
-                    if (cantidad > 0){
-                        alert("Esta solicitud de pedido no se puede denegar porque tiene "+cantidad+" factura(s) asociada(s)");
-                    } else {
-                        
-                        SolicitudService.rejectAfectacionPresupuestaria(codSolicitud).then(function (result) {
-                            SolicitudService.changeStatus(codSolicitud, 4).then(function (g) {
-                                window.location.reload();
-                            });
+                            } else {
+                                console.log("HA OCURRIDO UN ERROR! No se ha completado la aprobación");
+                            }
                         });
 
+                    } else {
+                        console.log("NO Habilitado!");
                     }
+
                 });
-                
-            } else {
-                return false;
-            }
+
+            }, function() {
+
+            });
 
         };
 
-        $scope.setCompromisoAprobado = function (codSolicitud) {
-            SolicitudService.setCompromisoAprobado(codSolicitud).then(function (result) {
-                SolicitudService.changeStatus(codSolicitud, 5).then(function (g) {
-                    window.location.reload();
-                });
-            });          
+        $scope.backToList = function () {            
+            $location.path('/vacaciones');
         };
 
-        $scope.isModuleEnabled = function(module) {
-
-            if (usuario.data.usuario.modulos_acceso != null){
-
-                var enabled = true;                
-                if (usuario.data.usuario.modulos_acceso != 'ALL') {                    
-                    var modulos_enabled = usuario.data.usuario.modulos_acceso.split(',');                    
-                    for (osa in modulos_enabled) {                    
-                        if (modulos_enabled[osa] == module) {
-                            enabled = true;
-                            break;
-                        } else {
-                            enabled = false;
-                        }
-                    }
-                    return enabled;
-
-                } else {
-                    return enabled;
+        $scope.getSaldoByPeriodo = function (numPeriodo) {
+            var objSaldo = [];
+            for (var sA = 0; sA < $scope.saldoActual.length; sA++) {
+                if (numPeriodo === $scope.saldoActual[sA].NUM_PERIODO) {
+                    objSaldo = $scope.saldoActual[sA];
+                    break;
                 }
-            } else {
-                return true;
             }
+            return objSaldo;
+        };
 
-        }; 
-
-        $scope.checkPermision = function(option) {
-            if (usuario.data.usuario.opt_sin_acceso != null){
-                var opciones_sin_acceso = usuario.data.usuario.opt_sin_acceso.split(',');                
-                var found = true;
-                for (osa in opciones_sin_acceso) {                    
-                    if (opciones_sin_acceso[osa] == option) {
-                        found = false;
-                        break;
-                    }
-                }
-                return found;
-            } else {
-                return true;
-            }
-
-        };  
-
-        if ($scope.checkPermision(9)) {
-            $scope.tabs = [
-                { title:'Por Autorizar', content:$scope.solicitudes, templateUrl: '../ng-app/views/solicitud/tabs/tab1.html'},
-                { title:'Mis Solicitudes', content:$scope.solicitudesG, templateUrl: '../ng-app/views/solicitud/tabs/tab2.html'}
-            ];
-        } else {
-            $scope.tabs = [
-                { title:'Mis Solicitudes', content:$scope.solicitudesG, templateUrl: '../ng-app/views/solicitud/tabs/tab2.html'}
-            ];
-        }
-        */
+        $scope.addToNewSaldoPeriodo = function (saldoPeriodo, numDays) {
+            saldoPeriodo.DAYS_REQUEST = numDays;            
+            $scope.newSaldoPeriodo.push(saldoPeriodo);
+        };
 
     }]);

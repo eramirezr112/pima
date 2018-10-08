@@ -36,6 +36,7 @@
         private $table_alias = '';
         private $table_query = '';
         private $where_filter = '';
+        private $query_string = '';
 
         function __construct() {            
             $this->conn = $this->dbConnect(); 
@@ -226,6 +227,11 @@
                                 $fieldIn = key($inRow);                             
                                 $this->where_filter .= "AND ".$this->table_alias.".".$fieldIn." in (".$inRow[$fieldIn].") ";    
                             }
+                        } else if ($field == "special_condition") { 
+                            foreach ($filter as $inRow) {                               
+                                $fieldIn = key($inRow);                             
+                                $this->where_filter .= "AND ".$inRow[$fieldIn]." ";
+                            }
                         } else {
                             $this->where_filter .= "AND ".$this->table_alias.".".$field." = '".$filter[$field]."' ";    
                         }
@@ -262,7 +268,11 @@
             $sql = "SELECT ".$conditions['limit']." $fields 
                     FROM ".$this->table_query." ".$this->where_filter;
 
+            // Final Query String
+            $this->query_string = $sql;
+
             $result = $this->execute($sql);
+            //$result = "";
 
             return $result;
         }
@@ -271,6 +281,10 @@
             
             $data = $stmt->getArray();
             return $data;
+        }
+
+        public function getQueryString() {
+            return $this->query_string;
         }
 
     }

@@ -1,0 +1,16 @@
+<div class="container">
+    <div class="card-container card">
+    <div class="row">
+        <div class="col-md-12">
+            <img id="pima" class="img-responsive" src="web/img/logo-default.jpg" style="margin:0 auto; width:175px;" />                
+            <form class="form-signin">
+                <span id="reauth-email" class="reauth-email"></span>
+                <input type="text"     ng-model="user" name="user" id="user" class="form-control input-md" placeholder="Usuario" required autofocus style="font-size:16px;">
+                <input type="password" ng-model="pass" name="pass" id="pass" class="form-control input-md" placeholder="Contraseña" required style="font-size:16px;">
+                <button class="btn btn-warning btn-block  btn-xs" ng-click="validate()" style="font-size:16px;">{{titleButton}}</button>
+            </form><!-- /form -->
+            <br>
+        </div>
+    </div>
+    </div>
+</div><!-- /container -->

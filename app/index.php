@@ -1,4 +1,4 @@
-  <?php include("../security/checkSecurity.php"); ?>
+<?php include("../security/checkSecurity.php"); ?>
 <!DOCTYPE html>
 <html lang="en" ng-app="pnlsys">
   <head>
@@ -50,7 +50,7 @@
           </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <header-menu-page name-user="<?php echo $_SESSION["des_usuario"]; ?>">            
+          <header-menu-page name-user="<?php echo $_SESSION["des_usuario"]; ?> (<?php echo $_SESSION["TIPO_FUNCIONARIO"]; ?>)">            
           </header-menu-page>
         </div>
       </div>
