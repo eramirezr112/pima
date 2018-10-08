@@ -313,10 +313,18 @@ class SolicitudController extends BaseController
     }
 
     public function approveSolicitud(){
+
+        session_start();
+        $codUsuario  = $_SESSION['COD_FUNCIONARIO'];
+
         $params = $this->getParameters();
         $id = intval($params["codSolicitud"]);
 
-        $sql = "UPDATE SRG_SOLICITUD_VEHICULOS set ind_estado = 'A' WHERE cod_solicitud = $id";
+        $sql = "UPDATE SRG_SOLICITUD_VEHICULOS 
+                    SET ind_estado = 'A', 
+                        fec_autorizacion = GETDATE(), 
+                        cod_jefe = $codUsuario 
+                WHERE cod_solicitud = $id";
         $result = $this->execute($sql);
 
         if ($result) {

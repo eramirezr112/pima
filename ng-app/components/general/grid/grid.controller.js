@@ -2,7 +2,8 @@ function gridController($timeout) {
     var ctrl = this;
 
     ctrl.$onInit = function() {
-        ctrl.columns.actions = "Acciones";        
+        ctrl.totalRegistros = ctrl.infoGrid.length;
+        ctrl.columns[ctrl.columns.length] = {visible:true, text:"Acciones"};
         var firstRow = ctrl.infoGrid[0];
         
         ctrl.headerClass = {};

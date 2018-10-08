@@ -7,6 +7,17 @@ angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagina
         //$scope.totalSolicitudes = solicitudes.data.solicitudes.length;
         $scope.vacaciones = vacaciones.data.vacaciones;
         $scope.columns    = vacaciones.data.columns;
+
+        // Se preparan las columnas a mostrar
+        $scope.preparedColumns = [];
+        angular.forEach($scope.columns, function(value, key) {            
+            var newColumn = {
+                visible: true,
+                text: value
+            };
+            $scope.preparedColumns.push(newColumn);
+        });
+
         // Rol de Usuario
         $scope.rolUsuario = usuario.data.usuario.rol_web;
 
