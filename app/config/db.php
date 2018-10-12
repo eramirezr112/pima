@@ -55,6 +55,7 @@
                     break;
                 case 'odbc_mssql':
                     $db = ADONewConnection(self::DB_TYPE_CONNECTION);
+                    $db->setConnectionParameter('characterSet','UTF-8');
                     $dsn = "Driver={SQL Server};Server=".self::DB_SERVER.";Database=".self::DB.";";
                     $db->setFetchMode(ADODB_FETCH_ASSOC);
                     $db->Connect($dsn, self::DB_USER, self::DB_PASSWORD);                
@@ -68,6 +69,7 @@
         }
 
         public function execute($query) {
+            $this->query_string = $query;
             $rs = $this->conn->Execute($query);
             if (!$rs) {
                 print 'error' . $this->conn->ErrorMsg() . '<br>';

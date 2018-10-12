@@ -274,12 +274,19 @@ class SolicitudController extends BaseController
     }
 
     public function get() {
+        session_start();
         $params = $this->getParameters();
         $id = intval($params["idSolicitud"]);
 
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+        $nameFuncionario = 'CONCAT (f.des_nombre, SPACE(1), f.des_apellido1, SPACE(1), f.des_apellido2)';
+        if ($connectionType == "odbc_mssql") {
+            $nameFuncionario = 'f.des_nombre + \' \' + f.des_apellido1 + \' \' + f.des_apellido2';
+        }
+
         // Encabezado de la solicitud
         $sql = "SELECT sv.*, 
-                       CONCAT (f.des_nombre, SPACE(1), f.des_apellido1, SPACE(1), f.des_apellido2) as funcionario, 
+                       $nameFuncionario as funcionario, 
                        c.des_centro as centro, 
                        p.des_programa as programa, 
                        sifP.des_provincia as provincia, 
@@ -309,7 +316,12 @@ class SolicitudController extends BaseController
         $result = $this->execute($sql);
         $funcionarios = $this->getArray($result);
 
-        echo json_encode(array('solicitud'=>$solicitud, 'funcionarios' => $funcionarios));
+        if ($connectionType == "odbc_mssql") {
+          $solicitud = $this->toUtf8($solicitud);
+          $funcionarios = $this->toUtf8($funcionarios);
+        }          
+
+        echo json_encode(array('solicitud'=>$solicitud, 'funcionarios' => $funcionarios), JSON_UNESCAPED_UNICODE);
     }
 
     public function approveSolicitud(){
