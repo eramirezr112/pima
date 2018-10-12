@@ -204,14 +204,14 @@
             <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
                 <table class="table">
                     <tr>
-                        <th class="text-center">Número</th>
-                        <th class="text-center">Funcionario</th>
-                        <th class="text-center">Observación</th>
+                        <th class="text-center">#</th>
+                        <th class="text-left">Funcionario</th>
+                        <th class="text-left">Observación</th>
                     </tr>
                     <tr ng-repeat="funcionario in funcionarios">
                         <td>{{funcionario.cod_funcionario}}</td>
-                        <td>{{funcionario.des_funcionario | capitalizeEveryWord}}</td>
-                        <td>{{funcionario.observacion}}</td>
+                        <td class="text-left">{{funcionario.des_funcionario | capitalizeEveryWord}}</td>
+                        <td class="text-left">{{funcionario.observacion}}</td>
                     </tr>
                 </table>
             </div>
