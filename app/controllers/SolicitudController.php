@@ -46,6 +46,11 @@ class SolicitudController extends BaseController
                 $funcionariosACargo .= ", ".$this->getFuncionariosUnidadTrasportes();
             }
 
+            // Si es Director puede aprobarse asi mismo
+            if ($_SESSION["TIPO_FUNCIONARIO"] == "DIRECTOR") {
+                $funcionariosACargo .= ", ".$_SESSION['COD_FUNCIONARIO']; 
+            }
+
             //Exception: Si es gerente se elimina el filtro de funcionarios a cargo.
             if ($_SESSION["TIPO_FUNCIONARIO"] == "GERENTE") {
                 $conditions = [

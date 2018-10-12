@@ -85,8 +85,7 @@ angular.module('ViewVacacion', ['ngMaterial'])
                                 .targetEvent(ev)
                                 .ok('Aceptar');
 
-                            $mdDialog.show(confirmResult).then(function() {
-                                console.log("Mensaje Aprobaciom - REDIRECCIONAR");
+                            $mdDialog.show(confirmResult).then(function() {                                
                                 $scope.backToList();
                             });
 
