@@ -35,12 +35,12 @@ angular.module('Solicitud', ['ui.bootstrap', 'angularUtils.directives.dirPaginat
                         angular.element($confirmButton).addClass('btn-accept md-raised');
                         angular.element($cancelButton).addClass('btn-cancel md-raised');
                     }
-                })
-                .title('¿Realmente desea aprobar esta Solicitud?')
-                .ariaLabel('Lucky day')
-                .targetEvent(id)
-                .ok('Si')
-                .cancel('No');
+            })
+            .title('¿Realmente desea aprobar esta Solicitud?')
+            .ariaLabel('Lucky day')
+            .targetEvent(id)
+            .ok('Si')
+            .cancel('No');
 
             $mdDialog.show(confirm).then(function() {
 
@@ -82,29 +82,7 @@ angular.module('Solicitud', ['ui.bootstrap', 'angularUtils.directives.dirPaginat
 
             }, function() {
                 console.log("NO");
-            });
-
-            /*
-            var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
-            if (r == true) {
-                var codSolicitud = id;
-
-                SolicitudService.approveSolicitud(codSolicitud).then(function (result) {
-                   
-                    var response = result.data.response;
-
-                    if (response == 1) {
-                        alert('La solicitud ha sido aprobada');
-                        window.location.reload();
-                    } else {
-                        alert('La solicitud No puede aprobarse en estos momentos');
-                    }
-
-                });
-            } else {
-                return false;
-            }
-            */            
+            });       
 
         };
 

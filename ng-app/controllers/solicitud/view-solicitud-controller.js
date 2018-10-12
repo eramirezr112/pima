@@ -1,13 +1,72 @@
-angular.module('ViewSolicitud', [])
-    .controller('ViewSolicitudController', ['$scope', '$filter', '$location', 'usuario', 'solicitudData', 'SolicitudService', function($scope, $filter, $location, usuario, solicitudData, SolicitudService) {
+angular.module('ViewSolicitud', ['ngMaterial'])
+    .controller('ViewSolicitudController', ['$scope', '$filter', '$mdDialog', '$location', 'usuario', 'solicitudData', 'SolicitudService', function($scope, $filter, $mdDialog, $location, usuario, solicitudData, SolicitudService) {
        
         $scope.title = "Solicitud de uso de Vehiculos Oficiales";
 
         $scope.solicitud    = solicitudData.data.solicitud[0];
         $scope.funcionarios = solicitudData.data.funcionarios;
 
-        $scope.aprobarSolicitud = function () {
+        $scope.aprobarSolicitud = function (id) {
             
+            var confirm = $mdDialog.confirm({
+
+                onComplete: function afterShowAnimation() {
+                    var $dialog = angular.element(document.querySelector('md-dialog'));
+                    var $actionsSection = $dialog.find('md-dialog-actions');
+                    var $cancelButton = $actionsSection.children()[0];
+                    var $confirmButton = $actionsSection.children()[1];
+                    angular.element($confirmButton).addClass('btn-accept md-raised');
+                    angular.element($cancelButton).addClass('btn-cancel md-raised');
+                }
+
+            })
+            .title('¿Realmente desea aprobar esta Solicitud?')
+            .ariaLabel('Lucky day')
+            .targetEvent(id)
+            .ok('Si')
+            .cancel('No');
+
+            $mdDialog.show(confirm).then(function() {
+
+                var codSolicitud = id;
+
+                SolicitudService.approveSolicitud(codSolicitud).then(function (result) {
+                   
+                    var response = result.data.response;
+
+                    if (response == 1) {
+
+                        var confirmResult = $mdDialog.confirm({
+                                onComplete: function afterShowAnimation() {
+                                    var $dialog = angular.element(document.querySelector('md-dialog'));
+                                    var $actionsSection = $dialog.find('md-dialog-actions');
+                                    var $cancelButton = $actionsSection.children()[0];
+                                    var $confirmButton = $actionsSection.children()[1];
+                                    angular.element($confirmButton).addClass('btn-accept md-raised');
+                                }
+                            })
+                            .title('La solicitud fue aprobada satisfactoriamente')
+                            .ariaLabel('Lucky day')
+                            .targetEvent(id)
+                            .ok('Aceptar');
+
+                        $mdDialog.show(confirmResult).then(function() {
+                            
+                            $location.path('/solicitud');
+
+                        });
+
+                    } else {
+                        alert('La solicitud No puede aprobarse en estos momentos');
+                    }
+
+                });
+
+            }, function() {
+                
+            });
+
+            /*
             var r = confirm("¿Esta seguro que desea Aprobar esta solicitud?");
             if (r == true) {
                 var codSolicitud = $scope.solicitud.cod_solicitud;
@@ -27,6 +86,7 @@ angular.module('ViewSolicitud', [])
             } else {
                 return false;
             }
+            */
 
         };
 
