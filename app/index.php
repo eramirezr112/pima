@@ -50,7 +50,7 @@
           </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <header-menu-page name-user="<?php echo $_SESSION["des_usuario"]; ?> (<?php echo $_SESSION["TIPO_FUNCIONARIO"]; ?>)">            
+          <header-menu-page name-user="<?php if ($_SESSION['CONNECTION_TYPE'] == 'odbc_mssql') { echo utf8_encode($_SESSION["des_usuario"]); } else { echo $_SESSION["des_usuario"]; } ?> (<?php echo $_SESSION["TIPO_FUNCIONARIO"]; ?>)">
           </header-menu-page>
         </div>
       </div>
