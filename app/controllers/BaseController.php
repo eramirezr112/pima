@@ -47,6 +47,22 @@ class BaseController extends DBConfig
         }
         return $newData;
     }   
+
+    public function sessionToUtf8($data) {
+        
+        foreach ($data as $key => $line) {
+            if (!is_array($line)) {
+                $line = utf8_encode($line); 
+                $newSession[$key] = $line;
+            } else {
+                $line = array_map("utf8_encode", $line); 
+                $newSession[$key] = $line;
+            }
+        }
+        
+        return $newSession;
+    }
+
 }
 
 ?>

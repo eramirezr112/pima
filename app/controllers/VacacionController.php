@@ -101,9 +101,18 @@ class VacacionController extends BaseController
         $params = $this->getParameters();
         $id = $params["idSolicitud"];
 
+        session_start();
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+
+        $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        if ($connectionType == "odbc_mssql") {
+            $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+        }        
+
         $sql = "SELECT v.num_solicitud, 
                        v.cod_funcionario, 
-                       (select CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2) from rh_funcionarios as ssf where ssf.cod_funcionario = v.cod_funcionario) as funcionario,
+                       (select $nameFuncionario from rh_funcionarios as ssf where ssf.cod_funcionario = v.cod_funcionario) as funcionario,
                        v.cod_centro, 
                        v.fec_confeccion, 
                        v.dias_solicitados, 
@@ -122,6 +131,10 @@ class VacacionController extends BaseController
                 WHERE num_solicitud = $id";        
         $result = $this->execute($sql);
         $solicitud = $this->getArray($result);
+
+        if ($connectionType == "odbc_mssql") {
+          $solicitud = $this->toUtf8($solicitud);          
+        }  
 
         $codFuncionario = $solicitud[0]["cod_funcionario"];
 
@@ -144,7 +157,11 @@ class VacacionController extends BaseController
         $result = $this->execute($sql);
         $diasGastados = $this->getArray($result);
 
-        echo json_encode(array('solicitud'=>$solicitud, 'saldoActual'=>$saldoActual, 'diasGastados'=>$diasGastados));
+        if ($connectionType == "odbc_mssql") {
+            echo json_encode(array('solicitud'=>$solicitud, 'saldoActual'=>$saldoActual, 'diasGastados'=>$diasGastados), JSON_UNESCAPED_UNICODE);
+        } else {
+            echo json_encode(array('solicitud'=>$solicitud, 'saldoActual'=>$saldoActual, 'diasGastados'=>$diasGastados));
+        }
     }
 
     public function getMaxNum() {

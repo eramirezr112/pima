@@ -12,11 +12,20 @@ angular.module('Login', ['ngMaterial'])
             };
 
             LoginService.validate(validateData).then(function (result) {
-                var status = result.data.response;
+                var status = parseInt(result.data.response);
                 
-                if (status) {                    
+                if (status == 1) {                    
                     $window.location.href = "../app";
                 } else {
+
+                    var message = "";
+                    if (status == 0) {
+                        message = "Contraseña Inválida";
+                    } else if (status == -1) {
+                        message = "El Usuario no tiene privilegios de acceso a este sitio";
+                    } else if (status == -2) {
+                        message = "Usuario Inválido";
+                    }
 
                     var id = 17;
 
@@ -29,7 +38,7 @@ angular.module('Login', ['ngMaterial'])
                                 angular.element($confirmButton).addClass('btn-accept md-raised');
                             }
                         })
-                        .title('Los credenciales de acceso son inválidos')
+                        .title(message)
                         .ariaLabel('Lucky day')
                         .targetEvent(id)
                         .ok('Aceptar');

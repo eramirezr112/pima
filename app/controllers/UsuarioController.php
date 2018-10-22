@@ -53,7 +53,14 @@ class UsuarioController extends BaseController
 
 	public function get() {
 		session_start();
-		echo json_encode(array('usuario'=>$_SESSION));
+		$connectionType = $_SESSION["CONNECTION_TYPE"];
+
+	    if ($connectionType == "odbc_mssql") {
+	    	echo json_encode(array('usuario'=> $this->sessionToUtf8($_SESSION)), JSON_UNESCAPED_UNICODE);
+	    } else {
+	    	echo json_encode(array('usuario'=> $_SESSION));	
+	    }
+		
 	}
 
 	public function getPermisionByUser() {

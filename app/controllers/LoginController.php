@@ -21,6 +21,17 @@ class LoginController extends BaseController
         $fields_funcionario = $jData['fields_funcionario'];
         $join_condition     = $jData['join_condition'];
 
+        // Se valida que el usuario ingresado exista
+        $query = "SELECT COUNT(u.cod_usuario) as existencia FROM seg_usuarios as u WHERE u.des_login = ?";
+        $values = array($user);
+        $stmt = $this->executeSecure($query, $values);
+        $userExist = $this->getArray($stmt);
+     
+        $response = null;
+        if ($userExist[0]['existencia'] == 0) {            
+            $response = -2;
+        }
+
         $query = "SELECT u.cod_usuario, 
                     u.des_usuario, 
                     u.des_login, 
@@ -38,8 +49,6 @@ class LoginController extends BaseController
         $stmt = $this->executeSecure($query, $values);    
         $data = $this->getArray($stmt);
 
-
-        $response = 1;
         // Usuario Encontrado
         if (is_array($data) && sizeof($data) > 0) {
 
@@ -57,6 +66,8 @@ class LoginController extends BaseController
 
             // Usuario con permisos de acceso Web
             if ($user['rol_web'] != null) {
+
+                $response = 1;
 
                 $query = "SELECT *  
                           FROM web_permisos as wp 
@@ -314,7 +325,12 @@ class LoginController extends BaseController
 
         // Usuario NO encontrado
         } else {
-            $response = 0;
+
+            if ($response == -2) {
+                $response = $response;
+            } else {
+                $response = 0;
+            }
         }
 
 
