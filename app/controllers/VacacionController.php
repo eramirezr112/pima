@@ -34,15 +34,24 @@ class VacacionController extends BaseController
             'cod_estado' =>'estado'
         ];
 
-        $conditions = [
-            //'limit' => 10,
-            'where' => [
-                ['cod_estado' => 'C'],
-                ['in' => 
-                    ['cod_funcionario' => $_SESSION['FUNCIONARIOS_A_CARGO']]
-                ]               
-            ]
-        ];
+        // NO es ADMIN
+        if ($codUsuario != 0) {
+            $conditions = [
+                //'limit' => 10,
+                'where' => [
+                    ['cod_estado' => 'C'],
+                    ['in' => 
+                        ['cod_funcionario' => $_SESSION['FUNCIONARIOS_A_CARGO']]
+                    ]               
+                ]
+            ];
+        } else {
+            $conditions = [
+                'where' => [
+                    ['cod_estado' => 'C']
+                ]
+            ];
+        }
 
         $relations = [
             'join' => [
@@ -265,7 +274,13 @@ class VacacionController extends BaseController
 
     public function approve() {
         session_start();
-        $codAprobador = $_SESSION['COD_FUNCIONARIO'];
+
+        // NO es ADMIN
+        if ($_SESSION['cod_usuario'] != 0) {
+            $codAprobador = $_SESSION['COD_FUNCIONARIO'];
+        } else {
+            $codAprobador = 0;
+        }
 
         $params = $this->getParameters();
         

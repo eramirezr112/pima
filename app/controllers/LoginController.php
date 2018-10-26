@@ -85,6 +85,9 @@ class LoginController extends BaseController
                 $_SESSION['modulos_acceso'] = $permits[0]['acceso_modulo'];
                 $_SESSION['opt_sin_acceso'] = $permits[0]['opciones_sin_acceso'];
 
+                if ($is_admin_login == true) {
+                    $_SESSION['TIPO_FUNCIONARIO'] = "Super Admin";
+                }
 
                 if ($is_admin_login == false) {
 

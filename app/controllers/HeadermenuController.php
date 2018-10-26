@@ -31,7 +31,7 @@ class HeadermenuController extends BaseController
     $permisos = $this->getArray($result);
     
     $filter_condition = "";
-    if (!$permisos[0]['opciones_sin_acceso'] == null) {      
+    if ($permisos[0]['opciones_sin_acceso'] != null) {      
       $filter_condition = "AND wo.num_opcion NOT IN (".$permisos[0]['opciones_sin_acceso'].")";
     }
 
