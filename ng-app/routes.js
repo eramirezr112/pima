@@ -77,6 +77,30 @@ angular.module("Routes", ['ngRoute'])
                     }
                 }
             })
+            .when('/adelanto-viaticos', {
+                templateUrl: '../ng-app/views/adelanto-viaticos/list.html',
+                controller: 'AdelantoViaticosController',
+                resolve: {
+                    adelantoViaticos: function(ViaticosService){
+                         return ViaticosService.getAllAdelantoViaticos();
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    }
+                }
+            })
+            .when('/liquidacion-viaticos', {
+                templateUrl: '../ng-app/views/liquidacion-viaticos/list.html',
+                controller: 'LiquidacionViaticosController',
+                resolve: {
+                    // viaticos: function(ViaticosService){
+                    //     return ViaticosService.all();
+                    // },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    }
+                }
+            })
             /*
             .when('/solicitud/add', {
                 templateUrl: '../ng-app/views/solicitud/add.html',
