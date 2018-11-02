@@ -4,7 +4,6 @@ angular.module('AdelantoViaticos', [])
         $scope.locationPath = $location.path();
         $scope.actions  = {'add':false, 'edit':false, 'view':true, 'delete':false, 'authorize':true};
 
-        console.log(adelantoViaticos);
         $scope.adelantoViaticos = adelantoViaticos.data.adelantoViaticos;
         $scope.columns          = adelantoViaticos.data.columns;
 

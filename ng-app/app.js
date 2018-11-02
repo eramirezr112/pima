@@ -41,6 +41,7 @@ angular.module("pnlsys", [
     'ViewVacacion',
     'VacacionesService',
     'AdelantoViaticos',
+    'ViewAdelantoViaticos',
     'ViaticosService'
 ])
 .filter('getEstado', function () {

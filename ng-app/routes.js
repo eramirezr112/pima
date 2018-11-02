@@ -89,6 +89,20 @@ angular.module("Routes", ['ngRoute'])
                     }
                 }
             })
+            .when('/adelanto-viaticos/view/:numAdelanto', {
+                templateUrl: '../ng-app/views/adelanto-viaticos/view.html',
+                controller: 'ViewAdelantoViaticosController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                    viaticoData: function (ViaticosService, $route) {
+                        var numAdelanto = $route.current.params.numAdelanto;                        
+                        return ViaticosService.getNumAdelanto(numAdelanto);
+
+                    }                    
+                }
+            })
             .when('/liquidacion-viaticos', {
                 templateUrl: '../ng-app/views/liquidacion-viaticos/list.html',
                 controller: 'LiquidacionViaticosController',
