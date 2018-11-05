@@ -178,7 +178,7 @@ class ViaticoController extends BaseController
 
         $params = $this->getParameters();
         $id        = intval($params["codSolicitud"]);
-        $codCentro = $params["codCentro"];
+        $codCentro = trim($params["codCentro"]);
         $codMeta   = $params["codMeta"];
         $montoAdelanto     = number_format(floatval($params["monto"]), 2, '.', '');
 
