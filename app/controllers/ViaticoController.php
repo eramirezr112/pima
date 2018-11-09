@@ -76,6 +76,78 @@ class ViaticoController extends BaseController
         echo json_encode(array('columns'=>$columns,'adelantoViaticos'=>$solicitudes, 'query' => $query));
     }
 
+    public function getAllLiquidacionViaticos() {
+
+        session_start();
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+        $nameSolicitante = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        if ($connectionType == "odbc_mssql") {
+            $nameSolicitante = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+        }
+
+        $isAdmin = $this->checkPermision(7);
+        $codUsuario  = $_SESSION['cod_usuario'];
+        $isJefe      = $_SESSION['rol_web'];
+
+        $table = ['TES_CCHV_COMPROBANTE_ENCABEZADO', 'alias'=>'v'];
+
+       //cod_centro_costo, des_motivo, des_observaciones, 
+       //cod_presupuesto, cod_autoriza, fec_autorizacion, cod_clasificacion, cod_estado, 
+       //cod_anula, fec_anulacion, des_justificacion, cod_entrega, fec_entrega, num_adelanto, Estado, COD_META,
+       //ind_transferencia, NUM_TRANSFERENCIA
+        $columns = [
+            'num_comprobante' =>'solicitud',                        
+            'tcc.des_clasificacion' =>'clasificacion',
+            'fec_comprobante' =>'fecha',
+            "$nameSolicitante" => 'solicitante',
+            'mon_comprobante' =>'monto',
+            'SUBSTRING(tce.des_estado, 1, 1)' =>'estado'
+        ];
+
+        // NO es ADMIN
+        if ($codUsuario != 0) {
+            $conditions = [
+                //'limit' => 10,
+                'where' => [
+                    ['cod_estado' => '1'],
+                    ['in' => 
+                        ['cod_solicitante' => $_SESSION['FUNCIONARIOS_A_CARGO']]
+                    ]               
+                ]
+            ];
+        } else {
+            $conditions = [
+                'where' => [
+                    ['cod_estado' => '1']
+                ]
+            ];
+        }
+
+        $relations = [
+            'join' => [
+                array ('RH_FUNCIONARIOS', //table
+                       array('cod_solicitante'=>'cod_funcionario'), //columns
+                       'ssf' //alias
+                ),
+                array ('TES_CCH_ESTADOS', //table
+                       'cod_estado', //column
+                       'tce' //alias
+                ),
+                array ('TES_CCH_CLASIFICACION', //table
+                       'cod_clasificacion', //column
+                       'tcc' //alias
+                )
+            ]
+        ];
+
+        $result = $this->customExecute($table, $columns, $conditions, $relations);
+        $query = $this->getQueryString();
+        $solicitudes = $this->getArray($result);
+
+        echo json_encode(array('columns'=>$columns,'liquidacionViaticos'=>$solicitudes, 'query' => $query));
+    }
+
     public function getNumAdelanto(){
 
         $params = $this->getParameters();
@@ -93,6 +165,7 @@ class ViaticoController extends BaseController
                        tcae.fec_adelanto,
                        $nameFuncionario as solicitante,
                        tcae.cod_centro_costo,
+                       cc.des_centro as centro,
                        tcae.des_motivo,
                        tcae.des_observaciones,
                        tcae.cod_presupuesto,
@@ -105,6 +178,7 @@ class ViaticoController extends BaseController
                        tcae.num_transferencia 
                 FROM TES_CCHV_ADELANTO_ENC as tcae, 
                      RH_FUNCIONARIOS as ssf, 
+                     RH_CENTROS_COSTO as cc,
                      TES_CCH_CLASIFICACION as tcc,
                      TES_CCH_ESTADOS as tce 
                 WHERE tcae.num_adelanto = $numAdelanto 
@@ -159,6 +233,111 @@ class ViaticoController extends BaseController
         $totalesDetalle['totMonDesayuno'] = $totMonDesayuno; 
         $totalesDetalle['totMonEstadia']  = $totMonEstadia; 
 
+
+        if ($connectionType == "odbc_mssql") {
+            echo json_encode(array('encabezado'=>$solicitudEncabezado, 'detalle' => $solicitudDetalle, 'totales' => $totalesDetalle), JSON_UNESCAPED_UNICODE);
+        } else {
+            echo json_encode(array('encabezado'=>$solicitudEncabezado, 'detalle' => $solicitudDetalle, 'totales' => $totalesDetalle));
+        }
+
+    }
+
+    public function getNumComprobante(){
+
+        $params = $this->getParameters();
+        $numComprobante = $params["numComprobante"];
+
+        session_start();
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+
+        $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        if ($connectionType == "odbc_mssql") {
+            $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+        }        
+
+        $sql = "SELECT tcce.num_comprobante, 
+                       tcce.fec_comprobante, 
+                       $nameFuncionario as solicitante,
+                       tcce.cod_centro_costo, 
+                       cc.des_centro as centro, 
+                       tcce.des_motivo, 
+                       tcce.des_observaciones, 
+                       tcce.cod_presupuesto, 
+                       tcce.cod_autoriza, 
+                       tcce.fec_autorizacion, 
+                       tcce.mon_comprobante, 
+                       tcc.des_clasificacion as clasificacion, 
+                       SUBSTRING(tce.des_estado, 1, 1) as estado,
+                       tcce.cod_anula, 
+                       tcce.fec_anulacion, 
+                       tcce.des_justificacion, 
+                       tcce.cod_entrega, 
+                       tcce.fec_entrega, 
+                       tcce.num_adelanto, 
+                       tcce.cod_meta, 
+                       tcce.num_transferencia, 
+                       tcce.cod_comp_ingresos, 
+                       tcce.cod_comp_cajach, 
+                       tcce.mon_funcionario, 
+                       tcce.mon_devolver, 
+                       tcce.ind_transferencia,  
+                       tcce.num_transferencia_liq 
+                FROM TES_CCHV_COMPROBANTE_ENCABEZADO as tcce, 
+                     RH_FUNCIONARIOS as ssf,
+                     RH_CENTROS_COSTO as cc,
+                     TES_CCH_CLASIFICACION as tcc, 
+                     TES_CCH_ESTADOS as tce 
+                WHERE tcce.num_comprobante = $numComprobante 
+                    AND tcce.cod_estado = 1 
+                    AND tcce.cod_centro_costo = cc.cod_centro
+                    AND tcce.cod_estado = tce.cod_estado 
+                    AND tcce.cod_solicitante = ssf.cod_funcionario 
+                    AND tcce.cod_clasificacion = tcc.cod_clasificacion";
+
+        $result = $this->execute($sql);
+        $solicitudEncabezado = $this->getArray($result);
+
+        if ($connectionType == "odbc_mssql") {
+            $solicitudEncabezado = $this->toUtf8($solicitudEncabezado);          
+        }  
+
+        $sqlD = "SELECT tcd.num_comprobante, 
+                        tcd.num_linea, 
+                        tcd.fec_detalle, 
+                        tcd.cod_localidad, 
+                        tcd.hor_salida, 
+                        tcd.hor_regreso, 
+                        tcd.mon_desayuno, 
+                        tcd.mon_almuerzo, 
+                        tcd.mon_cena, 
+                        tcd.mon_estadia 
+                FROM TES_CCHV_COMPROBANTE_DETALLE as tcd 
+                WHERE tcd.num_comprobante = $numComprobante";
+
+        $resultD    = $this->execute($sqlD);
+        $solicitudDetalle = $this->getArray($resultD);
+
+        if ($connectionType == "odbc_mssql") {
+            $solicitudDetalle = $this->toUtf8($solicitudDetalle);          
+        }
+
+        $totalesDetalle = array();
+
+        $totMonAlmuerzo = 0;
+        $totMonCena     = 0;
+        $totMonDesayuno = 0;
+        $totMonEstadia  = 0;
+        foreach ($solicitudDetalle as $lD) {
+            $totMonAlmuerzo += floatval($lD['mon_almuerzo']);
+            $totMonCena     += floatval($lD['mon_cena']);
+            $totMonDesayuno += floatval($lD['mon_desayuno']);
+            $totMonEstadia  += floatval($lD['mon_estadia']);
+        }
+
+        $totalesDetalle['totMonAlmuerzo'] = $totMonAlmuerzo; 
+        $totalesDetalle['totMonCena']     = $totMonCena; 
+        $totalesDetalle['totMonDesayuno'] = $totMonDesayuno; 
+        $totalesDetalle['totMonEstadia']  = $totMonEstadia;
 
         if ($connectionType == "odbc_mssql") {
             echo json_encode(array('encabezado'=>$solicitudEncabezado, 'detalle' => $solicitudDetalle, 'totales' => $totalesDetalle), JSON_UNESCAPED_UNICODE);

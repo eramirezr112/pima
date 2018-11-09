@@ -21,24 +21,24 @@
         <br>
         <div class="panel panel-default"> 
             <div class="panel-heading"> 
-                <h3 class="panel-title custom-font-size"><b>Adelanto de Viáticos</b></h3> 
+                <h3 class="panel-title custom-font-size"><b>Liquidación de Viáticos</b></h3> 
             </div> 
             <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:0px;">
                 <div class="col-md-12">
                     <table class="table table-condensed" style="margin:0px;">
                         <tr>
                             <td class="text-left" style="vertical-align: middle;">
-                                Adelanto No:
+                                Comprobante N°:
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.num_adelanto}}" class="form-control input-sm" id="nAdelanto" placeholder="Adelanto No">
+                                    <input type="text" value="{{encabezado.num_comprobante}}" class="form-control input-sm" id="nComprobante" placeholder="Comprobante N°">
                                 </fieldset>
                             </td>
                             <td class="text-left" style="vertical-align: middle;">
                                 Centro Costo
                             </td>
-                            <td colspan="3">
+                            <td colspan="5">
                                 <fieldset disabled> 
                                     <input type="text" value="{{encabezado.centro}}" class="form-control input-sm" id="centroCosto" placeholder="Centro Costo">
                                 </fieldset>
@@ -50,13 +50,13 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.fec_adelanto}}" class="form-control input-sm" id="fecha" placeholder="dd/mm/yyyy">
+                                    <input type="text" value="{{encabezado.fec_comprobante | customDate3}}" class="form-control input-sm" id="fecha" placeholder="dd/mm/yyyy">
                                 </fieldset>
                             </td>
                             <td class="text-left"  style="vertical-align: middle;">
                                 Solicitante:
                             </td>
-                            <td colspan="3">
+                            <td colspan="5">
                                 <fieldset disabled> 
                                     <input type="text" value="{{encabezado.solicitante}}" class="form-control input-sm" id="solicitante" placeholder="Solicitante">
                                 </fieldset>
@@ -68,7 +68,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.mon_adelanto | currency : '&cent;'}}" class="form-control input-sm" id="monto" placeholder="Monto">
+                                    <input type="text" value="{{encabezado.mon_comprobante | currency : '&cent;'}}" class="form-control input-sm" id="monto" placeholder="Monto">
                                 </fieldset>
                             </td>
                             <td class="text-left"  style="vertical-align: middle;">
@@ -80,11 +80,19 @@
                                 </fieldset>
                             </td>
                             <td class="text-left" style="vertical-align: middle;">
-                                Meta:
+                                Adelanto N°:
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.cod_meta}}" class="form-control input-sm" id="meta" placeholder="Meta">
+                                    <input type="text" value="{{encabezado.num_adelanto}}" class="form-control input-sm" id="nAdelanto" placeholder="Adelanto N°">
+                                </fieldset>
+                            </td>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Estado:
+                            </td>
+                            <td>
+                                <fieldset disabled>                                     
+                                    <input type="text" value="{{encabezado.estado | getEstado}}" class="form-control input-sm" id="estado" placeholder="Estado">
                                 </fieldset>
                             </td>
                         </tr>
@@ -98,17 +106,61 @@
                                 </fieldset>
                             </td>
                             <td class="text-left"  style="vertical-align: middle;">
-                                Estado:
+                                Meta:
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.estado | getEstado}}" class="form-control input-sm" id="estado" placeholder="Estado">
+                                    <input type="text" value="{{encabezado.cod_meta}}" class="form-control input-sm" id="meta" placeholder="Meta">
+                                </fieldset>
+                            </td>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Transferencia N°
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.num_transferencia}}" class="form-control input-sm" id="transferencia" placeholder="Transferencia N°">
                                 </fieldset>
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="text-left">
+                            <td colspan="8" class="text-left">								
+                                <div class="col-md-6" style="margin: 0; padding: 5px; padding-left:0px">
+                                	<p class="bg-info" style="padding: 5px;"><b>Monto a Reintegrar</b></p>
+                                	<div class="col-md-6" style="padding: 5px;">
+                                		N° Recibo
+		                                <fieldset disabled> 
+		                                    <input type="text" value="{{encabezado.cod_comp_ingresos}}" class="form-control input-sm" id="nRecibo" placeholder="N° Recibo">
+		                                </fieldset>		                               
+                                	</div>
+                                	<div class="col-md-6" style="padding: 5px;">
+                                		Monto
+		                                <fieldset disabled> 
+		                                    <input type="text" value="{{encabezado.mon_devolver | currency : '&cent;'}}" class="form-control input-sm" id="montoRecibo" placeholder="Monto Recibo">
+		                                </fieldset>
+                                	</div>
+                                    <br />
+                                </div>
+                                <div class="col-md-6" style="margin: 0; padding: 5px;">
+                                	<p class="bg-info" style="padding: 5px;"><b>Monto a Favor</b></p>
+                                	<div class="col-md-6" style="padding: 5px;">
+                                		Monto
+		                                <fieldset disabled> 
+		                                    <input type="text" value="{{encabezado.mon_funcionario | currency : '&cent;'}}" class="form-control input-sm" id="montoFuncionario" placeholder="Monto a Favor">
+		                                </fieldset>		                               
+                                	</div>
+                                	<div class="col-md-6" style="padding: 5px;">
+                                		Transferencia N°
+		                                <fieldset disabled> 
+		                                    <input type="text" value="{{encabezado.num_transferencia_liq}}" class="form-control input-sm" id="nTransferencia" placeholder="Transferencia N°">
+		                                </fieldset>
+                                	</div>
+                                    <br />
+                                </div>
 
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="8" class="text-left">								
                                 <div class="col-md-6" style="margin: 0; padding: 5px;">
                                     <label for="desMotivo" class="custom-font-size">Descripción del Viaje</label>
                                     <fieldset disabled>

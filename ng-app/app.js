@@ -42,6 +42,8 @@ angular.module("pnlsys", [
     'VacacionesService',
     'AdelantoViaticos',
     'ViewAdelantoViaticos',
+    'LiquidacionViaticos',
+    'ViewLiquidacionViaticos',
     'ViaticosService'
 ])
 .filter('getEstado', function () {
