@@ -1,0 +1,178 @@
+<div class="page-header">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="main-title">{{title}}</h3>
+        </div>
+        <div class="col-md-6 text-right">
+            <md-button class="btn-success md-raised" ng-click="aprobarSolicitud(encabezado.num_adelanto)" >
+                Aprobar Solicitud
+            </md-button>
+            <md-button class="btn-default md-raised" ng-click="backToList()" >
+                &lt;&lt;&lt; Regresar a la lista
+            </md-button>
+
+        </div>
+    </div>
+</div>
+
+<div class="row bg-success">
+    
+    <div class="col-md-12">
+        <br>
+        <div class="panel panel-default"> 
+            <div class="panel-heading"> 
+                <h3 class="panel-title custom-font-size"><b>Adelanto de Viáticos</b></h3> 
+            </div> 
+            <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:0px;">
+                <div class="col-md-12">
+                    <table class="table table-condensed" style="margin:0px;">
+                        <tr>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Adelanto No:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.num_adelanto}}" class="form-control input-sm" id="nAdelanto" placeholder="Adelanto No">
+                                </fieldset>
+                            </td>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Centro Costo
+                            </td>
+                            <td colspan="3">
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.centro}}" class="form-control input-sm" id="centroCosto" placeholder="Centro Costo">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Fecha:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.fec_adelanto}}" class="form-control input-sm" id="fecha" placeholder="dd/mm/yyyy">
+                                </fieldset>
+                            </td>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Solicitante:
+                            </td>
+                            <td colspan="3">
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.solicitante}}" class="form-control input-sm" id="solicitante" placeholder="Solicitante">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Monto:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.mon_adelanto | currency : '&cent;'}}" class="form-control input-sm" id="monto" placeholder="Monto">
+                                </fieldset>
+                            </td>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Presupuesto:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.cod_presupuesto}}" class="form-control input-sm" id="presupuesto" placeholder="0.00">
+                                </fieldset>
+                            </td>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Meta:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.cod_meta}}" class="form-control input-sm" id="meta" placeholder="Meta">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Clasificación:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.clasificacion}}" class="form-control input-sm" id="clasificacion" placeholder="Clasificación">
+                                </fieldset>
+                            </td>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Estado:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{encabezado.estado | getEstado}}" class="form-control input-sm" id="estado" placeholder="Estado">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="text-left">
+
+                                <div class="col-md-6" style="margin: 0; padding: 5px;">
+                                    <label for="desMotivo" class="custom-font-size">Descripción del Viaje</label>
+                                    <fieldset disabled>
+                                    <textarea class="form-control input-sm custom-font-size" rows="3" id="desMotivo">{{encabezado.des_motivo}}</textarea>
+                                    </fieldset>
+                                    <br />
+                                </div>
+                                <div class="col-md-6" style="margin: 0; padding: 5px;">
+                                    <label for="observaciones" class="custom-font-size">Observaciones</label>
+                                    <fieldset disabled>
+                                    <textarea class="form-control input-sm custom-font-size" rows="3" id="observaciones">{{encabezado.des_observaciones}}</textarea>     
+                                    </fieldset>
+                                    <br />
+                                </div>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div> 
+            <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:0px;">
+                <div class="col-md-12">
+                    <table class="table">
+                        <tr class="bg-warning text-center">
+                            <th class="text-center">Fecha</th>
+                            <th class="text-center">Localidad</th>
+                            <th class="text-center">Salida</th>
+                            <th class="text-center">Regreso</th>
+                            <th class="text-center">Desayuno</th>
+                            <th class="text-center">Almuerzo</th>
+                            <th class="text-center">Comida</th>
+                            <th class="text-center">Estadía</th>
+                            <th class="text-center">Total por Día</th>
+                        </tr>
+                        <tr ng-repeat="d in detalle">
+                            <td>{{d.fec_detalle | customDate3}}</td>
+                            <td>{{d.cod_localidad}}</td>
+                            <td>{{d.hor_salida}}</td>
+                            <td>{{d.hor_regreso}}</td>
+                            <td class="text-right">{{d.mon_desayuno | currency : "&cent;"}}</td>
+                            <td class="text-right">{{d.mon_almuerzo | currency : "&cent;"}}</td>
+                            <td class="text-right">{{d.mon_cena | currency : "&cent;"}}</td>
+                            <td class="text-right">{{d.mon_estadia | currency : "&cent;"}}</td>
+                            <td class="text-right">{{(d.mon_desayuno*1) + (d.mon_almuerzo*1) + (d.mon_cena*1) + (d.mon_estadia*1) | currency : "&cent;"}}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><b>Totales</b></td>
+                            <td class="text-right">{{totDesayuno | currency : "&cent;"}}</td>
+                            <td class="text-right">{{totAlmuerzo | currency : "&cent;"}}</td>
+                            <td class="text-right">{{totCena | currency : "&cent;"}}</td>
+                            <td class="text-right">{{totEstadia | currency : "&cent;"}}</td>
+                            <td class="text-right">{{(totDesayuno*1)+(totAlmuerzo*1)+(totCena*1)+(totEstadia*1) | currency : "&cent;"}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>            
+        </div>
+    </div>
+
+</div>
+
+<div class="row bg-success">
+
+</div>

@@ -1,4 +1,13 @@
 angular.module("Routes", ['ngRoute'])
+
+    .run(function($rootScope, $templateCache) {
+        $rootScope.$on('$routeChangeStart', function(event, next, current) {
+            if (typeof(current) !== 'undefined'){
+                $templateCache.remove(current.templateUrl);
+            }
+        });
+    })
+
     .config(['$routeProvider', function($routeProvider){
 
         $routeProvider
@@ -66,6 +75,58 @@ angular.module("Routes", ['ngRoute'])
                         return VacacionesService.get(idSolicitud);
 
                     }
+                }
+            })
+            .when('/adelanto-viaticos', {
+                templateUrl: '../ng-app/views/adelanto-viaticos/list.html',
+                controller: 'AdelantoViaticosController',
+                resolve: {
+                    adelantoViaticos: function(ViaticosService){
+                         return ViaticosService.getAllAdelantoViaticos();
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    }
+                }
+            })
+            .when('/adelanto-viaticos/view/:numAdelanto', {
+                templateUrl: '../ng-app/views/adelanto-viaticos/view.html',
+                controller: 'ViewAdelantoViaticosController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                    viaticoData: function (ViaticosService, $route) {
+                        var numAdelanto = $route.current.params.numAdelanto;                        
+                        return ViaticosService.getNumAdelanto(numAdelanto);
+
+                    }                    
+                }
+            })
+            .when('/liquidacion-viaticos', {
+                templateUrl: '../ng-app/views/liquidacion-viaticos/list.html',
+                controller: 'LiquidacionViaticosController',
+                resolve: {
+                    liquidacionViaticos: function(ViaticosService){
+                         return ViaticosService.getAllLiquidacionViaticos();
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    }
+                }
+            })
+            .when('/liquidacion-viaticos/view/:numComprobante', {
+                templateUrl: '../ng-app/views/liquidacion-viaticos/view.html',
+                controller: 'ViewLiquidacionViaticosController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                    viaticoData: function (ViaticosService, $route) {
+                        var numComprobante = $route.current.params.numComprobante;
+                        return ViaticosService.getNumComprobante(numComprobante);
+
+                    }                    
                 }
             })
             /*

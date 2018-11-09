@@ -332,7 +332,11 @@ class SolicitudController extends BaseController
     public function approveSolicitud(){
 
         session_start();
-        $codUsuario  = $_SESSION['COD_FUNCIONARIO'];
+        if ($_SESSION['cod_usuario'] != 0) {
+            $codUsuario  = $_SESSION['COD_FUNCIONARIO'];
+        } else {
+            $codUsuario  = 0;
+        }
 
         $params = $this->getParameters();
         $id = intval($params["codSolicitud"]);

@@ -78,57 +78,62 @@
   <script type="text/javascript" src="../vendor/angular-utils-pagination/dirPagination.js"></script>
   <script type="text/javascript" src="../vendor/angular-ui-bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
   <script type="text/javascript" src="http://cdn.jsdelivr.net/angular.checklist-model/0.1.3/checklist-model.min.js"></script>
-  <script type="text/javascript" src="../ng-app/app.js"></script>
-  <script type="text/javascript" src="../ng-app/routes.js"></script>
+  <script type="text/javascript" src="../ng-app/app.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/routes.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
 
   <!-- CONTROLLERS -->
-  <script type="text/javascript" src="../ng-app/controllers/home/home-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/solicitud/solicitud-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/vacaciones/vacaciones-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/vacaciones/view-vacacion-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/solicitud/add-solicitud-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/solicitud/edit-solicitud-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/solicitud/view-solicitud-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/ejecucion-presupuestaria-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-solicitud-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-orden-pago-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-orden-pago-directa-controller.js"></script>
+  <script type="text/javascript" src="../ng-app/controllers/home/home-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud/solicitud-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/vacaciones/vacaciones-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/vacaciones/view-vacacion-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud/add-solicitud-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud/edit-solicitud-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud/view-solicitud-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/ejecucion-presupuestaria-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-solicitud-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-orden-pago-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-orden-pago-directa-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-egreso-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-transferencia-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/consulta-vehicular/consulta-vehicular-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/consulta-vehicular/view-consulta-vehicular-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/roles/roles-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/roles/add-rol-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/roles/edit-rol-controller.js"></script>
-  <script type="text/javascript" src="../ng-app/controllers/usuarios/usuarios-controller.js"></script>
+  <script type="text/javascript" src="../ng-app/controllers/ejecucion-presupuestaria/documento-transferencia-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/consulta-vehicular/consulta-vehicular-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/consulta-vehicular/view-consulta-vehicular-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/roles/roles-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/roles/add-rol-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/roles/edit-rol-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/usuarios/usuarios-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/adelanto-viaticos/adelanto-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/adelanto-viaticos/view-adelanto-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/liquidacion-viaticos/liquidacion-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/liquidacion-viaticos/view-liquidacion-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   
   <!-- COMPONENTS -->
-  <script type="text/javascript" src="../ng-app/components/general/main-menu/main-menu.component.js"></script>
-  <script type="text/javascript" src="../ng-app/components/general/header-menu/header-menu.component.js"></script>
+  <script type="text/javascript" src="../ng-app/components/general/main-menu/main-menu.component.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/components/general/header-menu/header-menu.component.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <!-- Grid Component -->
-  <script type="text/javascript" src="../ng-app/components/general/grid/component.module.js"></script>
-  <script type="text/javascript" src="../ng-app/components/general/grid/grid.component.js"></script>
-  <script type="text/javascript" src="../ng-app/components/general/grid/grid.controller.js"></script>
+  <script type="text/javascript" src="../ng-app/components/general/grid/component.module.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/components/general/grid/grid.component.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/components/general/grid/grid.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   
   <!-- SERVICES -->
-  <script type="text/javascript" src="../ng-app/services/solicitud-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/vacaciones-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/programa-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/proveedor-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/periodo-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/usuario-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/cuenta-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/presupuesto-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/orden-pago-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/orden-pago-directa-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/egreso-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/transferencia-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/provincia-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/canton-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/consulta-vehicular-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/main-menu-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/header-menu-service.js"></script>
-  <script type="text/javascript" src="../ng-app/services/sistema-service.js"></script>
+  <script type="text/javascript" src="../ng-app/services/solicitud-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/vacaciones-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/programa-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/proveedor-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/periodo-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/usuario-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/cuenta-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/presupuesto-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/orden-pago-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/orden-pago-directa-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/egreso-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/transferencia-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/provincia-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/canton-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/consulta-vehicular-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/main-menu-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/header-menu-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/sistema-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/viaticos.service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
 
   </body>
 </html>

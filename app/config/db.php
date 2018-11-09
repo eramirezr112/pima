@@ -119,12 +119,12 @@
                     if(is_array($field)) {
 
                         $nCR = 1;
-                        foreach ($field as $f) {
+                        foreach ($field as $key => $f) {
                         
                             if ($nCR == 1 && $cR == 1) {
-                                $this->where_filter .= $this->table_alias.".".$f." = ".$alias.".".$f. " ";
+                                $this->where_filter .= $this->table_alias.".".$key." = ".$alias.".".$f. " ";
                             } else {
-                                $this->where_filter .= "AND ".$this->table_alias.".".$f." = ".$alias.".".$f. " ";
+                                $this->where_filter .= "AND ".$this->table_alias.".".$key." = ".$alias.".".$f. " ";
                             }
                             $nCR++;
 
