@@ -103,6 +103,8 @@
   <script type="text/javascript" src="../ng-app/controllers/usuarios/usuarios-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/controllers/adelanto-viaticos/adelanto-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/controllers/adelanto-viaticos/view-adelanto-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/liquidacion-viaticos/liquidacion-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/liquidacion-viaticos/view-liquidacion-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   
   <!-- COMPONENTS -->
   <script type="text/javascript" src="../ng-app/components/general/main-menu/main-menu.component.js?v=<?php echo $_SESSION['login_token']; ?>"></script>

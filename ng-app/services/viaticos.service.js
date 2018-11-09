@@ -36,6 +36,24 @@ angular.module("ViaticosService", []).factory("ViaticosService", function($http)
                 headers : {'Accept' : 'application/json'}
             };            
             return $http.get(path+'&f='+action, config);
+        },
+        getAllLiquidacionViaticos: function(){
+            var action = 'getAllLiquidacionViaticos';
+            var config = {
+                headers : {'Accept' : 'application/json'}
+            };     
+            return $http.get(path+'&f='+action, config);
+        },
+        getNumComprobante: function (numComprobante) {
+            var action = 'getNumComprobante';
+            var data = {
+                numComprobante: numComprobante
+            };
+            var config = {
+                params: data,
+                headers : {'Accept' : 'application/json'}
+            };
+            return $http.get(path+'&f='+action, config);
         }
     };
 });

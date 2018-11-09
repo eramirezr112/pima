@@ -1,12 +1,11 @@
-angular.module('ViewAdelantoViaticos', ['ngMaterial'])
-    .controller('ViewAdelantoViaticosController', ['$scope', '$location', '$mdDialog', 'viaticoData', 'ViaticosService', function($scope, $location, $mdDialog, viaticoData, ViaticosService) {
+angular.module('ViewLiquidacionViaticos', ['ngMaterial'])
+    .controller('ViewLiquidacionViaticosController', ['$scope', '$location', '$mdDialog', 'viaticoData', 'ViaticosService', function($scope, $location, $mdDialog, viaticoData, ViaticosService) {
        
-        $scope.title = "Adelanto de Viáticos Nacionales";
+        $scope.title = "Liquidación de Viáticos Nacionales";
         
         $scope.encabezado = viaticoData.data.encabezado[0];
         $scope.detalle    = viaticoData.data.detalle;
-
-
+        
         $scope.totales     = viaticoData.data.totales;
         $scope.totAlmuerzo = $scope.totales.totMonAlmuerzo;
         $scope.totCena     = $scope.totales.totMonCena;
@@ -35,11 +34,12 @@ angular.module('ViewAdelantoViaticos', ['ngMaterial'])
 
             $mdDialog.show(confirm).then(function() {
 
-                var codSolicitud = $scope.encabezado.num_adelanto;
+                var codSolicitud = $scope.encabezado.num_comprobante;
                 var codCentro    = $scope.encabezado.cod_centro_costo;
                 var codMeta      = $scope.encabezado.cod_meta;
-                var monto        = $scope.encabezado.mon_adelanto;
+                var monto        = $scope.encabezado.mon_comprobante;
 
+                /*
                 ViaticosService.approveSolicitud(codSolicitud, codCentro, codMeta, monto).then(function (result) {
                    
                     var response = result.data.response;
@@ -62,7 +62,7 @@ angular.module('ViewAdelantoViaticos', ['ngMaterial'])
 
                         $mdDialog.show(confirmResult).then(function() {
                             
-                            $location.path('/adelanto-viaticos');
+                            $location.path('/liquidacion-viaticos-viaticos');
 
                         });
 
@@ -70,7 +70,8 @@ angular.module('ViewAdelantoViaticos', ['ngMaterial'])
                         alert('La solicitud No puede aprobarse en estos momentos');
                     }
 
-                });
+                });            
+                */
 
             }, function() {
                 
@@ -79,53 +80,7 @@ angular.module('ViewAdelantoViaticos', ['ngMaterial'])
         };        
 
         $scope.backToList = function () {            
-            $location.path('/adelanto-viaticos');
-        };
+            $location.path('/liquidacion-viaticos');
+        };        
 
-    }])
-    /*
-    .filter('toDate', function ($filter) {
-        return function (input) {
-
-            var formats = [
-                moment.ISO_8601,
-                "DD/MM/YYYY"
-            ];
-
-            var result = moment(input, formats, true).isValid();
-
-            if (result) {
-                return $filter('date')(input, 'dd/MM/yyyy');
-            } else {
-                return "Ninguna";
-            }
-        }
-    })
-    .filter('statusCode', function ($filter) {
-
-        return function (input) {
-
-            if ( input != null && (input.toString()).length == 1 && !input.match(/^-{0,1}\d+$/)){
-
-                var output = "";
-                if (input === 'E') {
-                    output = "Entregado";
-                } else if (input === 'C') {
-                    output = "Confección";
-                } else if (input === 'N') {
-                    output = "Anuladas";
-                } else if (input === 'P') {
-                    output = "Préstamo";
-                } else if (input === 'A') {
-                    output = "Aprobadas";
-                }
-
-                return output;
-
-            } else {
-                return input;
-            }
-        }
-    })
-    */
-    ;
+    }]);
