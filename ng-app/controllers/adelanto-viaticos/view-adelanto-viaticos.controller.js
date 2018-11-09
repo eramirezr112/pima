@@ -70,7 +70,7 @@ angular.module('ViewAdelantoViaticos', ['ngMaterial'])
                         alert('La solicitud No puede aprobarse en estos momentos');
                     }
 
-                });            
+                });
 
             }, function() {
                 
