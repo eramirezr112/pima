@@ -9,11 +9,19 @@ angular.module('AdelantoViaticos', ['ngMaterial'])
 
         // Se preparan las columnas a mostrar
         $scope.preparedColumns = [];
-        angular.forEach($scope.columns, function(value, key) {            
+        angular.forEach($scope.columns, function(value, key) {    
+            var isCurrency = false;
+            if (value === 'monto') {
+                isCurrency = true;
+            }
             var newColumn = {
                 visible: true,
-                text: value
+                text: value,
+                isCurrency: isCurrency
             };
+
+            console.log(newColumn);
+            
             $scope.preparedColumns.push(newColumn);
         });
 

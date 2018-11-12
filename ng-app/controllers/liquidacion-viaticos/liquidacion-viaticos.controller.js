@@ -10,9 +10,14 @@ angular.module('LiquidacionViaticos', [])
         // Se preparan las columnas a mostrar
         $scope.preparedColumns = [];
         angular.forEach($scope.columns, function(value, key) {            
+            var isCurrency = false;
+            if (value === 'monto') {
+                isCurrency = true;
+            }
             var newColumn = {
                 visible: true,
-                text: value
+                text: value,
+                isCurrency: isCurrency
             };
             $scope.preparedColumns.push(newColumn);
         });        
