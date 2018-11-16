@@ -27,7 +27,12 @@
                     
                     <span ng-if="c.text != 'Acciones'">
                         <span ng-if="c.visible">
-                        {{d[c.text] | isDate | isStatusLetter | capitalizeEveryWord}}
+                            <span ng-if="c.isCurrency">
+                            {{d[c.text] | currency : "&cent;"}}
+                            </span>
+                            <span ng-if="!c.isCurrency">
+                            {{d[c.text] | isDate | isStatusLetter | capitalizeEveryWord}}
+                            </span>                            
                         </span>
                     </span>
                     <span ng-if="c.text == 'Acciones'">
