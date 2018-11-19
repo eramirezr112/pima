@@ -54,6 +54,20 @@ angular.module("ViaticosService", []).factory("ViaticosService", function($http)
                 headers : {'Accept' : 'application/json'}
             };
             return $http.get(path+'&f='+action, config);
+        },
+        approveLiquidacionViaticos: function (codSolicitud, codCentro, codMeta, monto) {
+            var action = 'approveLiquidacionViaticos';
+            var data = {
+                codSolicitud: codSolicitud,
+                codCentro: codCentro,
+                codMeta: codMeta,
+                monto: monto
+            };
+            var config = {
+                params: data,
+                headers : {'Accept' : 'application/json'}
+            };            
+            return $http.get(path+'&f='+action, config);
         }
     };
 });
