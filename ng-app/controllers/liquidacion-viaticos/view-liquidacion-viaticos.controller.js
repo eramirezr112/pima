@@ -39,8 +39,7 @@ angular.module('ViewLiquidacionViaticos', ['ngMaterial'])
                 var codMeta      = $scope.encabezado.cod_meta;
                 var monto        = $scope.encabezado.mon_comprobante;
 
-                /*
-                ViaticosService.approveSolicitud(codSolicitud, codCentro, codMeta, monto).then(function (result) {
+                ViaticosService.approveLiquidacionViaticos(codSolicitud, codCentro, codMeta, monto).then(function (result) {
                    
                     var response = result.data.response;
 
@@ -62,16 +61,55 @@ angular.module('ViewLiquidacionViaticos', ['ngMaterial'])
 
                         $mdDialog.show(confirmResult).then(function() {
                             
-                            $location.path('/liquidacion-viaticos-viaticos');
+                            $location.path('/liquidacion-viaticos');
 
                         });
 
+                    } else if (response < 0) {
+
+                        var confirmResult = $mdDialog.confirm({
+                                onComplete: function afterShowAnimation() {
+                                    var $dialog = angular.element(document.querySelector('md-dialog'));
+                                    var $actionsSection = $dialog.find('md-dialog-actions');
+                                    var $cancelButton = $actionsSection.children()[0];
+                                    var $confirmButton = $actionsSection.children()[1];
+                                    angular.element($confirmButton).addClass('btn-accept md-raised');
+                                }
+                            })
+                            .title('No se puede aprobar la solicitud debido a que no existe presupuesto disponible.')
+                            .ariaLabel('Lucky day')
+                            .targetEvent(id)
+                            .ok('Aceptar');
+
+                        $mdDialog.show(confirmResult).then(function() {
+                            
+                            $location.path('/liquidacion-viaticos/view/'+codSolicitud);
+
+                        });                        
                     } else {
-                        alert('La solicitud No puede aprobarse en estos momentos');
+
+                        var confirmResult = $mdDialog.confirm({
+                                onComplete: function afterShowAnimation() {
+                                    var $dialog = angular.element(document.querySelector('md-dialog'));
+                                    var $actionsSection = $dialog.find('md-dialog-actions');
+                                    var $cancelButton = $actionsSection.children()[0];
+                                    var $confirmButton = $actionsSection.children()[1];
+                                    angular.element($confirmButton).addClass('btn-accept md-raised');
+                                }
+                            })
+                            .title('HA OCURRIDO UN ERROR: La solicitud No puede aprobarse en estos momentos')
+                            .ariaLabel('Lucky day')
+                            .targetEvent(id)
+                            .ok('Aceptar');
+
+                        $mdDialog.show(confirmResult).then(function() {
+                            
+                            $location.path('/liquidacion-viaticos/view/'+codSolicitud);
+
+                        });                        
                     }
 
-                });            
-                */
+                });
 
             }, function() {
                 

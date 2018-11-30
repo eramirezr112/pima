@@ -19,9 +19,6 @@ angular.module('AdelantoViaticos', ['ngMaterial'])
                 text: value,
                 isCurrency: isCurrency
             };
-
-            console.log(newColumn);
-            
             $scope.preparedColumns.push(newColumn);
         });
 

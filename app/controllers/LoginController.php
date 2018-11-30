@@ -318,7 +318,13 @@ class LoginController extends BaseController
                 }
 
                 $key = $this->getUniqueLoginAccess();
-                $_SESSION['login_token']  = $key;                
+                $_SESSION['login_token']  = $key;    
+
+                $fichero = '../ng-app/session.file.js';
+                // Añade una nueva persona al fichero
+                $actual = "var session = '$key'";
+                // Escribe el contenido al fichero
+                file_put_contents($fichero, $actual);            
 
             // Usuario sin permisos de acceso Web
             } else {

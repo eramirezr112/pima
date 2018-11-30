@@ -78,6 +78,8 @@
   <script type="text/javascript" src="../vendor/angular-utils-pagination/dirPagination.js"></script>
   <script type="text/javascript" src="../vendor/angular-ui-bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
   <script type="text/javascript" src="http://cdn.jsdelivr.net/angular.checklist-model/0.1.3/checklist-model.min.js"></script>
+
+  <script type="text/javascript" src="../ng-app/session.file.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/app.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/routes.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
 
