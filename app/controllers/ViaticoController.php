@@ -426,6 +426,246 @@ class ViaticoController extends BaseController
 
     }
 
+    public function approveLiquidacionViaticos() {
+
+        session_start();
+        if ($_SESSION['cod_usuario'] != 0) {
+            $codUsuario  = $_SESSION['COD_FUNCIONARIO'];
+        } else {
+            $codUsuario  = 0;
+        }
+
+        $params = $this->getParameters();
+
+        //Numero de Comprobante
+        $numComprobante   = intval($params["codSolicitud"]);
+
+        // Encabezado del Comprobante
+        $encabezado = $this->getEncabezadoComprobante($numComprobante);
+        $montoComprobante = number_format(floatval($encabezado['mon_comprobante']), 2, '.', '');
+        $numAdelanto      = intval($encabezado['num_adelanto']);
+        $codCentro        = trim($encabezado['cod_centro_costo']);
+        $codMeta          = $encabezado["cod_meta"];     
+
+        //Se obtienen los configuradores requeridos para la aprobacion
+        $configuradores  = $this->getConfiguradores();
+        $yearPresupuesto = $configuradores[0]['VAL_DATO'];
+        $codSubPartida   = $configuradores[1]['VAL_DATO'];
+
+        //Se obtienen los montos provisionales y disponibles actuales 
+        $montos = $this->getMontosActuales($yearPresupuesto, $codCentro, $codSubPartida, $codMeta);
+        $provisional = number_format(floatval($montos[0]['provisional']), 2, '.', '');
+        $disponible  = number_format(floatval($montos[0]['disponible']), 2, '.', '');
+        $definitivo  = number_format(floatval($montos[0]['definitivo']), 2, '.', '');
+
+        $status_process = 1;
+        
+        //Liquidacion tiene adelanto
+        if ($numAdelanto > 0) {            
+            $monAdelanto = number_format(floatval($this->getMonAdelanto($numAdelanto)), 2, '.', '');
+
+            $statusP = true;
+            if ($montoComprobante < $monAdelanto) {
+                $diferencia = $monAdelanto - $montoComprobante;
+
+                $new_provisional = $provisional - $montoAdelanto;
+                $new_disponible  = $disponible + $diferencia;
+                $new_definitivo  = $definitivo + $montoComprobante;
+
+                $f_provisional = number_format(floatval($new_provisional), 2, '.', '');
+                $f_disponible  = number_format(floatval($new_disponible), 2, '.', '');
+                $f_definitivo  = number_format(floatval($new_definitivo), 2, '.', '');
+
+                $sql = "UPDATE pre_ejecucion_presupuesto_encabe 
+                        SET mon_compromiso_provisional = $f_provisional, 
+                            mon_disponible = $f_disponible,
+                            mon_compromiso_definitivo = $f_definitivo 
+                        WHERE ano_presupuesto = $yearPresupuesto 
+                        AND cod_centro = '$codCentro' 
+                        AND cod_subpartida = '$codSubPartida' 
+                        AND cod_meta = '$codMeta'";
+                $resultA = $this->execute($sql);
+
+                if (!$resultA) {
+                    $statusP = false;
+                    $status_process = 0;
+                }
+
+            } else if ($montoComprobante > $monAdelanto) {
+                $diferencia = $montoComprobante - $monAdelanto;
+
+                // Se autoriza
+                if ($diferencia >= $disponible) {
+
+                    $new_disponible  = $disponible - $diferencia;
+                    $new_provisional = $provisional - $montoAdelanto;
+                    $new_definitivo  = $definitivo + $montoComprobante;
+
+                    $f_provisional = number_format(floatval($new_provisional), 2, '.', '');
+                    $f_disponible  = number_format(floatval($new_disponible), 2, '.', '');
+                    $f_definitivo  = number_format(floatval($new_definitivo), 2, '.', '');
+
+                    $sql = "UPDATE pre_ejecucion_presupuesto_encabe 
+                            SET mon_compromiso_provisional = $f_provisional, 
+                                mon_disponible = $f_disponible,
+                                mon_compromiso_definitivo = $f_definitivo 
+                            WHERE ano_presupuesto = $yearPresupuesto 
+                            AND cod_centro = '$codCentro' 
+                            AND cod_subpartida = '$codSubPartida' 
+                            AND cod_meta = '$codMeta'";
+                    $resultA = $this->execute($sql);
+
+                    if (!$resultA) {
+                        $statusP = false;
+                        $status_process = 0;
+                    }
+
+                // NO se autoriza
+                } else {                    
+                    // No se puede autorizar Y enviar mensaje al usuario No existe presupuesto disponible
+                    $statusP = false;
+                    $status_process = -1;
+                }
+
+            } else if ($montoComprobante == $monAdelanto) {
+                $new_provisional = $provisional - $montoAdelanto;
+                $new_definitivo  = $definitivo + $montoComprobante;
+
+                $f_provisional = number_format(floatval($new_provisional), 2, '.', '');
+                $f_definitivo  = number_format(floatval($new_definitivo), 2, '.', '');
+                
+                $sql = "UPDATE pre_ejecucion_presupuesto_encabe 
+                        SET mon_compromiso_provisional = $f_provisional,                             
+                            mon_compromiso_definitivo = $f_definitivo 
+                        WHERE ano_presupuesto = $yearPresupuesto 
+                        AND cod_centro = '$codCentro' 
+                        AND cod_subpartida = '$codSubPartida' 
+                        AND cod_meta = '$codMeta'";
+                $resultA = $this->execute($sql);
+
+                if (!$resultA) {
+                    $statusP = false;
+                    $status_process = 0;
+                }
+
+            }
+
+            if ($statusP) {
+
+                //Se obtiene la version
+                $version    = $this->getVersion($yearPresupuesto);
+                //Se genera la nueva linea de detalle
+                $codDetalle = $this->getCodigoDetalle() + 1;
+
+                $sql = "INSERT INTO PRE_EJECUCION_PRESUPUESTO_DETALL (ano_presupuesto, cod_version, cod_centro, cod_subpartida, 
+                        cod_detalle, num_documento, tip_documento, mon_gasto, tip_detalle, fec_liquidacion, COD_META) 
+                        VALUES ($yearPresupuesto, $version, '$codCentro', '$codSubPartida', 
+                        $codDetalle, $numComprobante, 11, $montoComprobante, 'CD', NULL, $codMeta)";
+
+                $resultB = $this->execute($sql);
+
+                if ($resultB) {
+
+                    $sql = "DELETE FROM PRE_EJECUCION_PRESUPUESTO_DETALL 
+                            WHERE num_adelanto = $numAdelanto 
+                                AND tip_detalle = 'CP' 
+                                AND tip_documento = 10 
+                                AND ano_presupuesto = $yearPresupuesto 
+                                AND cod_centro = '$codCentro' 
+                                AND cod_subpartida = '$codSubPartida' 
+                                AND COD_META = $codMeta";
+
+                    $resultC = $this->execute($sql);
+
+                    if ($resultC) {
+
+                        $sql = "UPDATE TES_CCHV_COMPROBANTE_ENCABEZADO 
+                                    SET cod_estado = 2, 
+                                        fec_autorizacion = GETDATE(), 
+                                        cod_autoriza = $codUsuario 
+                                WHERE num_comprobante = $numComprobante";
+                        $resultD = $this->execute($sql);
+
+                        if (!$resultD) {
+                            $status_process = 0;
+                        }
+
+                    } else {
+                        $status_process = 0;
+                    }
+
+                } else {
+                    $status_process = 0;
+                }
+
+            }
+
+
+        // Liquidacion SIN adelanto
+        } else {
+
+            if ($montoComprobante <= $disponible) {
+
+                $new_disponible  = $disponible - $montoComprobante;
+                $new_definitivo  = $definitivo + $montoComprobante;
+
+                $f_disponible  = number_format(floatval($new_disponible), 2, '.', '');
+                $f_definitivo  = number_format(floatval($new_definitivo), 2, '.', '');
+
+                $sql = "UPDATE pre_ejecucion_presupuesto_encabe 
+                        SET mon_disponible = $f_disponible, 
+                            mon_compromiso_definitivo = $f_definitivo 
+                        WHERE ano_presupuesto = $yearPresupuesto 
+                        AND cod_centro = '$codCentro' 
+                        AND cod_subpartida = '$codSubPartida' 
+                        AND cod_meta = '$codMeta'";
+
+                $resultA = $this->execute($sql);
+
+                if ($resultA) {
+
+                    //Se obtiene la version
+                    $version    = $this->getVersion($yearPresupuesto);
+                    //Se genera la nueva linea de detalle
+                    $codDetalle = $this->getCodigoDetalle() + 1;
+
+                    $sql = "INSERT INTO PRE_EJECUCION_PRESUPUESTO_DETALL (ano_presupuesto, cod_version, cod_centro, cod_subpartida, 
+                            cod_detalle, num_documento, tip_documento, mon_gasto, tip_detalle, fec_liquidacion, COD_META) 
+                            VALUES ($yearPresupuesto, $version, '$codCentro', '$codSubPartida', 
+                            $codDetalle, $numComprobante, 11, $montoComprobante, 'CD', GETDATE(), $codMeta)";
+
+                    $resultB = $this->execute($sql);
+    
+                    if ($resultB) {
+                        $sql = "UPDATE TES_CCHV_COMPROBANTE_ENCABEZADO 
+                                    SET cod_estado = 2, 
+                                        fec_autorizacion = GETDATE(), 
+                                        cod_autoriza = $codUsuario 
+                                WHERE num_comprobante = $numComprobante";
+                        $resultC = $this->execute($sql);
+
+                        if (!$resultC) {
+                            $status_process = 0;
+                        }
+
+                    } else {
+                        $status_process = 0;
+                    }
+                } else {
+                    $status_process = 0;
+                }
+
+            } else {
+                // No se puede autorizar Y enviar mensaje al usuario No existe presupuesto disponible
+                $status_process = -1;
+            }
+
+        }
+
+        echo json_encode(array('response'=>$status_process));
+
+    }
+
     private function getConfiguradores() {
 
         $sql = "SELECT VAL_DATO 
@@ -441,7 +681,8 @@ class ViaticoController extends BaseController
     private function getMontosActuales($yearPresupuesto, $codCentro, $codSubPartida, $codMeta) {
 
         $sql = "SELECT mon_compromiso_provisional as provisional,
-                       mon_disponible as disponible 
+                       mon_disponible as disponible, 
+                       mon_compromiso_definitivo as definitivo  
                 FROM pre_ejecucion_presupuesto_encabe 
                 WHERE ano_presupuesto = $yearPresupuesto 
                     AND cod_centro = '$codCentro' 
@@ -472,6 +713,81 @@ class ViaticoController extends BaseController
         $codigo = $this->getArray($result);
 
         return $codigo[0]['codDetalle'];
+    }
+
+    private function getEncabezadoComprobante($numComprobante) {
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+
+        $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        if ($connectionType == "odbc_mssql") {
+            $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+        } 
+
+        $sql = "SELECT tcce.num_comprobante, 
+                       tcce.fec_comprobante, 
+                       $nameFuncionario as solicitante,
+                       tcce.cod_centro_costo, 
+                       cc.des_centro as centro, 
+                       tcce.des_motivo, 
+                       tcce.des_observaciones, 
+                       tcce.cod_presupuesto, 
+                       tcce.cod_autoriza, 
+                       tcce.fec_autorizacion, 
+                       tcce.mon_comprobante, 
+                       tcc.des_clasificacion as clasificacion, 
+                       SUBSTRING(tce.des_estado, 1, 1) as estado,
+                       tcce.cod_anula, 
+                       tcce.fec_anulacion, 
+                       tcce.des_justificacion, 
+                       tcce.cod_entrega, 
+                       tcce.fec_entrega, 
+                       tcce.num_adelanto, 
+                       tcce.cod_meta, 
+                       tcce.num_transferencia, 
+                       tcce.cod_comp_ingresos, 
+                       tcce.cod_comp_cajach, 
+                       tcce.mon_funcionario, 
+                       tcce.mon_devolver, 
+                       tcce.ind_transferencia,  
+                       tcce.num_transferencia_liq 
+                FROM TES_CCHV_COMPROBANTE_ENCABEZADO as tcce, 
+                     RH_FUNCIONARIOS as ssf,
+                     RH_CENTROS_COSTO as cc,
+                     TES_CCH_CLASIFICACION as tcc, 
+                     TES_CCH_ESTADOS as tce 
+                WHERE tcce.num_comprobante = $numComprobante 
+                    AND tcce.cod_estado = 1 
+                    AND tcce.cod_centro_costo = cc.cod_centro
+                    AND tcce.cod_estado = tce.cod_estado 
+                    AND tcce.cod_solicitante = ssf.cod_funcionario 
+                    AND tcce.cod_clasificacion = tcc.cod_clasificacion";
+
+        $result = $this->execute($sql);
+        $solicitudEncabezado = $this->getArray($result);
+
+        if ($connectionType == "odbc_mssql") {
+            $solicitudEncabezado = $this->toUtf8($solicitudEncabezado);          
+        }
+
+        return $solicitudEncabezado[0];
+    }
+
+    private function getMonAdelanto($numAdelanto) {
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+
+        $sql = "SELECT tcae.mon_adelanto 
+                FROM TES_CCHV_ADELANTO_ENC as tcae 
+                WHERE tcae.num_adelanto = $numAdelanto";
+        $result = $this->execute($sql);
+        $data   = $this->getArray($result);
+
+        if ($connectionType == "odbc_mssql") {
+            $data = $this->toUtf8($data);          
+        }
+
+        return $data[0]['mon_adelanto'];
     }
 
     private function checkPermision ($option) {

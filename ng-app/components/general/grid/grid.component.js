@@ -8,7 +8,7 @@ var gridComponent = {
         locationPath: '=',
         approveAction: '&'
     },
-    templateUrl: '../ng-app/components/general/grid/grid.html',
+    templateUrl: '../ng-app/components/general/grid/grid.html?s='+session,
     controller: 'gridController'
 };
 
