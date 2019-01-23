@@ -79,6 +79,15 @@ angular.module("pnlsys", [
         return output;
     }
 })
+.filter('strSubPartida', function () {
+
+    return function (input) {
+        var strSubpartida = input.substring(0,1) + ".";
+        strSubpartida += input.substring(1,3) + ".";
+        strSubpartida += input.substring(3,5);
+        return strSubpartida;
+    }
+})
 .filter('getEstadoEgreso', function () {
 
     return function (input) {

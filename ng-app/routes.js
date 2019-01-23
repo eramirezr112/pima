@@ -129,6 +129,34 @@ angular.module("Routes", ['ngRoute'])
                     }                    
                 }
             })
+            .when('/ejecucion-presupuestaria', {
+                templateUrl: '../ng-app/views/ejecucion-presupuestaria/index.html',
+                controller: 'EjecucionPresupuestariaController',
+                resolve: {
+                    /*
+                    programas: function(ProgramaService){
+                        return ProgramaService.all();
+                    },*/
+                    centroCostos: function (PresupuestoService) {
+                        return PresupuestoService.getAllCentroCostos();
+                    },/*
+                    cuentas: function (CuentaService) {
+                        return CuentaService.all();
+                    },
+                    */
+                    presupuesto: function (PresupuestoService) {
+                        var year          = new Date().getFullYear();
+                        var codCentro     = '';
+                        var codSubpartida = '';
+                        var desCuenta     = '';
+                        return PresupuestoService.getEncabezado(year, codCentro, codSubpartida, desCuenta);
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    }                         
+                }
+                
+            })
             /*
             .when('/solicitud/add', {
                 templateUrl: '../ng-app/views/solicitud/add.html',

@@ -1,7 +1,36 @@
 angular.module('EjecucionPresupuestaria', ['ui.bootstrap'])
-    .controller('EjecucionPresupuestariaController', ['$scope', '$uibModal', 'periodos', 'programas', 'cuentas', 'presupuesto', 'PresupuestoService', '$location', 'usuario', 'UsuarioService', 'PeriodoService', 'SolicitudService', 'OrdenPagoService', 'OrdenPagoDirectaService', 'EgresoService', 'TransferenciaService', function($scope, $uibModal, periodos, programas, cuentas, presupuesto, PresupuestoService, $location, usuario, UsuarioService, PeriodoService, SolicitudService, OrdenPagoService, OrdenPagoDirectaService, EgresoService, TransferenciaService) {
+    .controller('EjecucionPresupuestariaController', ['$scope', '$uibModal', 'centroCostos', 'presupuesto'  /*, 'periodos', 'programas', 'cuentas', 'presupuesto', 'PresupuestoService'*/, '$location', 'usuario', /*'UsuarioService', 'PeriodoService', 'SolicitudService', 'OrdenPagoService', 'OrdenPagoDirectaService', 'EgresoService', 'TransferenciaService',*/ function($scope, $uibModal, centroCostos, presupuesto, /*periodos, programas, cuentas, presupuesto, PresupuestoService, */ $location, usuario, /*UsuarioService, PeriodoService, SolicitudService, OrdenPagoService, OrdenPagoDirectaService, EgresoService, TransferenciaService*/) {
 
-        //$scope.access = usuario.data.usuario.ind_presup;
+        $scope.title = "Consulta de Ejecución Presupuestaria";
+        $scope.centroCostos = centroCostos.data.list;
+        $scope.centroCosto = centroCostos.data.first;
+        $scope.encabezado = presupuesto.data.encabezado;
+        $scope.registrosEncabeza = presupuesto.data.registros;
+        $scope.totalesEncabezado = presupuesto.data.totales;
+        console.log(presupuesto.data);
+
+        var minYear = 2004;
+        var current_year = new Date().getFullYear();
+        $scope.years = [];
+        $scope.year = {'cod_year': current_year, 'num_year': current_year};
+
+        for (var i = minYear; i <= current_year; i++) {
+            var year_data = {'cod_year': i, 'num_year': i};
+            $scope.years.push(year_data);
+        }
+
+        // Get detalle for the first line
+        var initInfo = {
+            detalle: presupuesto.data.initDetalle
+        };
+
+        // Tabs
+        $scope.provisional    = initInfo.detalle.provisional;
+        $scope.definitivo     = initInfo.detalle.definitivo;
+        $scope.real           = initInfo.detalle.real;        
+        $scope.modificaciones = initInfo.detalle.modificaciones;        
+
+        /*
         $scope.isModuleEnabled = function(module) {
 
             if (usuario.data.usuario.modulos_acceso != null){
@@ -46,7 +75,7 @@ angular.module('EjecucionPresupuestaria', ['ui.bootstrap'])
         };
 
         $scope.access = $scope.checkPermision(2);
-        $scope.title = "Ejecución Presupuestaria";
+        
 
         // Encabezado Data
         $scope.periodos          = periodos.data.periodos;
@@ -64,10 +93,10 @@ angular.module('EjecucionPresupuestaria', ['ui.bootstrap'])
         };
 
         // Tabs
-        $scope.reservado      = initInfo.detalle.reservado;
-        $scope.aprobado       = initInfo.detalle.aprobado;
-        $scope.ejecutado      = initInfo.detalle.ejecutado;
-        $scope.modificaciones = initInfo.detalle.modificaciones;
+        $scope.provisional = initInfo.detalle.provisional;
+        $scope.definitivo  = initInfo.detalle.definitivo;
+        $scope.real        = initInfo.detalle.real;
+        //$scope.modificaciones = initInfo.detalle.modificaciones;
 
         var initPrograma = null;
         initPrograma = {
@@ -117,32 +146,18 @@ angular.module('EjecucionPresupuestaria', ['ui.bootstrap'])
             $scope.tabs[0].content = null;
             $scope.tabs[1].content = null;
             $scope.tabs[2].content = null;
-            $scope.tabs[3].content = null;
-            /*            
-            setTimeout(function() {
-
-                var codCuenta = $scope.filteredItems[0].cod_cuenta;
-                var codPrograma = $scope.filteredItems[0].cod_programa;
-
-                PresupuestoService.getDetalle(codPrograma, codCuenta).then(function (result) {                
-                    $scope.reservado = result.data.detalle.reservado;
-                    $scope.tabs[0].content = result.data.detalle.reservado;
-                    $scope.tabs[1].content = result.data.detalle.aprobado;
-                    $scope.tabs[2].content = result.data.detalle.ejecutado;
-                    $scope.tabs[3].content = result.data.detalle.modificaciones;                
-                }); 
-
-            }, 1000);
-            */            
+            $scope.tabs[3].content = null;        
         }               
+        */
 
         $scope.tabs = [
-            { title:'Presup. Reservado', content:$scope.reservado     , templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab1.html'},
-            { title:'Presup. Aprobado' , content:$scope.aprobado      , templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab2.html'},
-            { title:'Presup. Ejecutado', content:$scope.ejecutado     , templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab3.html'},
-            { title:'Modificaciones'   , content:$scope.modificaciones, templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab4.html'},
+            { title:'Comp. Provisional', content:$scope.provisional, templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab1.html'},
+            { title:'Comp. Definitivo' , content:$scope.definitivo , templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab2.html'},
+            { title:'Gasto. Real'      , content:$scope.real       , templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab3.html'},
+            { title:'Modificaciones'   , content:$scope.modificaciones, templateUrl: '../ng-app/views/ejecucion-presupuestaria/tabs/tab4.html'}
         ];
 
+        /*
         $scope.programFilter = function(tran) {            
 
             if ($scope.programa.DES_PROGRAMA == "- TODOS -" || !$scope.programa) {                
@@ -306,9 +321,6 @@ angular.module('EjecucionPresupuestaria', ['ui.bootstrap'])
                 $scope.activeRowTab = index;
             });
 
-            /**
-             * Get document's data for the Modal Box
-             */
             function getModalData(typeDoc) {
 
                 var template = '';
@@ -375,5 +387,6 @@ angular.module('EjecucionPresupuestaria', ['ui.bootstrap'])
             };
 
         }
+        */
 
     }]);

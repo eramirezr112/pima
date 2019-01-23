@@ -51,7 +51,7 @@ background:none;
 }
 
 #tbl-ep{
-	width: 1270px;
+	width: 1325px;
 }
 
 #tbl-ep th{
@@ -62,13 +62,13 @@ background:none;
     width: 50px;
 }
 #tbl-ep .col-medium {
-    width: 200px;
+    width: 150px;
 }
 #tbl-ep .col-big {
-    width: 190px;
+    width: 200px;
 }
 #tbl-ep .col-base {
-    width: 100px;
+    width: 120px;
 }
 #tbl-ep thead, tfoot {
     background:#f9f9f9;
@@ -92,7 +92,7 @@ background:none;
 .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
     color: #000;
     cursor: default;
-    background-color: #C1D740;
+    background-color: #09c2dd;
     border: 1px solid #ddd;
     border-bottom-color: transparent;
 }
@@ -112,7 +112,7 @@ background:none;
 }
 
 #tbl-tabs-ep thead{
-    background:#00A650;;
+    background:#eee;;
     display:table;
     width:100%;
     width:calc(100% - 5px);
