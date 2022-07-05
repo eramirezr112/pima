@@ -34,7 +34,7 @@ class MainmenuController extends BaseController
     // Opciones de Menu
     $sql = "SELECT wo.num_opcion, wo.cod_modulo, wo.descripcion, wo.url 
             FROM web_opciones as wo 
-            WHERE wo.cod_seccion = 1 $filter_condition;";
+            WHERE wo.cod_seccion = 1 $filter_condition ORDER BY wo.orden;";
 
     $result = $this->execute($sql);
     
@@ -50,5 +50,4 @@ class MainmenuController extends BaseController
 		die("not implemented");	
 	}
 }
-
 ?>

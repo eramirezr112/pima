@@ -17,21 +17,25 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-if="totalRegistros == 0">
+            <tr ng-if="$ctrl.totalRegistros == 0">
                 <td colspan="6" class="text-center" style="color:#ccc;">Sin Registros</td>
             </tr>
 
             <tr dir-paginate="d in $ctrl.infoGrid | filter:{ col1: search } | itemsPerPage:15">
                 
-                <td ng-repeat="c in $ctrl.columns" ng-class="$ctrl.addClass($index, d[c.text])" ng-if="c.visible">
-                    
+                <td ng-repeat="c in $ctrl.columns" ng-class="$ctrl.addClass($index, d[c.text])" ng-if="c.visible">                    
                     <span ng-if="c.text != 'Acciones'">
                         <span ng-if="c.visible">
                             <span ng-if="c.isCurrency">
                             {{d[c.text] | currency : "&cent;"}}
                             </span>
                             <span ng-if="!c.isCurrency">
-                            {{d[c.text] | isDate | isStatusLetter | capitalizeEveryWord}}
+                                <span ng-if="!c.isFromSolRecursos">
+                                    {{d[c.text] | isDate | isStatusLetter | capitalizeEveryWord}}
+                                </span>
+                                <span ng-if="c.isFromSolRecursos">                                    
+                                    {{d[c.text] | isStatusLetter2}}
+                                </span>                            
                             </span>                            
                         </span>
                     </span>
@@ -40,14 +44,21 @@
                             <a href="#!{{$ctrl.locationPath}}/edit/{{d['solicitud']}}" class="btn btn-warning btn-xs" title="Editar"><i class="fa fa-edit"></i></a>
                         </span>
                         <span ng-if="$ctrl.actions.view">
-                            <a href="#!{{$ctrl.locationPath}}/view/{{d['solicitud']}}" class="btn btn-default btn-xs" title="Ver"><i class="fa fa-eye"></i></a>
+                            <a href="#!{{$ctrl.locationPath}}/view/{{d['solicitud']}}" ng-show="$ctrl.locationPath !== '/solicitud-recursos-aj' && $ctrl.locationPath !== '/solicitud-recursos-ag' && $ctrl.locationPath !== '/solicitud-recursos-al'" class="btn btn-default btn-xs" title="Ver"><i class="fa fa-eye"></i></a>
+                            <a href="#!{{$ctrl.locationPath}}/view/{{d['número']}}" ng-show="$ctrl.locationPath == '/solicitud-recursos-aj' || $ctrl.locationPath == '/solicitud-recursos-ag' || $ctrl.locationPath == '/solicitud-recursos-al'" class="btn btn-default btn-xs" title="Ver"><i class="fa fa-eye"></i></a>
+                        </span>                        
+                        <span ng-if="$ctrl.actions.authorize && d['estado'] == 'C' || d['ind_estado'] == 1  || d['ind_estado'] == 2 || d['ind_estado'] == 12">
+                            <a class="btn btn-success btn-xs" ng-show="$ctrl.locationPath !== '/solicitud-recursos-aj' && $ctrl.locationPath !== '/solicitud-recursos-ag' && $ctrl.locationPath !== '/solicitud-recursos-al'" data-ng-click="$ctrl.approve({codEdit:d['solicitud']})" title="Autorizar"><i class="fa fa fa-check"></i></a>
+                            <a class="btn btn-success btn-xs" ng-show="$ctrl.locationPath == '/solicitud-recursos-aj' || $ctrl.locationPath == '/solicitud-recursos-ag' || $ctrl.locationPath == '/solicitud-recursos-al'" data-ng-click="$ctrl.approve({codEdit:d['número']})" title="Autorizar"><i class="fa fa fa-check"></i></a>
                         </span>
-                        <span ng-if="$ctrl.actions.authorize && d['estado'] == 'C'">
-                            <a class="btn btn-success btn-xs" data-ng-click="$ctrl.approve({codEdit:d['solicitud']})" title="Autorizar"><i class="fa fa fa-check"></i></a>
-                        </span>
-
                         <span ng-if="$ctrl.actions.delete">
                             <a class="btn btn-danger btn-xs" ng-click="" title="Eliminar"><i class="fa fa-trash"></i></a>
+                        </span>
+                        <span ng-if="$ctrl.actions.reject && (d['ind_estado'] == 2 || d['ind_estado'] == 12) && d['tipo'] != 'C'">
+                            <a class="btn btn-warning btn-xs" data-ng-click="$ctrl.devolver({codEdit:d['número']})" title="Devolver Solicitud" style="width:24px; background-color:#4DD2FF; border-color:#00BFFF;"><i class="fa fa-arrow-left"></i></a>
+                        </span>
+                        <span ng-if="$ctrl.actions.denied && (d['ind_estado'] == 2 || d['ind_estado'] == 12) && d['tipo'] == 'C'">
+                            <a class="btn btn-warning btn-xs" data-ng-click="$ctrl.denied({codEdit:d['número']})" title="Denegar Solicitud" style="width:24px; background-color:#D90000; border-color:#B20000;"><i class="fa fa-close"></i></a>
                         </span>
                     </span>
                 </td>

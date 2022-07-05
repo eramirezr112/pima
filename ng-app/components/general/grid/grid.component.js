@@ -6,7 +6,9 @@ var gridComponent = {
         columns: '=',
         infoGrid: '=',
         locationPath: '=',
-        approveAction: '&'
+        approveAction: '&',
+        deniedAction: '&',
+        devolverAction: '&'
     },
     templateUrl: '../ng-app/components/general/grid/grid.html?s='+session,
     controller: 'gridController'

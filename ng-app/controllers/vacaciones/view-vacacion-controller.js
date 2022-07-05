@@ -1,13 +1,12 @@
 angular.module('ViewVacacion', ['ngMaterial'])
     .controller('ViewVacacionController', ['$scope', '$mdDialog', '$filter', '$location', 'usuario', 'vacacionData', 'VacacionesService', function($scope, $mdDialog, $filter, $location, usuario, vacacionData, VacacionesService) {
        
-        $scope.title = "Solicitud de Vacaciones";
+        $scope.title = "Solicitudes de Vacaciones";
 
         $scope.solicitud    = vacacionData.data.solicitud[0];
         $scope.saldoActual  = vacacionData.data.saldoActual;
         $scope.diasGastados = vacacionData.data.diasGastados;        
-        console.log("NUM_SOLICITUD = " + $scope.solicitud.num_solicitud);
-        console.log("COD_FUNCIONARIO = " + $scope.solicitud.cod_funcionario);
+            
         $scope.showConfirm = function(ev) {
             var confirm = $mdDialog.confirm({
                     onComplete: function afterShowAnimation() {
@@ -121,6 +120,16 @@ angular.module('ViewVacacion', ['ngMaterial'])
             return objSaldo;
         };
 
+        $scope.getSumTotalDias = function () { 
+
+            let objSaldo = 0;
+            for (var sA = 0; sA < $scope.saldoActual.length; sA++) {                
+                objSaldo += $scope.saldoActual[sA].NUM_SALDO_PERIODO;
+            }
+
+            return parseFloat(objSaldo);
+        };
+
         $scope.addToNewSaldoPeriodo = function (saldoPeriodo, numDays) {
             saldoPeriodo.DAYS_REQUEST = numDays;            
             $scope.newSaldoPeriodo.push(saldoPeriodo);
@@ -143,6 +152,16 @@ angular.module('ViewVacacion', ['ngMaterial'])
             } else {
                 return "Ninguna";
             }
+        }
+    })    
+    .filter('formatPeriodo', function ($filter) {
+        return function (input) {
+
+            var p1 = input.substr(0, 4);            
+            var p2 = input.substr(4, 8);            
+
+            return `${p1}-${p2}`;
+
         }
     })
     .filter('statusCode', function ($filter) {

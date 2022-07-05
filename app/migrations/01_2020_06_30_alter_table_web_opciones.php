@@ -1,0 +1,1 @@
+ALTER TABLE web_opciones ALTER COLUMN descripcion varchar(150)

@@ -20,7 +20,7 @@ angular.module('Solicitud', ['ui.bootstrap', 'angularUtils.directives.dirPaginat
         // Se oculta la columna de solicitud
         $scope.preparedColumns[0].visible = false;
 
-        // Rol de Usuario
+        // Rol de Usuario    
         $scope.rolUsuario = usuario.data.usuario.rol_web;
 
         $scope.codEdit = null;

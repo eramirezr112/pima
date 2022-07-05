@@ -1,5 +1,6 @@
 <?php 
 
+
 require ('BaseController.php');
 class UsuarioController extends BaseController
 {
@@ -54,11 +55,18 @@ class UsuarioController extends BaseController
 	public function get() {
 		session_start();
 		$connectionType = $_SESSION["CONNECTION_TYPE"];
+		
+		$userData = array();
+		foreach ($_SESSION as $key => $value) {
+			if ($key !== 'IMG_FOTO'){
+				$userData[$key] = $value;
+			}
+		}
 
 	    if ($connectionType == "odbc_mssql") {
-	    	echo json_encode(array('usuario'=> $this->sessionToUtf8($_SESSION)), JSON_UNESCAPED_UNICODE);
-	    } else {
-	    	echo json_encode(array('usuario'=> $_SESSION));	
+	    	echo json_encode(array('usuario'=> $this->sessionToUtf8($userData)), JSON_UNESCAPED_UNICODE);
+	    } else {	    	
+	    	echo json_encode(array('usuario'=> $userData));	
 	    }
 		
 	}

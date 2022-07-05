@@ -12,7 +12,7 @@ angular.module("Routes", ['ngRoute'])
 
         $routeProvider
             .when('/home', {
-                templateUrl: '../ng-app/views/home/index.html',
+                templateUrl: '../ng-app/views/home/index.html?v='+session,
                 controller: 'HomeController',
                 resolve: {
                     usuario: function (UsuarioService) {
@@ -21,7 +21,7 @@ angular.module("Routes", ['ngRoute'])
                 }                
             })
             .when('/solicitud', {
-                templateUrl: '../ng-app/views/solicitud/list.html',
+                templateUrl: '../ng-app/views/solicitud/list.html?v='+session,
                 controller: 'SolicitudController',
                 resolve: {
                     solicitudes: function(SolicitudService){
@@ -33,7 +33,7 @@ angular.module("Routes", ['ngRoute'])
                 }                
             })
             .when('/solicitud/view/:idSolicitud', {
-                templateUrl: '../ng-app/views/solicitud/view.html',
+                templateUrl: '../ng-app/views/solicitud/view.html?v='+session,
                 controller: 'ViewSolicitudController',
                 resolve: {
                     usuario: function (UsuarioService) {
@@ -52,7 +52,7 @@ angular.module("Routes", ['ngRoute'])
                 }
             })
             .when('/vacaciones', {
-                templateUrl: '../ng-app/views/vacaciones/list.html',
+                templateUrl: '../ng-app/views/vacaciones/list.html?v='+session,
                 controller: 'SolicitudVacacionesController',
                 resolve: {
                     vacaciones: function(VacacionesService){
@@ -64,7 +64,7 @@ angular.module("Routes", ['ngRoute'])
                 }                
             })
             .when('/vacaciones/view/:idSolicitud', {
-                templateUrl: '../ng-app/views/vacaciones/view.html',
+                templateUrl: '../ng-app/views/vacaciones/view.html?v='+session,
                 controller: 'ViewVacacionController',
                 resolve: {
                     usuario: function (UsuarioService) {
@@ -78,7 +78,7 @@ angular.module("Routes", ['ngRoute'])
                 }
             })
             .when('/adelanto-viaticos', {
-                templateUrl: '../ng-app/views/adelanto-viaticos/list.html',
+                templateUrl: '../ng-app/views/adelanto-viaticos/list.html?v='+session,
                 controller: 'AdelantoViaticosController',
                 resolve: {
                     adelantoViaticos: function(ViaticosService){
@@ -90,7 +90,7 @@ angular.module("Routes", ['ngRoute'])
                 }
             })
             .when('/adelanto-viaticos/view/:numAdelanto', {
-                templateUrl: '../ng-app/views/adelanto-viaticos/view.html',
+                templateUrl: '../ng-app/views/adelanto-viaticos/view.html?v='+session,
                 controller: 'ViewAdelantoViaticosController',
                 resolve: {
                     usuario: function (UsuarioService) {
@@ -104,7 +104,7 @@ angular.module("Routes", ['ngRoute'])
                 }
             })
             .when('/liquidacion-viaticos', {
-                templateUrl: '../ng-app/views/liquidacion-viaticos/list.html',
+                templateUrl: '../ng-app/views/liquidacion-viaticos/list.html?v='+session,
                 controller: 'LiquidacionViaticosController',
                 resolve: {
                     liquidacionViaticos: function(ViaticosService){
@@ -116,7 +116,7 @@ angular.module("Routes", ['ngRoute'])
                 }
             })
             .when('/liquidacion-viaticos/view/:numComprobante', {
-                templateUrl: '../ng-app/views/liquidacion-viaticos/view.html',
+                templateUrl: '../ng-app/views/liquidacion-viaticos/view.html?v='+session,
                 controller: 'ViewLiquidacionViaticosController',
                 resolve: {
                     usuario: function (UsuarioService) {
@@ -127,6 +127,126 @@ angular.module("Routes", ['ngRoute'])
                         return ViaticosService.getNumComprobante(numComprobante);
 
                     }                    
+                }
+            })
+            .when('/ejecucion-presupuestaria', {
+                templateUrl: '../ng-app/views/ejecucion-presupuestaria/index.html?v='+session,
+                controller: 'EjecucionPresupuestariaController',
+                resolve: {
+                    /*
+                    programas: function(ProgramaService){
+                        return ProgramaService.all();
+                    },*/
+                    centroCostos: function (PresupuestoService) {
+                        return PresupuestoService.getAllCentroCostos();
+                    },
+                    listYears: function (PresupuestoService) {
+                        return PresupuestoService.getYears();
+                    },                    
+                    presupuesto: function (PresupuestoService) {
+                        var year          = new Date().getFullYear();
+                        var codCentro     = '';
+                        var codSubpartida = '';
+                        var desCuenta     = '';
+                        return PresupuestoService.getEncabezado(year, codCentro, codSubpartida, desCuenta);
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    }                         
+                }
+                
+            })
+            .when('/solicitud-recursos-aj', {
+                templateUrl: '../ng-app/views/solicitud-recursos/list-solicitudes.html?v='+session,
+                controller: 'SolicitudRecursosController',
+                resolve: {
+                    solicitudes: function(SolicitudRecursosService){
+                        return SolicitudRecursosService.all(1);
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                }                
+            })
+            .when('/solicitud-recursos-ag', {
+                templateUrl: '../ng-app/views/solicitud-recursos/list-solicitudes.html?v='+session,
+                controller: 'SolicitudRecursosController',
+                resolve: {
+                    solicitudes: function(SolicitudRecursosService){
+                        return SolicitudRecursosService.all(2);
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                }                
+            })
+            .when('/solicitud-recursos-al', {
+                templateUrl: '../ng-app/views/solicitud-recursos/list-solicitudes.html?v='+session,
+                controller: 'SolicitudRecursosController',
+                resolve: {
+                    solicitudes: function(SolicitudRecursosService){
+                        return SolicitudRecursosService.all(12);
+                    },
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                }                
+            })
+            .when('/solicitud-recursos-aj/view/:idSolicitud', {
+                templateUrl: '../ng-app/views/solicitud-recursos/view-recurso-aj.html?v='+session,
+                controller: 'ViewSolicitudRecursosAJController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                    solicitudData: function (SolicitudRecursosService, $route) {
+                        var idSolicitud = $route.current.params.idSolicitud;                        
+                        return SolicitudRecursosService.get(idSolicitud);
+                        //return 0;
+                    }
+                    /*,
+                    cuentas: function (CuentaService) {
+                        return CuentaService.all();
+                    },
+                    */
+                }
+            })
+            .when('/solicitud-recursos-ag/view/:idSolicitud', {
+                templateUrl: '../ng-app/views/solicitud-recursos/view-recurso-ag.html?v='+session,
+                controller: 'ViewSolicitudRecursosAGController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                    solicitudData: function (SolicitudRecursosService, $route) {
+                        var idSolicitud = $route.current.params.idSolicitud;                        
+                        return SolicitudRecursosService.get(idSolicitud);
+                        //return 0;
+                    }
+                    /*,
+                    cuentas: function (CuentaService) {
+                        return CuentaService.all();
+                    },
+                    */
+                }
+            })
+            .when('/solicitud-recursos-al/view/:idSolicitud', {
+                templateUrl: '../ng-app/views/solicitud-recursos/view-recurso-al.html?v='+session,
+                controller: 'ViewSolicitudRecursosALController',
+                resolve: {
+                    usuario: function (UsuarioService) {
+                        return UsuarioService.get();
+                    },
+                    solicitudData: function (SolicitudRecursosService, $route) {
+                        var idSolicitud = $route.current.params.idSolicitud;                        
+                        return SolicitudRecursosService.get(idSolicitud);
+                        //return 0;
+                    }
+                    /*,
+                    cuentas: function (CuentaService) {
+                        return CuentaService.all();
+                    },
+                    */
                 }
             })
             /*

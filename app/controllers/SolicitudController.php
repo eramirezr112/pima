@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 
 require ('BaseController.php');
 class SolicitudController extends BaseController
@@ -14,8 +15,10 @@ class SolicitudController extends BaseController
 
         $connectionType = $_SESSION["CONNECTION_TYPE"];
         $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecSolicitud = 'fec_solicitud';
         if ($connectionType == "odbc_mssql") {
             $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+            $fecSolicitud = 'CONVERT(VARCHAR(33), fec_solicitud, 126)';
         }
 
         $isAdmin = $this->checkPermision(7);
@@ -30,7 +33,7 @@ class SolicitudController extends BaseController
             "$nameFuncionario" => 'funcionario',
             'p.des_programa' => 'programa', 
             'rcc.des_centro' => 'centro', 
-            'fec_solicitud' => 'Fec.Solicitud', 
+            "$fecSolicitud" => 'Fec.Solicitud', 
             'ind_estado' => 'estado'
         ];
 
@@ -285,12 +288,20 @@ class SolicitudController extends BaseController
 
         $connectionType = $_SESSION["CONNECTION_TYPE"];
         $nameFuncionario = 'CONCAT (f.des_nombre, SPACE(1), f.des_apellido1, SPACE(1), f.des_apellido2)';
+        $fecSolicitud = "sv.fec_solicitud as fec_solicitud";
+        $fecAutorizacion = "sv.fec_autorizacion as fec_autorizacion";
+        $fecIngreso = "sv.fec_ingreso as fec_ingreso";
+        $fecSalida = "sv.fec_salida as fec_salida";
         if ($connectionType == "odbc_mssql") {
             $nameFuncionario = 'f.des_nombre + \' \' + f.des_apellido1 + \' \' + f.des_apellido2';
+            $fecSolicitud = 'CONVERT(VARCHAR(33), sv.fec_solicitud, 126) as fec_solicitud';
+            $fecAutorizacion = 'CONVERT(VARCHAR(33), sv.fec_autorizacion, 126) as fec_autorizacion';
+            $fecIngreso = 'CONVERT(VARCHAR(33), sv.fec_ingreso, 126) as fec_ingreso';
+            $fecSalida = 'CONVERT(VARCHAR(33), sv.fec_salida, 126) as fec_salida';
         }
 
         // Encabezado de la solicitud
-        $sql = "SELECT sv.*, 
+        $sql = "SELECT sv.*, $fecSolicitud, $fecAutorizacion, $fecIngreso, $fecSalida,   
                        $nameFuncionario as funcionario, 
                        c.des_centro as centro, 
                        p.des_programa as programa, 
@@ -332,6 +343,7 @@ class SolicitudController extends BaseController
     public function approveSolicitud(){
 
         session_start();
+
         if ($_SESSION['cod_usuario'] != 0) {
             $codUsuario  = $_SESSION['COD_FUNCIONARIO'];
         } else {

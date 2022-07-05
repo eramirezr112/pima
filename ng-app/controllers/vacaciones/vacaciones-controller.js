@@ -5,7 +5,7 @@ angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagina
         $scope.actions  = {'add':false, 'edit':false, 'view':true, 'delete':false, 'authorize':true};
 
         //$scope.totalSolicitudes = solicitudes.data.solicitudes.length;
-        $scope.vacaciones = vacaciones.data.vacaciones;
+        $scope.vacaciones = vacaciones.data.vacaciones;        
         $scope.columns    = vacaciones.data.columns;
 
         // Se preparan las columnas a mostrar
@@ -14,7 +14,7 @@ angular.module('Vacaciones', ['ui.bootstrap', 'angularUtils.directives.dirPagina
             var newColumn = {
                 visible: true,
                 text: value
-            };
+            };            
             $scope.preparedColumns.push(newColumn);
         });
 

@@ -14,7 +14,7 @@
 			<tr ng-repeat="line in tab.content.lines">
 				<td class="col-small text-center">{{line.num_modificacion}}</td>
 				<td class="col-medium text-center">{{line.tip_modificacion}}</td>
-				<td class="col-medium text-center">{{line.fec_modificacion | customDate2}}</td>
+				<td class="col-medium text-center">{{line.fec_modificacion | customDate3}}</td>
 				<td class="col-medium text-right">{{line.mon_disminuir | currency : "&cent;"}}</td>
 				<td class="col-medium text-right">{{line.mon_aumentar | currency : "&cent;"}}</td>
 				<td class="col-medium text-right">{{line.mon_total | currency : "&cent;"}}</td>

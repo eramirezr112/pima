@@ -14,7 +14,7 @@
                 <label class="sr-only custom-font-size" for="idSolicitud">Solicitud</label>
                 <div class="input-group">
                     <div class="input-group-addon custom-font-size">Solicitud:</div>
-                    <input type="text" value="{{solicitud.num_solicitud}}" class="form-control input-sm" id="idSolicitud" placeholder="#Solicitud">
+                    <input type="text" value="{{solicitud.cod_solicitud}}" class="form-control input-sm" id="idSolicitud">
                 </div>
             </div>
             </div>
@@ -23,7 +23,7 @@
                 <label class="sr-only custom-font-size" for="fecha">Fecha</label>
                 <div class="input-group">
                     <div class="input-group-addon custom-font-size">Fecha:</div>
-                    <input type="text" value="{{solicitud.fec_solicitud | toDate}}" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
+                    <input type="text" value="{{solicitud.fec_solicitud | customDate3}}" class="form-control input-sm" id="fecha">
                 </div>
             </div>
             </div>
@@ -39,7 +39,7 @@
                 <label class="sr-only custom-font-size" for="fecha">Fecha Aprobación</label>
                 <div class="input-group">
                     <div class="input-group-addon custom-font-size">Fecha Aprobación:</div>
-                    <input type="text" value="{{solicitud.fec_autorizacion | toDate}}" class="form-control input-sm" id="fecha" placeholder="00/00/00 00:00">
+                    <input type="text" value="{{solicitud.fec_autorizacion | customDate2}}" class="form-control input-sm" id="fecha" >
                 </div>
             </div>
             </div>
@@ -48,7 +48,7 @@
                 <label class="sr-only custom-font-size" for="estado">Estado</label>
                 <div class="input-group">
                     <div class="input-group-addon custom-font-size">Estado:</div>
-                    <input type="text" value="{{solicitud.ind_estado | statusCode}}" class="form-control input-sm" id="estado" placeholder="Estado">
+                    <input type="text" value="{{solicitud.ind_estado | statusCode}}" class="form-control input-sm" id="estado">
                 </div>
             </div>
             </div>
@@ -71,7 +71,7 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.programa | capitalizeEveryWord}}" class="form-control input-sm" id="programa" placeholder="Nombre Programa">
+                                <input type="text" value="{{solicitud.programa | capitalizeEveryWord}}" class="form-control input-sm" id="programa">
                             </fieldset>
                         </td>
                     </tr>
@@ -81,7 +81,7 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.centro | capitalizeEveryWord}}" class="form-control input-sm" id="centro" placeholder="Nombre Centro">
+                                <input type="text" value="{{solicitud.centro | capitalizeEveryWord}}" class="form-control input-sm" id="centro">
                             </fieldset>
                         </td>
                     </tr>
@@ -91,7 +91,7 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.funcionario | capitalizeEveryWord}}" class="form-control input-sm" id="funcionario" placeholder="Nombre de Funcionario">
+                                <input type="text" value="{{solicitud.funcionario | capitalizeEveryWord}}" class="form-control input-sm" id="funcionario">
                             </fieldset>
                         </td>
                     </tr>
@@ -113,7 +113,7 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.fec_salida | toDate}}" class="form-control input-sm" id="fecSalida" placeholder="Nombre Programa">
+                                <input type="text" value="{{solicitud.fec_salida | customDate2}}" class="form-control input-sm" id="fecSalida">
                             </fieldset>
                         </td>
                     </tr>
@@ -123,14 +123,14 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.fec_ingreso | toDate}}" class="form-control input-sm" id="fecIngreso" placeholder="Nombre Centro">
+                                <input type="text" value="{{solicitud.fec_ingreso | customDate2}}" class="form-control input-sm" id="fecIngreso">
                             </fieldset>
                         </td>
                     </tr>
                     <tr style="visibility: hidden;">
                         <td colspan="2">
                             <fieldset disabled> 
-                                <input class="form-control input-sm" placeholder="None">
+                                <input class="form-control input-sm">
                             </fieldset>
                         </td>
                     </tr>
@@ -152,7 +152,7 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.provincia | capitalizeEveryWord}}" class="form-control input-sm" id="provincia" placeholder="Nombre Provincia">
+                                <input type="text" value="{{solicitud.provincia | capitalizeEveryWord}}" class="form-control input-sm" id="provincia">
                             </fieldset>
                         </td>
                     </tr>
@@ -162,7 +162,7 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.canton | capitalizeEveryWord}}" class="form-control input-sm" id="estado" placeholder="Nombre Canton">
+                                <input type="text" value="{{solicitud.canton | capitalizeEveryWord}}" class="form-control input-sm" id="estado">
                             </fieldset>
                         </td>
                     </tr>
@@ -172,7 +172,7 @@
                         </td>
                         <td>
                             <fieldset disabled> 
-                                <input type="text" value="{{solicitud.distrito | capitalizeEveryWord}}" class="form-control input-sm" id="estado" placeholder="Nombre del Distrito">
+                                <input type="text" value="{{solicitud.distrito | capitalizeEveryWord}}" class="form-control input-sm" id="estado">
                             </fieldset>
                         </td>
                     </tr>

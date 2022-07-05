@@ -1,5 +1,6 @@
 <?php 
 
+
 require ('BaseController.php');
 class ViaticoController extends BaseController
 {
@@ -14,8 +15,82 @@ class ViaticoController extends BaseController
 
         $connectionType = $_SESSION["CONNECTION_TYPE"];
         $nameSolicitante = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        
+        $fecAdelanto = 'v.fec_adelanto';
         if ($connectionType == "odbc_mssql") {
             $nameSolicitante = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+           
+            $fecAdelanto = 'CONVERT(VARCHAR(33), v.fec_adelanto, 126)';
+        }
+
+        $isAdmin = $this->checkPermision(7);
+        $codUsuario  = $_SESSION['cod_usuario'];
+        $isJefe      = $_SESSION['rol_web'];
+        $centros_costo = $_SESSION['CENTROS_COSTO'];
+
+
+        $columns = [
+            'num_adelanto' =>'solicitud',                        
+            'tcc.des_clasificacion' =>'clasificacion',
+            "$fecAdelanto" =>'fecha',
+            "$nameSolicitante" => 'solicitante',
+            'mon_adelanto' =>'monto',
+            'SUBSTRING(tce.des_estado, 1, 1)' =>'estado'
+        ];
+
+        $newListSolicitudes = array();
+        foreach ($centros_costo as $centro) {
+            $centro = trim($centro);
+            $sql = "SELECT v.num_adelanto as solicitud,
+                        tcc.des_clasificacion as clasificacion,
+                        $fecAdelanto as fecha,
+                        $nameSolicitante as solicitante,
+                        v.mon_adelanto as monto,
+                        SUBSTRING(tce.des_estado, 1, 1) as estado  
+                FROM TES_CCHV_ADELANTO_ENC as v, 
+                    RH_FUNCIONARIOS as ssf, 
+                    TES_CCH_ESTADOS as tce,
+                    TES_CCH_CLASIFICACION as tcc                      
+                WHERE v.cod_estado = 1  
+                AND v.cod_centro_costo like '$centro%' 
+                AND v.cod_estado = tce.cod_estado 
+                AND v.cod_solicitante = ssf.cod_funcionario 
+                AND v.cod_clasificacion = tcc.cod_clasificacion";
+            $result    = $this->execute($sql);
+            $solicitudes = $this->getArray($result);
+
+            foreach ($solicitudes as $solicitud) {
+                array_push($newListSolicitudes, $solicitud);
+            }            
+        }
+
+        $keys = array_column($newListSolicitudes, 'solicitud');
+        array_multisort($keys, SORT_ASC, $newListSolicitudes);        
+
+        if ($connectionType == "odbc_mssql") {
+            $newListSolicitudes = $this->toUtf8($newListSolicitudes);
+        }          
+        
+        if ($connectionType == "odbc_mssql") {
+          echo json_encode(array('columns'=>$columns,'adelantoViaticos'=>$newListSolicitudes, 'query' => $sql), JSON_UNESCAPED_UNICODE);
+        }else {          
+          echo json_encode(array('columns'=>$columns,'adelantoViaticos'=>$newListSolicitudes, 'query' => $sql));
+        }        
+
+        
+    }    
+
+    /*
+    public function getAllAdelantoViaticos() {
+
+        session_start();
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+        $nameSolicitante = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecAdelanto = 'fec_adelanto';
+        if ($connectionType == "odbc_mssql") {
+            $nameSolicitante = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+            $fecAdelanto = 'CONVERT(VARCHAR(33), fec_adelanto, 126)';
         }
 
         $isAdmin = $this->checkPermision(7);
@@ -27,7 +102,7 @@ class ViaticoController extends BaseController
         $columns = [
             'num_adelanto' =>'solicitud',                        
             'tcc.des_clasificacion' =>'clasificacion',
-            'fec_adelanto' =>'fecha',
+            "$fecAdelanto" =>'fecha',
             "$nameSolicitante" => 'solicitante',
             'mon_adelanto' =>'monto',
             'SUBSTRING(tce.des_estado, 1, 1)' =>'estado'
@@ -75,6 +150,7 @@ class ViaticoController extends BaseController
 
         echo json_encode(array('columns'=>$columns,'adelantoViaticos'=>$solicitudes, 'query' => $query));
     }
+    */
 
     public function getAllLiquidacionViaticos() {
 
@@ -82,8 +158,78 @@ class ViaticoController extends BaseController
 
         $connectionType = $_SESSION["CONNECTION_TYPE"];
         $nameSolicitante = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecComprobante = 'v.fec_comprobante';
         if ($connectionType == "odbc_mssql") {
             $nameSolicitante = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+            $fecComprobante = 'CONVERT(VARCHAR(33), v.fec_comprobante, 126)';
+        }
+
+        $isAdmin = $this->checkPermision(7);
+        $codUsuario  = $_SESSION['cod_usuario'];
+        $isJefe      = $_SESSION['rol_web'];
+        $centros_costo = $_SESSION['CENTROS_COSTO'];
+
+        $columns = [
+            'num_comprobante' =>'solicitud',                                            
+            'tcc.des_clasificacion' =>'clasificacion',
+            "$fecComprobante" => 'fecha',
+            "$nameSolicitante" => 'solicitante',
+            'mon_comprobante' =>'monto',
+            'SUBSTRING(tce.des_estado, 1, 1)' =>'estado'
+        ];    
+
+        $newListSolicitudes = array();
+        foreach ($centros_costo as $centro) {
+            $centro = trim($centro);
+            $sql = "SELECT v.num_comprobante as solicitud,
+                        tcc.des_clasificacion as clasificacion,
+                        $fecComprobante as fecha,
+                        $nameSolicitante as solicitante,
+                        v.mon_comprobante as monto,
+                        SUBSTRING(tce.des_estado, 1, 1) as estado  
+                FROM TES_CCHV_COMPROBANTE_ENCABEZADO as v, 
+                    RH_FUNCIONARIOS as ssf, 
+                    TES_CCH_ESTADOS as tce,
+                    TES_CCH_CLASIFICACION as tcc                      
+                WHERE v.cod_estado = 1  
+                AND v.cod_centro_costo like '$centro%' 
+                AND v.cod_estado = tce.cod_estado 
+                AND v.cod_solicitante = ssf.cod_funcionario 
+                AND v.cod_clasificacion = tcc.cod_clasificacion";
+            $result    = $this->execute($sql);
+            $solicitudes = $this->getArray($result);
+
+            foreach ($solicitudes as $solicitud) {
+                array_push($newListSolicitudes, $solicitud);
+            }            
+        }
+
+        $keys = array_column($newListSolicitudes, 'solicitud');
+        array_multisort($keys, SORT_ASC, $newListSolicitudes);        
+
+        if ($connectionType == "odbc_mssql") {
+            $newListSolicitudes = $this->toUtf8($newListSolicitudes);
+        }          
+        
+        if ($connectionType == "odbc_mssql") {
+          echo json_encode(array('columns'=>$columns,'liquidacionViaticos'=>$newListSolicitudes, 'query' => $sql), JSON_UNESCAPED_UNICODE);
+        }else {          
+          echo json_encode(array('columns'=>$columns,'liquidacionViaticos'=>$newListSolicitudes, 'query' => $sql));
+        }
+
+    }
+
+    /*
+    public function getAllLiquidacionViaticos() {
+
+        session_start();
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+        $nameSolicitante = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecComprobante = 'fec_comprobante';
+        if ($connectionType == "odbc_mssql") {
+            $nameSolicitante = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+            $fecComprobante = 'CONVERT(VARCHAR(33), fec_comprobante, 126)';
         }
 
         $isAdmin = $this->checkPermision(7);
@@ -99,7 +245,7 @@ class ViaticoController extends BaseController
         $columns = [
             'num_comprobante' =>'solicitud',                        
             'tcc.des_clasificacion' =>'clasificacion',
-            'fec_comprobante' =>'fecha',
+            "$fecComprobante" => 'fecha',
             "$nameSolicitante" => 'solicitante',
             'mon_comprobante' =>'monto',
             'SUBSTRING(tce.des_estado, 1, 1)' =>'estado'
@@ -145,8 +291,19 @@ class ViaticoController extends BaseController
         $query = $this->getQueryString();
         $solicitudes = $this->getArray($result);
 
-        echo json_encode(array('columns'=>$columns,'liquidacionViaticos'=>$solicitudes, 'query' => $query));
+
+        if ($connectionType == "odbc_mssql") {
+            $solicitudes = $this->toUtf8($solicitudes);
+        }          
+        
+        if ($connectionType == "odbc_mssql") {
+          echo json_encode(array('columns'=>$columns,'liquidacionViaticos'=>$solicitudes, 'query' => $query), JSON_UNESCAPED_UNICODE);
+        }else {          
+          echo json_encode(array('columns'=>$columns,'liquidacionViaticos'=>$solicitudes, 'query' => $query));
+        }
+
     }
+    */
 
     public function getNumAdelanto(){
 
@@ -157,12 +314,16 @@ class ViaticoController extends BaseController
         $connectionType = $_SESSION["CONNECTION_TYPE"];
 
         $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecAdelanto = 'tcae.fec_adelanto';
+        $fecDetalle = 'tcad.fec_detalle';
         if ($connectionType == "odbc_mssql") {
             $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+            $fecAdelanto = 'CONVERT(VARCHAR(33), tcae.fec_adelanto, 126) as fec_adelanto';
+            $fecDetalle = 'CONVERT(VARCHAR(33), tcad.fec_detalle, 126) as fec_detalle';
         }        
 
         $sql = "SELECT tcae.num_adelanto,
-                       tcae.fec_adelanto,
+                       $fecAdelanto,
                        $nameFuncionario as solicitante,
                        tcae.cod_centro_costo,
                        cc.des_centro as centro,
@@ -185,6 +346,7 @@ class ViaticoController extends BaseController
                 AND tcae.cod_estado = 1 
                 AND tcae.cod_estado = tce.cod_estado 
                 AND tcae.cod_solicitante = ssf.cod_funcionario 
+                AND tcae.cod_centro_costo = cc.cod_centro 
                 AND tcae.cod_clasificacion = tcc.cod_clasificacion";
         $result    = $this->execute($sql);
         $solicitudEncabezado = $this->getArray($result);
@@ -195,7 +357,7 @@ class ViaticoController extends BaseController
 
         $sqlD = "SELECT tcad.num_adelanto,
                        tcad.num_linea,
-                       tcad.fec_detalle,
+                       $fecDetalle,
                        tcad.cod_localidad,
                        tcad.hor_salida,
                        tcad.hor_regreso,
@@ -251,12 +413,16 @@ class ViaticoController extends BaseController
         $connectionType = $_SESSION["CONNECTION_TYPE"];
 
         $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecComprobante = 'tcce.fec_comprobante';
+        $fecDetalle = 'tcd.fec_detalle';
         if ($connectionType == "odbc_mssql") {
             $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+            $fecComprobante = 'CONVERT(VARCHAR(33), tcce.fec_comprobante, 126) as fec_comprobante';
+            $fecDetalle = 'CONVERT(VARCHAR(33), tcd.fec_detalle, 126) as fec_detalle';
         }        
 
         $sql = "SELECT tcce.num_comprobante, 
-                       tcce.fec_comprobante, 
+                       $fecComprobante, 
                        $nameFuncionario as solicitante,
                        tcce.cod_centro_costo, 
                        cc.des_centro as centro, 
@@ -303,7 +469,7 @@ class ViaticoController extends BaseController
 
         $sqlD = "SELECT tcd.num_comprobante, 
                         tcd.num_linea, 
-                        tcd.fec_detalle, 
+                        $fecDetalle, 
                         tcd.cod_localidad, 
                         tcd.hor_salida, 
                         tcd.hor_regreso, 
@@ -313,10 +479,10 @@ class ViaticoController extends BaseController
                         tcd.mon_estadia 
                 FROM TES_CCHV_COMPROBANTE_DETALLE as tcd 
                 WHERE tcd.num_comprobante = $numComprobante";
-
+                
         $resultD    = $this->execute($sqlD);
         $solicitudDetalle = $this->getArray($resultD);
-
+        
         if ($connectionType == "odbc_mssql") {
             $solicitudDetalle = $this->toUtf8($solicitudDetalle);          
         }

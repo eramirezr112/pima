@@ -5,14 +5,17 @@ function gridController($timeout) {
         ctrl.totalRegistros = ctrl.infoGrid.length;
         ctrl.columns[ctrl.columns.length] = {visible:true, text:"Acciones"};
         var firstRow = ctrl.infoGrid[0];
-        
-        ctrl.headerClass = {};
-        for (r in firstRow){
 
+        ctrl.headerClass = {};        
+        for (r in firstRow){            
             var colClass = 'col-align-';
-            var align = 'center'            
+            var align = 'center';
             if (!isNaN(firstRow[r])) {
-                colClass = colClass + "right";
+                if(r == 'días solicitados') {
+                    colClass = colClass + "center";
+                } else {
+                    colClass = colClass + "right";    
+                }
             } else {
                 colClass = colClass + "left";
             }
@@ -32,10 +35,19 @@ function gridController($timeout) {
 
     ctrl.addClass = function(index, value) {
         var colClass = 'col-align-';
-        var align = 'center'
-        if (index > 0) {
+        var align = 'center';
+        if (index > 0) {            
             if (!isNaN(value)) {
-                colClass = colClass + "right";
+                if(ctrl.title == 'Solicitudes de Vacaciones'){
+                    if (index == 3) {
+                        colClass = colClass + "center";    
+                    } else {
+                        colClass = colClass + "right";        
+                    }
+                } else {
+                    colClass = colClass + "right";    
+                }
+                
             } else {
                 colClass = colClass + "left";
             }
@@ -48,6 +60,14 @@ function gridController($timeout) {
 
     ctrl.approve = function (cod) {        
         ctrl.approveAction(cod);
+    };
+
+    ctrl.denied = function (cod) {        
+        ctrl.deniedAction(cod);
+    };
+
+    ctrl.devolver = function (cod) {        
+        ctrl.devolverAction(cod);
     };
 
 }
@@ -95,6 +115,28 @@ grid.controller('gridController', ['$timeout', gridController])
                     output = "Préstamo";
                 } else if (input === 'A') {
                     output = "Aprobadas";
+                }
+
+                return output;
+
+            } else {
+                return input;
+            }
+        }
+    })
+    .filter('isStatusLetter2', function ($filter) {
+
+        return function (input) {
+
+            if ( input != null && (input.toString()).length == 1 && !input.match(/^-{0,1}\d+$/)){
+
+                var output = "";
+                if (input === 'N') {
+                    output = "Recursos";
+                } else if (input === 'S') {
+                    output = "Suministros";
+                } else if (input === 'C') {
+                    output = "Complementaria";
                 }
 
                 return output;

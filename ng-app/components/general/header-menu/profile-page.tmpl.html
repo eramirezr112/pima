@@ -1,0 +1,180 @@
+<md-dialog aria-label="Perfil de Usuario">
+  <form ng-cloak>
+    <md-toolbar style="background: #222627; ">
+      
+        <h3 class="md-title text-center">Perfil de Usuario</h3>
+      
+    </md-toolbar>
+
+
+    <div layout="row" layout-align="center center" style="padding: 20px;">
+      
+      <table width="800" border=1>        
+        <tbody>
+          <tr>
+            <td width="200" style="padding:10px">
+                <img ng-if="photo != ''" width="100%" src='data:image/jpeg;base64,{{photo}}' alt="">               
+                <img ng-if="photo == ''" width="100%" src='../web/img/user-default.png' alt=""> 
+            </td>
+            <td width="600" style="padding:10px">
+              <table style="width:100%;">
+                <tbody>
+                  <tr>
+                    <th>Nombre</th>
+                    <td>{{profile.DES_NOMBRE | capitalizeEveryWord}} {{profile.DES_APELLIDO1 | capitalizeEveryWord}} {{profile.DES_APELLIDO2 | capitalizeEveryWord}}</td>
+                    <th>Identificación:</th>
+                    <td>{{profile.DES_CEDULA}}</td>                    
+                  </tr>
+                  <tr>
+                    <td colspan="4" style="padding-top:10px">
+                      <div class="panel panel-default"> 
+                          <div class="panel-heading"> 
+                              <h3 class="panel-title custom-font-size"><b>Información</b></h3> 
+                          </div> 
+                          <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+                              <table class="table table-condensed" style="margin:0px;">
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Jefe:
+                                      </td>
+                                      <td colspan="3">
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.JEFATURA | capitalizeEveryWord}}" class="form-control input-sm" id="jefe">
+                                          </fieldset>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Puesto:
+                                      </td>
+                                      <td colspan="3">
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.des_puesto | capitalizeEveryWord}}" class="form-control input-sm" id="puesto">
+                                          </fieldset>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Centro Costo:
+                                      </td>
+                                      <td colspan="3">
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.des_centro | capitalizeEveryWord}}" class="form-control input-sm" id="centro">
+                                          </fieldset>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Nombramiento:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.IND_NOMBRAMIENTO | getNombramiento}}" class="form-control input-sm" id="nombramiento">
+                                          </fieldset>
+                                      </td>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          N° Plaza:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.NUM_PLAZA}}" class="form-control input-sm" id="nplaza">
+                                          </fieldset>
+                                      </td>                                      
+                                  </tr>   
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Jornada:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.tip_jornada | getTipoJornada}}" class="form-control input-sm" id="jornada">
+                                          </fieldset>
+                                      </td>
+                                      <td class="text-left" style="vertical-align: middle;">
+                                          Fecha Ingreso:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.FEC_INGRESO | customDate3}}" class="form-control input-sm" id="fecIngreso">
+                                          </fieldset>
+                                      </td>                                      
+                                  </tr>
+                              </table>
+                          </div> 
+                      </div>  
+                      <div class="panel panel-default"> 
+                          <div class="panel-heading"> 
+                              <h3 class="panel-title custom-font-size"><b>Información Salarial</b></h3> 
+                          </div> 
+                          <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+                              <table class="table table-condensed" style="margin:0px;">
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Grado Académico:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.IND_GRADO_ACADEMICO | getGradoAcademico}}" class="form-control input-sm" id="grado">
+                                          </fieldset>
+                                      </td>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Puntos Carrera:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.CAN_PUNTOS_CARRERA}}" class="form-control input-sm" id="grado">
+                                          </fieldset>
+                                      </td>
+                                  </tr>
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Años Reconocidos:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.CAN_ANOS_RECONOCIDA}}" class="form-control input-sm" id="yearReco">
+                                          </fieldset>
+                                      </td>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          % Dedicación Exc:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.POR_DEDICACION_EXCLUSIVA}}" class="form-control input-sm" id="dediExc">
+                                          </fieldset>
+                                      </td>                                      
+                                  </tr>
+                                  <tr>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          Años Antiguedad:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.CAN_ANOS_ANTIGUEDAD}}" class="form-control input-sm" id="yearAnti">
+                                          </fieldset>
+                                      </td>
+                                      <td class="text-left"  style="vertical-align: middle;">
+                                          % Prohibición:
+                                      </td>
+                                      <td>
+                                          <fieldset disabled> 
+                                              <input type="text" value="{{profile.POR_PROHIBICION}}" class="form-control input-sm" id="porProhibicion">
+                                          </fieldset>
+                                      </td>                                      
+                                  </tr>
+                              </table>
+                          </div> 
+                      </div> 
+                    </td>                    
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+    </div>
+
+  </form>
+</md-dialog>

@@ -5,7 +5,6 @@ angular.module('ViewLiquidacionViaticos', ['ngMaterial'])
         
         $scope.encabezado = viaticoData.data.encabezado[0];
         $scope.detalle    = viaticoData.data.detalle;
-        
         $scope.totales     = viaticoData.data.totales;
         $scope.totAlmuerzo = $scope.totales.totMonAlmuerzo;
         $scope.totCena     = $scope.totales.totMonCena;
@@ -121,4 +120,23 @@ angular.module('ViewLiquidacionViaticos', ['ngMaterial'])
             $location.path('/liquidacion-viaticos');
         };        
 
-    }]);
+    }])
+    .filter('formatHour', function ($filter) {
+
+        return function (input) {            
+            let timeLength = (input.toString()).length
+            let output = "";
+            let res = (input.toString()).split("");
+
+            switch(timeLength){
+                case 3:
+                    output = `0${res[0]}:${res[1]}${res[2]}`;
+                break;
+                case 4:
+                    output = `${res[0]}${res[1]}:${res[2]}${res[3]}`;
+                break; 
+            }
+
+            return output;
+        }
+    });

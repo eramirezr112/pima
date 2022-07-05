@@ -4,10 +4,37 @@
 
 <div class="row">
     <div class="col-md-3">
+		<div class="media bg-primary" style="padding: 10px; height: 100px; color: #fff; background-color: #7A4DFF">		  
+		  <div class="media-body">
+		    <h4 class="media-heading">Solicitudes de Recursos</h4>
+		    <span class="custom-font-size">
+		    	<a href="#!/solicitud-recursos-aj" class="subOptionHome">
+		    	- Autorización Jefatura
+		    	</a>
+		    </span>		    
+		    <span class="custom-font-size" ng-show="codEmpleado == 'GGP' || codEmpleado == 'ADMIN'">		    	
+		    	<a href="#!/solicitud-recursos-ag" class="subOptionHome">
+		    	- Aprobación Gerencia
+		    	</a>
+		    </span>
+		    <span class="custom-font-size" ng-show="codEmpleado == 'ABG' || codEmpleado == 'ABG1' || codEmpleado == 'ADMIN'">
+		    	<a href="#!/solicitud-recursos-al" class="subOptionHome">
+		    	- Aprobación Legal
+		    	</a>
+		    </span>
+		  </div>
+		  <div class="media-right">
+		      <span><i class="fa fa-archive" style="font-size: 30px;"></i></span>
+		  </div>
+		  
+		</div>
+    </div>
+
+    <div class="col-md-3">
 		<div class="media bg-primary" style="padding: 10px; height: 100px;">
 		  <a href="#!/solicitud" style="color:#fff; text-decoration: none;">
 		  <div class="media-body">
-		    <h4 class="media-heading">Solicitud Vehículos</h4>
+		    <h4 class="media-heading">Solicitudes de Vehículos</h4>
 		    <span class="custom-font-size">
 		    	Solicitudes de Vehículos
 		    </span>
@@ -22,9 +49,9 @@
 		<div class="media bg-primary" style="padding: 10px; height: 100px; color: #fff; background-color: #11aa00">
 		  <a href="#!/vacaciones" style="color:#fff; text-decoration: none;">
 		  <div class="media-body">
-		    <h4 class="media-heading">Solicitud Vacaciones</h4>
+		    <h4 class="media-heading">Solicitudes de Vacaciones</h4>
 		    <span class="custom-font-size">
-		    	Solicitudes de vacaciones
+		    	Solicitudes de Vacaciones
 		    </span>
 		  </div>
 		  <div class="media-right media-middle">
@@ -37,9 +64,9 @@
 		<div class="media bg-primary" style="padding: 10px; height: 100px; color: #fff; background-color: #12AEB3">
 		  <a href="#!/adelanto-viaticos" style="color:#fff; text-decoration: none;">
 		  <div class="media-body">
-		    <h4 class="media-heading">Adelanto Viáticos</h4>
+		    <h4 class="media-heading">Adelantos de Viáticos</h4>
 		    <span class="custom-font-size">
-		    	Solicitudes de adelanto de viáticos
+		    	Adelantos de Viáticos
 		    </span>
 		  </div>
 		  <div class="media-right media-middle">
@@ -49,12 +76,12 @@
 		</div>
     </div>
     <div class="col-md-3">
-		<div class="media bg-primary" style="padding: 10px; height: 100px; color: #fff; background-color: #DF3D05">
+		<div class="media bg-primary" style="margin-top:20px; padding: 10px; height: 100px; color: #fff; background-color: #DF3D05">
 		  <a href="#!/liquidacion-viaticos" style="color:#fff; text-decoration: none;">
 		  <div class="media-body">
-		    <h4 class="media-heading">Liquidación Viáticos</h4>
+		    <h4 class="media-heading">Liquidaciones de Viáticos</h4>
 		    <span class="custom-font-size">
-		    	Solicitudes de liquidación de viáticos
+		    	Liquidaciones de Viáticos
 		    </span>
 		  </div>
 		  <div class="media-right media-middle">
@@ -63,14 +90,14 @@
 		</a>
 		</div>
     </div>
-	<!--
+	
     <div class="col-md-3">
 		<div class="media bg-primary" style="margin-top:20px; padding: 10px; height: 100px; color: #fff; background-color: #ccb700">
 		  <a href="#!/ejecucion-presupuestaria" style="color:#fff; text-decoration: none;">
 		  <div class="media-body">
 		    <h4 class="media-heading">Ejecución Presupuestaria</h4>
 		    <span class="custom-font-size">
-		    	Lista de ejecución presupuestsria
+		    	Ejecución Presupuestaria
 		    </span>
 		  </div>
 		  <div class="media-right media-middle">
@@ -79,7 +106,8 @@
 		  </a>
 		</div>
     </div>
-	-->
+
+
 
     <div class="col-md-3">    	
     </div>

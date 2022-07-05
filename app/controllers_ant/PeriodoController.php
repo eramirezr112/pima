@@ -14,6 +14,9 @@ class PeriodoController extends BaseController
 		$codPeriodo = $_SESSION['cod_periodo'];
 
 		$sql = "SELECT cod_periodo, num_year FROM cfg_cam_periodos_electorales WHERE cod_periodo >= $codPeriodo";
+		
+		//SELECT VAL_DATO INTO FROM SIF_CONFIGURADORES WHERE COD_CONFIGURADOR = 13;  
+
 		$result = $this->execute($sql);
 		$periodos = $this->getArray($result);
 		

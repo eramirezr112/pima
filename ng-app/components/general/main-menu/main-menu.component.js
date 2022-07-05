@@ -1,9 +1,10 @@
 angular.module('MainMenu', [])
 .component('mainMenuPage', {
 	bindings: {
-	    codUser: '='
+	    codUser: '=',
+	    codEmpleado: '@'
 	},
-	templateUrl: '../ng-app/components/general/main-menu/main-menu.html',
+	templateUrl: '../ng-app/components/general/main-menu/main-menu.html?v='+session,
 	controller: 'mainMenuController'
 })
 .controller('mainMenuController', [ 'MainMenuService', function (MainMenuService) {

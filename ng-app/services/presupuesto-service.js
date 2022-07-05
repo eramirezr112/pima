@@ -5,24 +5,44 @@ angular.module("PresupuestoService", []).factory("PresupuestoService", function(
     var path = apiBase + controllerName;
 
     return {
-        getEncabezado: function(programa, partida, estado){
+        getAllCentroCostos: function () {
+            var action = 'getAllCentroCostos';
+            var config = {
+                headers : {'Accept' : 'application/json'}
+            };            
+            return $http.get(path+'&f='+action, config);
+        },
+        getYears: function () {
+            var action = 'getYears';
+            var config = {
+                headers : {'Accept' : 'application/json'}
+            };            
+            return $http.get(path+'&f='+action, config);
+        },
+        getEncabezado: function(year, codCentro, codSubpartida, desCuenta){
             var action = 'getEncabezado';
             var data = {
-                codPrograma: programa,
-                codPartida: partida,
-                codEstado: estado
+                year: year,
+                codCentro: codCentro,
+                codSubpartida: codSubpartida,
+                desCuenta: desCuenta
             };
+            //console.log(data);
+            
             var config = {
                 params: data,
                 headers : {'Accept' : 'application/json'}
             };            
             return $http.get(path+'&f='+action, config);
+            
         },
-        getDetalle: function (codPrograma, codCuenta) {
+        getDetalle: function (nYear, nCodCentro, nCodSubpartida, nCodMeta) {
             var action = 'getDetalle';
             var data = {
-                codPrograma: codPrograma,
-                codCuenta: codCuenta
+                year          : nYear,
+                codCentro     : nCodCentro,
+                codSubpartida : nCodSubpartida,
+                codMeta       : nCodMeta
             };
             var config = {
                 params: data,

@@ -1,4 +1,4 @@
-<?php 
+<?php
     require ('../app/config/db.php');
     $user     = trim($_POST['user']);
     $pass     = trim($_POST['pass']);

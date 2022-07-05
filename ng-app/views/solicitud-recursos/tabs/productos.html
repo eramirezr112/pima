@@ -1,0 +1,43 @@
+<div class="table-responsive">
+	<table id="tbl-tabs-sr-productos"class="table table-condensed" style="width:100%; margin-top:5px;">
+		<thead>
+			<tr>
+				<th class="col-small" style="border: solid thin #ddd; text-align: center;">Producto</th>				
+				<th class="col-small" style="border: solid thin #ddd; text-align: center;">Cantidad</th>
+				<th class="col-small" style="border: solid thin #ddd; text-align: center;">Medida</th>
+				<th class="col-long" style="border: solid thin #ddd; text-align: center;">Características</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Precio Unit</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Monto Total</th>
+				<th class="col-medium" style="border: solid thin #ddd; text-align: center;">Cuenta Sugerida</th>
+				<th class="col-small" style="border: solid thin #ddd; text-align: center;">Meta</th>
+			</tr>
+		</thead>
+		<tbody>			
+			<tr ng-repeat="line in tab.content">
+				<td class="col-small text-center">{{line.cod_producto}}</td>
+				<td class="col-small text-right">{{line.can_producto}}</td>				
+				<td class="col-small text-center">{{line.des_abreviacion}}</td>
+				<td class="col-long text-left">{{line.des_producto}}</td>
+				<td class="col-medium text-right">{{line.mon_precio | currency : "&cent;"}}</td>
+				<td class="col-medium text-right">{{line.mont_total | currency : "&cent;"}}</td>
+				<td class="col-medium text-center">{{line.cuenta_sugerida | strSubPartida}}</td>
+				<td class="col-small text-center">{{line.meta}}</td>
+				<td class="col-small text-center" ng-if="line.afectacion_presupuestaria_real != null">{{line.afectacion_presupuestaria_real | strSubPartida}}</td>
+			</tr>				
+			<!--
+			<tr ng-repeat="line in tab.content.lines">
+				<td class="col-small text-center">999-9999</td>
+				
+				<td class="col-medium text-center">{{line.tip_modificacion}}</td>
+				<td class="col-medium text-center">{{line.fec_modificacion | customDate3}}</td>
+				<td class="col-medium text-center">{{line.fec_modificacion | customDate3}}</td>
+				<td class="col-medium text-right">{{line.mon_aumentar | currency : "&cent;"}}</td>
+				<td class="col-medium text-right">{{line.mon_total | currency : "&cent;"}}</td>
+				<td class="col-medium text-center"></td>
+				<td class="col-medium text-center"></td>
+				
+			</tr>
+			-->
+		</tbody>
+	</table>
+</div>
