@@ -131,6 +131,42 @@ background:none;
     table-layout:fixed;
 } 
 
+#tbl-tabs-sr-productos .col-small {
+    width: 60px;
+}
+#tbl-tabs-sr-productos .col-medium {
+    width: 100px;
+}
+#tbl-tabs-sr-productos .col-long {
+    width: 150px;
+}
+
+#tbl-tabs-sr-productos th{
+    vertical-align: middle; 
+    text-align: center;
+    border: solid thin #ddd;    
+}
+
+#tbl-tabs-sr-productos thead{
+    background:#eee;;
+    display:table;
+    width:100%;
+    width:calc(100% - 5px);
+}
+#tbl-tabs-sr-productos tbody {
+    height:260px;
+    overflow-y:scroll;
+    overflow-x:hidden;
+    display:block;
+    width:100%;
+    background: #fff;
+}
+#tbl-tabs-sr-productos tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+} 
+
 .app-modal-window .modal-dialog {
   width: 98%;
 }
@@ -233,6 +269,50 @@ background:none;
 
 .md-primary.md-cancel-button.md-button.md-ink-ripple.md-default-theme.btn-cancel:hover{
     background-color: #3ba3cb;
+}
+
+#accordion a{
+    font-size: 14px;
+}
+#accordion .panel{
+    margin-bottom: 0;
+    background-color: none; 
+    border: 0; 
+    border-radius: none; 
+    -webkit-box-shadow: none;
+    box-shadow: none;    
+}
+#accordion .panel-body{
+    padding: 0px 0px 0px 25px;
+    background-color: #f6f6f6;
+}
+
+#submenu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#submenu ul li{
+    width: 100%;
+    float: left;
+    margin-top: 10px;
+}
+#submenu ul li > a{
+    color:#000;
+    font-size: 13px;
+}
+
+.subOptionHome {
+    color:#fff; 
+    text-decoration: none; 
+    display:block; 
+    width:120px; 
+    margin-bottom:2px; 
+    padding: 1px 5px; 
+    border-radius:5px;    
+}
+.subOptionHome:hover{
+    color:#ffff00;  
 }
 
 

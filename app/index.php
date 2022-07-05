@@ -1,4 +1,13 @@
-<?php include("../security/checkSecurity.php"); ?>
+<?php include("../security/checkSecurity.php"); 
+
+/*
+echo("<pre>");
+print_r($_SESSION);
+echo("</pre>");
+exit;
+*/
+
+?>
 <!DOCTYPE html>
 <html lang="en" ng-app="pnlsys">
   <head>
@@ -46,11 +55,15 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="#" style="color:#fff;">
-            <img src="../web/img/logo-white.png" alt="" width="47px" style="margin-top:-13px; background:#222627;  padding:0px; position:">
+            <img src="../web/img/logo-color.png" alt="" width="48px" style="margin-top:-3px; background:#222627;  padding:0px; position:">
           </a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
-          <header-menu-page name-user="<?php if ($_SESSION['CONNECTION_TYPE'] == 'odbc_mssql') { echo utf8_encode($_SESSION["des_usuario"]); } else { echo $_SESSION["des_usuario"]; } ?> (<?php echo $_SESSION["TIPO_FUNCIONARIO"]; ?>)">
+          <header-menu-page 
+            profile-photo="<?php if($_SESSION['IMG_FOTO'] != '') { echo base64_encode($_SESSION['IMG_FOTO']); } else { echo ''; } ?>" 
+            name-user="<?php if ($_SESSION['CONNECTION_TYPE'] == 'odbc_mssql') { echo utf8_encode($_SESSION["des_usuario"]); } else { echo $_SESSION["des_usuario"]; } ?> (<?php echo $_SESSION["TIPO_FUNCIONARIO"]; ?>)"
+            profile-data='<?php  echo json_encode($_SESSION["PROFILE_DATA"]); ?>'
+          >
           </header-menu-page>
         </div>
       </div>
@@ -59,9 +72,9 @@
     <div class="container-fluid" style="padding-top: 50px;">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">          
-          <main-menu-page cod-user="<?php echo $_SESSION["cod_usuario"]; ?>"></main-menu-page>
+          <main-menu-page cod-empleado="<?php echo trim($_SESSION["COD_EMPLEADO"]); ?>" cod-user="<?php echo $_SESSION["cod_usuario"]; ?>"></main-menu-page>
         </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">          
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" style="padding-top:40px;">
           <div ng-view class="view-animate"></div>
         </div>
       </div>
@@ -72,6 +85,7 @@
   <script type="text/javascript" src="../node_modules/angular-animate/angular-animate.min.js"></script>
   <script type="text/javascript" src="../node_modules/angular-aria/angular-aria.min.js"></script>
   <script type="text/javascript" src="../node_modules/angular-material/angular-material.min.js"></script>
+  <script src="//code.angularjs.org/1.8.2/angular-sanitize.js"></script>
   <!--<script type="text/javascript" src="../vendor/angular/angular.min.js"></script>-->
   <script type="text/javascript" src="../vendor/angular/angular-route.min.js"></script>
   <script type="text/javascript" src="../vendor/twbs/bootstrap/dist/js/bootstrap.min.js"></script>  
@@ -79,6 +93,7 @@
   <script type="text/javascript" src="../vendor/angular-ui-bootstrap/ui-bootstrap-tpls-2.5.0.min.js"></script>
   <script type="text/javascript" src="http://cdn.jsdelivr.net/angular.checklist-model/0.1.3/checklist-model.min.js"></script>
 
+  <script type="text/javascript" src="../web/js/lodash.js"></script>
   <script type="text/javascript" src="../ng-app/session.file.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/app.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/routes.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
@@ -107,6 +122,10 @@
   <script type="text/javascript" src="../ng-app/controllers/adelanto-viaticos/view-adelanto-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/controllers/liquidacion-viaticos/liquidacion-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/controllers/liquidacion-viaticos/view-liquidacion-viaticos.controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud-recursos/solicitud-recursos-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud-recursos/view-solicitud-recursos-aj-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud-recursos/view-solicitud-recursos-ag-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/controllers/solicitud-recursos/view-solicitud-recursos-al-controller.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   
   <!-- COMPONENTS -->
   <script type="text/javascript" src="../ng-app/components/general/main-menu/main-menu.component.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
@@ -118,6 +137,7 @@
   
   <!-- SERVICES -->
   <script type="text/javascript" src="../ng-app/services/solicitud-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
+  <script type="text/javascript" src="../ng-app/services/solicitud-recursos-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/services/vacaciones-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/services/programa-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>
   <script type="text/javascript" src="../ng-app/services/proveedor-service.js?v=<?php echo $_SESSION['login_token']; ?>"></script>

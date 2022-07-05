@@ -1,0 +1,238 @@
+<!--
+<h3 class="page-header">
+    {{title}}
+    <a href="#!/solicitud" class="btn btn-default btn-xs pull-right">&lt;&lt;&lt; Regresar a la lista</a>
+    <button type="button" class="btn btn-success btn-xs pull-right" style="margin-right: 10px;" ng-click="aprobarSolicitud(solicitud.cod_solicitud)">Aprobar Solicitud</button>    
+</h3>
+-->
+<div class="page-header">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="main-title">{{title}}</h3>
+        </div>
+        <div class="col-md-6 text-right">
+            <md-button class="btn-success md-raised" ng-click="showConfirm($event)" >
+                Aprobar Solicitud
+            </md-button>
+            <md-button class="btn-default md-raised" ng-click="backToList()" >
+                &lt;&lt;&lt; Regresar a la lista
+            </md-button>
+
+        </div>
+    </div>
+</div>
+<div class="page-content">
+    <div class="row bg-success">
+        <div class="col-md-6">
+            <br />
+            <div class="row">   
+                <fieldset disabled>
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="idSolicitud">N° Solicitud</label>
+                    <div class="input-group">                        
+                        <div class="input-group-addon custom-font-size">Solicitud:</div>
+                        <input type="text" value="{{solicitud.cod_solicitud}}" class="form-control input-sm" id="idSolicitud">
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="fecha">Fec. Solicitud</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Fec. Solicitud</div>
+                        <input type="text" value="{{solicitud.fec_solicitud | customDate3}}" class="form-control input-sm" id="fechaSolicitud">
+                    </div>
+                </div>
+                </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <br />
+            <div class="row">   
+                <fieldset disabled> 
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="fecha">Fec. Recibido</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Fec. Recibido</div>
+                        <input type="text" value="{{solicitud.fec_recibe | customDate2}}" class="form-control input-sm" id="fechaRecibido" >
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="estado">Tipo</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Tipo</div>
+                        <input type="text" value="{{solicitud.tipo | sRStatusCode}}" class="form-control input-sm" id="tipo">
+                    </div>
+                </div>
+                </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="row bg-success">
+        <div class="col-md-6">
+            <br />
+            <div class="row">   
+                <fieldset disabled>
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="idSolicitud">Categoría</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Categoría</div>
+                        <input type="text" value="{{solicitud.cod_categoria | sRCategoryCode}}" class="form-control input-sm" id="categoria">
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="fecha">Fec. Autorización</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Fec. Autorización</div>
+                        <input type="text" value="{{solicitud.fec_autorizacion | customDate3}}" class="form-control input-sm" id="fechaAutorizacion">
+                    </div>
+                </div>
+                </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <br />
+            <div class="row">   
+                <fieldset disabled> 
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="fecha">Recibido por</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Recibido por</div>
+                        <input type="text" value="{{solicitud.recibido_por | customDate2}}" class="form-control input-sm" id="recibidoPor" >
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-6">
+                <div class="form-group">
+                    <label class="sr-only custom-font-size" for="estado">Estado</label>
+                    <div class="input-group">
+                        <div class="input-group-addon custom-font-size">Estado</div>
+                        <input type="text" value="{{solicitud.des_estado}}" class="form-control input-sm" id="estado">
+                    </div>
+                </div>
+                </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <div class="row bg-success">
+        
+        <div class="col-md-4">
+            <div class="panel panel-default"> 
+                <div class="panel-heading"> 
+                    <h3 class="panel-title custom-font-size"><b>Información</b></h3> 
+                </div> 
+                <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+                    <table class="table table-condensed" style="margin:0px;">
+                        <tr>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Centro Costo:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{solicitud.centro_costo | capitalizeEveryWord}}" class="form-control input-sm" id="centro">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Solicitante:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{solicitud.solicitante | capitalizeEveryWord}}" class="form-control input-sm" id="solicitante">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Autoriza:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{solicitud.autorizado_por | capitalizeEveryWord}}" class="form-control input-sm" id="autoriza">
+                                </fieldset>
+                            </td>
+                        </tr>                    
+                    </table>
+                </div> 
+            </div>
+        </div>
+        
+        <div class="col-md-4">      
+            <div class="panel panel-default"> 
+                <div class="panel-heading"> 
+                    <h3 class="panel-title custom-font-size"><b>Aprobación Presupuestaria</b></h3> 
+                </div> 
+                <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+                    <table class="table table-condensed" style="margin:0px;">
+                        <tr>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Programa:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{solicitud.des_programa}}" class="form-control input-sm" id="programa">
+                                </fieldset>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="text-left"  style="vertical-align: middle;">
+                                Monto:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{solicitud.mon_solicitud | currency : '&cent;'}}" class="form-control input-sm" id="monto">
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div> 
+            </div>
+        </div>
+        
+        <div class="col-md-4">      
+            <div class="panel panel-default"> 
+                <div class="panel-heading"> 
+                    <h3 class="panel-title custom-font-size"><b>Supervisor de la Compra</b></h3> 
+                </div> 
+                <div class="panel-body custom-font-size" style="padding-top:5px; padding-bottom:5px;">
+                    <table class="table table-condensed" style="margin:0px;">
+                        <tr>
+                            <td class="text-left" style="vertical-align: middle;">
+                                Responsable:
+                            </td>
+                            <td>
+                                <fieldset disabled> 
+                                    <input type="text" value="{{solicitud.responsable| capitalizeEveryWord}}" class="form-control input-sm" id="responsable">
+                                </fieldset>
+                            </td>
+                        </tr>
+                    </table>
+                </div> 
+            </div>
+        </div>
+
+    </div>
+    <div class="row" style="background: #ddd;">
+        <div class="col-md-12">
+            <br />
+            <uib-tabset active="active" class="custom-font-size">          
+                <uib-tab index="$index + 1" ng-repeat="tab in tabs" heading="{{tab.title}}" disable="tab.disabled">
+                  <div ng-include="tab.templateUrl"></div>
+                </uib-tab>          
+            </uib-tabset>  
+        </div>
+    </div>
+</div>

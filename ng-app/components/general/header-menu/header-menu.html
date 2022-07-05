@@ -1,6 +1,9 @@
 <ul class="nav navbar-nav navbar-right custom-font-size">
   <li>
-    <a href="#" style="color:#fff;"><i class="fa fa-user"></i> {{$ctrl.nameUser}}</a>
+    <a href="#" style="color:#fff;" ng-click="$ctrl.loadProfileInfo($event)">
+      <img ng-if="$ctrl.profilePhoto != ''" class=" img-circle" width="40" src='data:image/jpeg;base64,{{$ctrl.profilePhoto}}' alt=""> 
+      <img ng-if="$ctrl.profilePhoto == ''" class=" img-circle" width="30" src='../web/img/user-default.png' alt=""> 
+      &nbsp; {{$ctrl.nameUser}}</a>
   </li>
   <!--
   <li>    
@@ -17,14 +20,15 @@
         </li>
       </ul>              
     </div>
-  </li> 
+  </li>
   -->
-  <li><div href="#" style="color:#fff; margin: 18px;">|</div></li>            
+  <li><div href="#" style="color:#fff; margin: 28px;">|</div></li>            
   <li>
     <md-button ng-style="{background:'#222627'}" ng-click="$ctrl.closeSession($event)">
-     <md-icon md-font-icon="fa fa-sign-out" ng-style="{color: '#fff', 'font-size':'20px', height:'20px'}">
+     <md-icon md-font-icon="fa fa-sign-out" ng-style="{color: '#fff', 'font-size':'20px', height:'20px', 'margin-top': '18px'}">
      </md-icon>
     </md-button>    
     
   </li>            
 </ul>
+

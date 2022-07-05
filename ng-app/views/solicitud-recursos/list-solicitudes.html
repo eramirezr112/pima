@@ -1,0 +1,17 @@
+<div ng-show={{accessPage}}>
+<grid title="{{titlePage}}" 
+      actions="actions" 
+      columns="preparedColumns" 
+      info-grid=solicitudes 
+      location-path="locationPath"
+      approve-action="approve(codEdit)"
+      denied-action="denied(codEdit)"
+      devolver-action="devolver(codEdit)"
+      >
+</grid>
+</div>
+<div ng-show={{!accessPage}}>
+	<span style="color:#cc0000; font-weight: bold">ACCESO DENEGADO!</span>
+	<p style="margin-top: 10px">Este usuario <strong>NO</strong> tiene permisos de acceso para ingresar a esta sección. Favor comuníquese con el administrador del sistema</p>
+
+</div>

@@ -1,5 +1,6 @@
 <?php 
 
+
 require ('BaseController.php');
 class VacacionController extends BaseController
 {
@@ -14,9 +15,15 @@ class VacacionController extends BaseController
 
         $connectionType = $_SESSION["CONNECTION_TYPE"];
         $nameSolicitante = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecConfeccion = "fec_confeccion";
+        $fecInicio = "fec_inicio";
+        $fecFinal = "fec_final";
         if ($connectionType == "odbc_mssql") {
             $nameSolicitante = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
-        }
+            $fecConfeccion = 'CONVERT(VARCHAR(33), fec_confeccion, 126)';
+            $fecInicio = 'CONVERT(VARCHAR(33), fec_inicio, 126)';
+            $fecFinal = 'CONVERT(VARCHAR(33), fec_final, 126)';
+        }      
 
         $isAdmin = $this->checkPermision(7);
         $codUsuario  = $_SESSION['cod_usuario'];
@@ -27,21 +34,32 @@ class VacacionController extends BaseController
         $columns = [
             'num_solicitud' =>'solicitud',            
             "$nameSolicitante" => 'solicitante',
-            'fec_confeccion' =>'fecha',
-            'dias_solicitados' =>'dias solicitados',
-            'fec_inicio' =>'desde',
-            'fec_final' =>'hasta',
+            "$fecConfeccion" =>'fecha',
+            'dias_solicitados' =>'días solicitados',
+            "$fecInicio" =>'desde',
+            "$fecFinal" =>'hasta',
             'cod_estado' =>'estado'
         ];
 
         // NO es ADMIN
         if ($codUsuario != 0) {
+        
+            $newListFuncionarios = $_SESSION['FUNCIONARIOS_A_CARGO'];
+            if ($_SESSION['TIPO_FUNCIONARIO'] == "GERENTE" || $_SESSION['TIPO_FUNCIONARIO'] == "AUDITOR") {
+                $newListFuncionarios = str_replace($_SESSION['COD_FUNCIONARIO'].",", "", $_SESSION['FUNCIONARIOS_A_CARGO']);
+            }
+
+            if ($_SESSION['TIPO_FUNCIONARIO'] == "GERENTE") {
+                $secretarioActas = $this->getSecretarioActas();
+                $newListFuncionarios = str_replace($secretarioActas.",", "", $newListFuncionarios);
+            }
+
             $conditions = [
                 //'limit' => 10,
                 'where' => [
                     ['cod_estado' => 'C'],
                     ['in' => 
-                        ['cod_funcionario' => $_SESSION['FUNCIONARIOS_A_CARGO']]
+                        ['cod_funcionario' => $newListFuncionarios]
                     ]               
                 ]
             ];
@@ -75,7 +93,28 @@ class VacacionController extends BaseController
         $result = $this->customExecute($table, $columns, $conditions, $relations);
         $solicitudes = $this->getArray($result);
 
-        echo json_encode(array('columns'=>$columns,'vacaciones'=>$solicitudes));
+        if ($connectionType == "odbc_mssql") {
+            $solicitudes = $this->toUtf8($solicitudes);
+        }          
+        
+        if ($connectionType == "odbc_mssql") {
+          echo json_encode(array('columns'=>$columns,'vacaciones'=>$solicitudes), JSON_UNESCAPED_UNICODE);
+        }else {          
+          echo json_encode(array('columns'=>$columns,'vacaciones'=>$solicitudes));
+        }
+    }
+
+    private function getSecretarioActas() {
+        $sql = "SELECT RH_CENTROS_COSTO.COD_ENCARGADO as cod_funcionario
+                FROM SIF_CONFIGURADORES,   
+                        RH_CENTROS_COSTO  
+                WHERE ( SIF_CONFIGURADORES.val_dato = RH_CENTROS_COSTO.COD_CENTRO ) and  
+                        ( ( SIF_CONFIGURADORES.cod_configurador in (64) ) )";
+        $result = $this->execute($sql);
+        $funcionario = $this->getArray($result);
+
+        return $funcionario[0]['cod_funcionario'];
+
     }
 
     public function getGuardadas() {
@@ -115,18 +154,29 @@ class VacacionController extends BaseController
         $connectionType = $_SESSION["CONNECTION_TYPE"];
 
         $nameFuncionario = 'CONCAT (ssf.des_nombre, SPACE(1),ssf.des_apellido1, SPACE(1), ssf.des_apellido2)';
+        $fecConfeccion = "v.fec_confeccion";
+        $fecInicio = "v.fec_inicio";
+        $fecFinal = "v.fec_final";        
+        $fecJefatura = "v.fec_jefatura";        
+        $fecAutoriza = "v.fec_autoriza";        
         if ($connectionType == "odbc_mssql") {
             $nameFuncionario = 'ssf.des_nombre + \' \' + ssf.des_apellido1 + \' \' + ssf.des_apellido2';
+            $fecConfeccion = 'CONVERT(VARCHAR(33), v.fec_confeccion, 126) as fec_confeccion';
+            $fecInicio = 'CONVERT(VARCHAR(33), v.fec_inicio, 126) as fec_inicio';
+            $fecFinal = 'CONVERT(VARCHAR(33), v.fec_final, 126) as fec_final';            
+            $fecJefatura = 'CONVERT(VARCHAR(33), v.fec_jefatura, 126) as fec_jefatura';            
+            $fecAutoriza = 'CONVERT(VARCHAR(33), v.fec_autoriza, 126) as fec_autoriza';            
         }        
 
         $sql = "SELECT v.num_solicitud, 
                        v.cod_funcionario, 
                        (select $nameFuncionario from rh_funcionarios as ssf where ssf.cod_funcionario = v.cod_funcionario) as funcionario,
                        v.cod_centro, 
-                       v.fec_confeccion, 
+                       cc.des_centro as centro,
+                       $fecConfeccion, 
                        v.dias_solicitados, 
-                       v.fec_inicio, 
-                       v.fec_final, 
+                       $fecInicio, 
+                       $fecFinal, 
                        v.cod_estado, 
                        (select f.num_expediente from rh_funcionarios as f where f.cod_funcionario = v.cod_funcionario) as num_expediente, 
                        (select f.fec_acreditacion from rh_funcionarios as f where f.cod_funcionario = v.cod_funcionario) as fec_acreditacion, 
@@ -134,10 +184,11 @@ class VacacionController extends BaseController
                        v.tip_boleta, 
                        v.cod_jefatura, 
                        v.cod_autoriza, 
-                       v.fec_jefatura, 
-                       v.fec_autoriza 
-                FROM RH_SOLICITUD_VACACIONES as v 
-                WHERE num_solicitud = $id";        
+                       $fecJefatura, 
+                       $fecAutoriza  
+                FROM RH_SOLICITUD_VACACIONES as v, RH_CENTROS_COSTO as cc  
+                WHERE num_solicitud = $id 
+                    AND v.cod_centro = cc.cod_centro";        
         $result = $this->execute($sql);
         $solicitud = $this->getArray($result);
 

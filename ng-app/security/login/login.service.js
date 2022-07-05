@@ -14,15 +14,28 @@ angular.module("LoginService", []).factory("LoginService", function($http){
         },
         validate: function (userData) {
             var action = 'validate';
-            var data = {
-                nickname: userData.nickname,
-                password: userData.password
-            };
-            var config = {
-                params: data,
-                headers : {'Accept' : 'application/json'}
-            };
-            return $http.get(path+'&f='+action, config);
+            var data = null; 
+
+            if (userData.hasOwnProperty("cod")){
+                data = {
+                    nickname: userData.nickname,
+                    password: userData.password,
+                    cod: userData.cod
+                };
+            } else {
+                data = {
+                    nickname: userData.nickname,
+                    password: userData.password
+                };                
+            }
+
+
+            return $http({
+                url: path+'&f='+action, 
+                method: 'post',
+                data: $.param(data),
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            });             
         }
     };
 });

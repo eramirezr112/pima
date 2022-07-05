@@ -1,5 +1,5 @@
 .selected-row{
-  background:#ccff99;
+  background:#BFFFFF;
 }
 
 .off{
@@ -7,18 +7,18 @@
 }
 
 .table-striped > tbody > tr:hover{
-  background:#ccff99;
+  background:#BFFFFF;
 }
 
 .table-striped > tbody > tr:active{
-  background:#ccff99;
+  background:#BFFFFF;
 }
 
 
 .table-striped > tbody > tr:focus{
-  background:#ccff99;
+  background:#BFFFFF;
 }
 
 .selected-row-tab{
-  background:#ccff99;
+  background:#BFFFFF;
 }

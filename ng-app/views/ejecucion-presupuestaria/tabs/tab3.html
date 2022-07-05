@@ -13,12 +13,13 @@
 				<td class="col-small text-center">{{line.num_documento}}</td>
 				<td class="col-medium text-center">{{line.desTipDocumento}}</td>
 				<td class="col-medium text-right">{{line.mon_gasto | currency : "&cent;"}}</td>
-				<!--
 				<td class="col-medium text-center">
-					{{line.fechaDetalle | customDate2}} 
+					{{line.fechaDetalle | customDate3}} 
+					<!--
 					<i class="fa fa-eye pull-right" title="Ver Solicitud:{{line.num_documento}}" style="cursor: pointer;" ng-click="viewDocument($index, line.num_documento, line.tip_doc)"></i>
+					-->
 				</td>
-				-->
+				
 			</tr>
 		</tbody>
 	  <tfoot>

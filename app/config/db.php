@@ -1,28 +1,11 @@
 <?php  
     
+
     class DBConfig
     {
 
         public $data = "";
-        /*
-        // AMBIENTE PRODUCCION
-        const DB_TYPE_CONNECTION = "mssqlnative";
-        const DB_SERVER = "172.29.137.19";
-        const DB_USER = "sifpima";
-        const DB_PASSWORD = "ad2426";
-        const DB = "SIFPIMA";
-        */
-        
-        /*
-        // AMBIENTE PRUEBAS (SQL 2000)
-        const DB_TYPE_CONNECTION = "odbc_mssql";
-        const DB_SERVER = "192.168.0.4";
-        const DB_USER = "websifpima";
-        const DB_PASSWORD = "ad2426";
-        const DB = "Test";
-        */
 
-        
         // AMBIENTE LOCAL
         const DB_TYPE_CONNECTION = "mssqlnative";
         const DB_SERVER = "72.55.156.230";
@@ -72,7 +55,7 @@
             $this->query_string = $query;
             $rs = $this->conn->Execute($query);
             if (!$rs) {
-                print 'error' . $this->conn->ErrorMsg() . '<br>';
+                print 'error' . $this->conn->ErrorMsg();
             } else {
                 return $rs; 
             }           
@@ -85,7 +68,7 @@
             $rs   = $this->conn->Execute($stmt, $values, 1);
             
             if (!$rs) {
-                print 'error' . $this->conn->ErrorMsg() . '<br>';
+                print 'error' . $this->conn->ErrorMsg();
             } else {
                 return $rs; 
             }           
@@ -269,7 +252,6 @@
 
             $sql = "SELECT ".$conditions['limit']." $fields 
                     FROM ".$this->table_query." ".$this->where_filter;
-
             // Final Query String
             $this->query_string = $sql;
 
@@ -290,6 +272,4 @@
         }
 
     }
-
-
 ?>

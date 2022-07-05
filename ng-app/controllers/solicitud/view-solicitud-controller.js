@@ -1,7 +1,7 @@
 angular.module('ViewSolicitud', ['ngMaterial'])
     .controller('ViewSolicitudController', ['$scope', '$filter', '$mdDialog', '$location', 'usuario', 'solicitudData', 'SolicitudService', function($scope, $filter, $mdDialog, $location, usuario, solicitudData, SolicitudService) {
        
-        $scope.title = "Solicitud de uso de Vehiculos Oficiales";
+        $scope.title = "Solicitud de uso de Vehículos Oficiales";
 
         $scope.solicitud    = solicitudData.data.solicitud[0];
         $scope.funcionarios = solicitudData.data.funcionarios;

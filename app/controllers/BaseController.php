@@ -1,5 +1,4 @@
 <?php 
-
 require ('config/db.php');
 class BaseController extends DBConfig
 {
@@ -46,7 +45,7 @@ class BaseController extends DBConfig
             array_push($newData, $line);
         }
         return $newData;
-    }   
+    }
 
     public function sessionToUtf8($data) {
         
@@ -55,14 +54,14 @@ class BaseController extends DBConfig
                 $line = utf8_encode($line); 
                 $newSession[$key] = $line;
             } else {
-                $line = array_map("utf8_encode", $line); 
-                $newSession[$key] = $line;
+                if ($key != 'login_dateTime') {
+                    $line = array_map("utf8_encode", $line); 
+                    $newSession[$key] = $line;
+                }
             }
         }
         
         return $newSession;
     }
-
 }
-
 ?>

@@ -5,7 +5,7 @@
         </div>
         <div class="col-md-6 text-right">
             <md-button class="btn-success md-raised" ng-click="showConfirm($event)" >
-                Aprobar Solicitud
+                Autorizar Solicitud
             </md-button>
             <md-button class="btn-default md-raised" ng-click="backToList()" >
                 &lt;&lt;&lt; Regresar a la lista
@@ -13,11 +13,6 @@
 
         </div>
     </div>
-    <!--
-    <a href="#!/vacaciones" class="btn btn-default btn-xs pull-right">&lt;&lt;&lt; Regresar a la lista</a>    
-    <button type="button" class="btn btn-success btn-xs pull-right" style="margin-right: 10px;" ng-click="aprobarSolicitud()">Aprobar Solicitud</button>
-    -->
-
 </div>
 <div class="page-content">
     <fieldset disabled>
@@ -65,7 +60,7 @@
                             <label class="sr-only custom-font-size" for="funcionario">Funcionario</label>
                             <div class="input-group">
                                 <div class="input-group-addon custom-font-size">Funcionario:&nbsp;&nbsp;</div>
-                                <input type="text" value="{{solicitud.funcionario | capitalizeEveryWord}}" class="form-control input-sm" id="funcionario">
+                                <input type="text" value="{{solicitud.funcionario}}" class="form-control input-sm" id="funcionario">
                             </div>
                         </div>
                     </div>
@@ -84,8 +79,8 @@
                         <div class="form-group">
                             <label class="sr-only custom-font-size" for="centroCosto">Centro Costo</label>
                             <div class="input-group">
-                                <div class="input-group-addon custom-font-size">Centro Costo:</div>
-                                <input type="text" value="{{solicitud.cod_centro}}" class="form-control input-sm" id="centroCosto">
+                                <div class="input-group-addon custom-font-size">Centro de Costo:</div>
+                                <input type="text" value="{{solicitud.centro}}" class="form-control input-sm" id="centroCosto">
                             </div>
                         </div>
                     </div>
@@ -95,7 +90,7 @@
                         <div class="form-group">
                             <label class="sr-only custom-font-size" for="autoriza">Autoriza</label>
                             <div class="input-group">
-                                <div class="input-group-addon custom-font-size">Autroriza:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                <div class="input-group-addon custom-font-size">Autoriza:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
                                 <input type="text" value="{{solicitud.cod_autoriza}}" class="form-control input-sm" id="autoriza">
                             </div>
                         </div>
@@ -129,7 +124,7 @@
                                     <th style="text-align: center;">Días Gastados</th>
                                 </tr>
                                 <tr ng-repeat="dG in diasGastados">
-                                    <td>{{dG.NUM_PERIODO}}</td>
+                                    <td>{{dG.NUM_PERIODO | formatPeriodo}}</td>
                                     <td>{{dG.NUM_DIAS}}</td>
                                 </tr>
                             </table>
@@ -150,7 +145,7 @@
                                 <th style="text-align: center;">Saldo</th>
                             </tr>
                             <tr ng-repeat="sA in saldoActual">
-                                <td>{{sA.NUM_PERIODO}}</td>
+                                <td>{{sA.NUM_PERIODO | formatPeriodo}}</td>
                                 <td>{{sA.NUM_SALDO_PERIODO}}</td>
                             </tr>
                         </table>
@@ -158,7 +153,7 @@
                     <table style="background:#ddd;" class="table table-condensed table-bordered">
                         <tr>
                             <th>Total</th>
-                            <td>0.00</td>
+                            <td>{{getSumTotalDias()}}</td>
                         </tr>
                     </table>
                 </div>

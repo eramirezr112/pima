@@ -1,5 +1,6 @@
 <?php 
 
+
 require ('BaseController.php');
 class PresupuestoController extends BaseController
 {
@@ -9,7 +10,8 @@ class PresupuestoController extends BaseController
     }
 
     public function getAllCentroCostos() {
-
+        session_start();
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
         $allCentros = array();
 
         $sql = "SELECT RTRIM(COD_CENTRO) as COD_CENTRO,  RTRIM(COD_CENTRO_PADRE) as COD_CENTRO_PADRE, 
@@ -21,6 +23,9 @@ class PresupuestoController extends BaseController
         $result = $this->execute($sql);
 
         $centroCostros = $this->getArray($result);
+        if ($connectionType == "odbc_mssql") {
+            $centroCostros = $this->toUtf8($centroCostros);
+        }          
 
         $initCentro = ['COD_CENTRO' => 0, 'COD_CENTRO_PADRE' => 0, 'COD_ENCARGADO' => 0, 'COD_PRESUPUESTO' => 0, 'COD_PROGRAMA' => 0, 'DES_CENTRO' => 'TODOS'];        
         array_push($allCentros, $initCentro);
@@ -33,30 +38,64 @@ class PresupuestoController extends BaseController
 
     }
 
+    public function getYears() {
+
+      $allYears = array();
+      $current_year = $this->getCurrentYear();
+      $current = ['cod_year'=> $current_year, 'num_year'=> $current_year];
+
+      $minYear = 2004;
+      for ($i = $minYear; $i <= $current_year; $i++) {
+        $year_data = ['cod_year'=> $i, 'num_year'=>$i];
+        array_push($allYears, $year_data);
+      }
+    
+      echo json_encode(array('all'=>$allYears, 'current'=>$current));
+    }
+
+    public function getCurrentYear() {
+      $sql = "SELECT val_dato 
+              FROM SIF_CONFIGURADORES 
+              WHERE cod_configurador = 13";
+
+      $result = $this->execute($sql);
+      $current_year   = intval($this->getArray($result)[0]['val_dato']);
+      return $current_year;
+    }
+
     public function getEncabezado() {
         session_start();
-        //$codPeriodo  = $_SESSION['cod_periodo'];
+
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+
+        $current_year = $this->getCurrentYear();
 
         $params = $this->getParameters();
-        //$year          = $params["year"];
-        $year          = 2018;
+        
+        if ($params["year"] >= $current_year) {
+          $year        = $current_year;
+        } else {
+          $year        = $params["year"];
+        }
+
+        //$year          = $this->getCurrentYear();
         $codCentro     = $params["codCentro"];
         $codSubpartida = $params["codSubpartida"];
         $desCuenta     = $params["desCuenta"];
 
         $filters = "";
-        if ($codCentro != "") {
+        if ($codCentro != "" && $codCentro != 0) {
             $filters .= "AND pe.cod_centro like '$codCentro' ";
         }
 
         if ($codSubpartida != "") {
-            $filters .= "AND pe.cod_subpartida like '%' + $codSubpartida + '%' ";
+            $filters .= "AND pe.cod_subpartida like '%' + '$codSubpartida' + '%' ";
         }
 
         if ($desCuenta != "") {
-            $filters .= "AND pc.DES_CUENTA like '%' + $desCuenta + '%'";
-        }
-
+            $filters .= "AND pc.DES_CUENTA like '%' + '$desCuenta' + '%'";
+        }   
+ 
         $sql = "SELECT pe.ano_presupuesto,  
                        pe.cod_version,  
                        pe.cod_centro,  
@@ -70,15 +109,23 @@ class PresupuestoController extends BaseController
                        pe.mon_disponible,  
                        pc.DES_CUENTA,  
                        pe.COD_META, 
+                       pm.NUM_META,
                        cc.DES_CENTRO
-                    FROM PRE_EJECUCION_PRESUPUESTO_ENCABE as pe, PRE_CUENTAS as pc, RH_CENTROS_COSTO as cc 
+                    FROM PRE_EJECUCION_PRESUPUESTO_ENCABE as pe, PRE_CUENTAS as pc, RH_CENTROS_COSTO as cc, PLA_METAS as pm 
                     WHERE pc.COD_CUENTA = pe.cod_subpartida 
                        AND RTRIM(pe.cod_centro) = RTRIM(cc.COD_CENTRO) 
+                       AND pe.COD_META = pm.COD_META 
                        AND pe.ano_presupuesto = $year 
                        $filters";
 
         $result = $this->execute($sql);
+
         $encabezado = $this->getArray($result);
+
+        if ($connectionType == "odbc_mssql") {
+            $encabezado = $this->toUtf8($encabezado);   
+
+        }
 
         $totales = array('tot_presupuesto_ordinario'  => 0, 
                          'tot_modificaciones'         => 0, 
@@ -93,30 +140,41 @@ class PresupuestoController extends BaseController
         $firstLine    = 0;      
         $fCodPrograma = 0;
         $fCodCuenta   = 0;
-        foreach ($encabezado as $k => $line) {
-            if ($firstLine == 0) {
-                $nYear          = $line['ano_presupuesto']; 
-                $nCodCentro     = $line['cod_centro'];
-                $nCodSubpartida = $line['cod_subpartida'];
-                $nCodMeta       = $line['COD_META'];
-            }
-            $totales['tot_presupuesto_ordinario']  += $line['mon_ordinario'];
-            $totales['tot_modificaciones']         += $line['mon_modificaciones'];
+        if(sizeof($encabezado) > 0) {
+          foreach ($encabezado as $k => $line) {
+              if ($firstLine == 0) {
+                  $nYear          = $line['ano_presupuesto']; 
+                  $nCodCentro     = $line['cod_centro'];
+                  $nCodSubpartida = $line['cod_subpartida'];
+                  $nCodMeta       = $line['COD_META'];
+              }
+              $totales['tot_presupuesto_ordinario']  += $line['mon_ordinario'];
+              $totales['tot_modificaciones']         += $line['mon_modificaciones'];
 
-            $nTotalPresupuesto = $line['mon_ordinario'] - $line['mon_modificaciones'];
-            $totales['tot_total_presupuesto']      += $nTotalPresupuesto;
+              $nTotalPresupuesto = $line['mon_ordinario'] - $line['mon_modificaciones'];
+              $totales['tot_total_presupuesto']      += $nTotalPresupuesto;
 
-            $totales['tot_compromiso_provisional'] += $line['mon_compromiso_provisional'];
-            $totales['tot_compromiso_definitivo']  += $line['mon_compromiso_definitivo'];
-            $totales['tot_gasto_real']             += $line['mon_gasto_real'];
-            $totales['tot_disponible']             += $line['mon_disponible'];
+              $totales['tot_compromiso_provisional'] += $line['mon_compromiso_provisional'];
+              $totales['tot_compromiso_definitivo']  += $line['mon_compromiso_definitivo'];
+              $totales['tot_gasto_real']             += $line['mon_gasto_real'];
+              $totales['tot_disponible']             += $line['mon_disponible'];
 
-            $firstLine++;
+              $firstLine++;
+          }
+
+          $initDetalle = $this->getDetalle($nYear, $nCodCentro, $nCodSubpartida, $nCodMeta);
+
+          if ($connectionType == "odbc_mssql") {              
+              echo json_encode(array('encabezado' => $encabezado, 'totales' => $totales, 'registros' => sizeof($encabezado), 'initDetalle' => $initDetalle), JSON_UNESCAPED_UNICODE);
+          } else {
+              echo json_encode(array('encabezado' => $encabezado, 'totales' => $totales, 'registros' => sizeof($encabezado), 'initDetalle' => $initDetalle));
+          }          
+
+        } else {
+
+          echo json_encode(array('encabezado' => array(), 'totales' => array(), 'registros' => sizeof($encabezado), 'initDetalle' => array()));          
+
         }
-
-        //$initDetalle = array();
-        $initDetalle = $this->getDetalle($nYear, $nCodCentro, $nCodSubpartida, $nCodMeta);
-        echo json_encode(array('encabezado' => $encabezado, 'totales' => $totales, 'registros' => sizeof($encabezado), 'initDetalle' => $initDetalle));
 
         /*
         $conditions = "AND cod_programa = $codPrograma 
@@ -193,6 +251,18 @@ class PresupuestoController extends BaseController
             $codCentro     = $nCodCentro;
             $codSubpartida = $nCodSubpartida;
             $codMeta       = $nCodMeta;
+
+            $connectionType = $_SESSION["CONNECTION_TYPE"];
+
+        } else {
+            $params = $this->getParameters();
+            $year          = $params["year"];
+            $codCentro     = $params["codCentro"];
+            $codSubpartida = $params["codSubpartida"];
+            $codMeta       = $params["codMeta"];
+
+            session_start();
+            $connectionType = $_SESSION["CONNECTION_TYPE"];            
         }
 
         // Tabs Provisional, Definitivo, Real
@@ -213,6 +283,11 @@ class PresupuestoController extends BaseController
 
         $result      = $this->execute($sql);
         $provisional = $this->getArray($result);
+        
+        if ($connectionType == "odbc_mssql") {
+            $provisional = $this->toUtf8($provisional);   
+
+        }        
         
         if (sizeof($provisional) > 0) {
             $nProvisional = array();    
@@ -242,6 +317,10 @@ class PresupuestoController extends BaseController
         $result      = $this->execute($sql);
         $definitivo  = $this->getArray($result);
 
+        if ($connectionType == "odbc_mssql") {
+            $definitivo = $this->toUtf8($definitivo);  
+        }           
+
         if (sizeof($definitivo) > 0) {
             $nDefinitivo = array();    
             foreach ($definitivo as $k => $line) {
@@ -270,18 +349,23 @@ class PresupuestoController extends BaseController
         $result = $this->execute($sql);
         $real   = $this->getArray($result);
 
+        if ($connectionType == "odbc_mssql") {
+            $real = $this->toUtf8($real); 
+        }          
+
         if (sizeof($real) > 0) {
             $nReal = array();    
             foreach ($real as $k => $line) {
 
                 //$line['tip_doc'] = intval($line['tip_documento']);
-                $line['desTipDocumento'] = $this->getTipoDocumento($line['tip_documento']);
+                $line['desTipDocumento'] = $this->getTipoDocumento($line['tip_documento']);              
                 $line['fechaDetalle'] = $this->getFechaDetalle($line['tip_documento'], $line['num_documento'], $line['mon_gasto']);
                 array_push($nReal, $line);
 
             }
             $real = $nReal;
         }
+
 
         //Tab Modificaciones
         $modificaciones = array ();
@@ -308,6 +392,10 @@ class PresupuestoController extends BaseController
 
         $resultM = $this->execute($sqlM);
         $detalleM = $this->getArray($resultM);
+
+        if ($connectionType == "odbc_mssql") {
+            $detalleM = $this->toUtf8($detalleM);         
+        }           
                   
         foreach ($detalleM as $k => $m) {
             $m['tip_modificacion'] = $this->getTipoModificacion($m['tip_modificacion']);
@@ -317,34 +405,37 @@ class PresupuestoController extends BaseController
         // Presupuesto Provisional
         $detalle['provisional'] ['lines']   = $provisional;
         $detalle['provisional'] ['totales']['registros'] = sizeof($provisional);
-        //$detalle['reservado']     ['totales']['total']     = $this->getTotalDetalle($reservado);
+        $detalle['provisional'] ['totales']['total']     = $this->getTotalDetalle($provisional);
         // Presupuesto Definitivo
         $detalle['definitivo']  ['lines']   = $definitivo;
         $detalle['definitivo']  ['totales']['registros'] = sizeof($definitivo);
-        //$detalle['aprobado']      ['totales']['total']     = $this->getTotalDetalle($aprobado);
+        $detalle['definitivo']  ['totales']['total']     = $this->getTotalDetalle($definitivo);
         // Presupuesto Real
         $detalle['real']        ['lines']   = $real;
         $detalle['real']        ['totales']['registros'] = sizeof($real);
-        //$detalle['ejecutado']     ['totales']['total']     = $this->getTotalDetalle($ejecutado);
+        $detalle['real']        ['totales']['total']     = $this->getTotalDetalle($real);
 
         // Presupuesto Modificado
         $detalle['modificaciones']['lines']   = $modificaciones;
         $detalle['modificaciones']['totales']['registros'] = sizeof($modificaciones);
-        //$detalle['modificaciones']['totales']['total']     = $this->getTotalDetalle($modificaciones, true);
+        $detalle['modificaciones']['totales']['total']     = $this->getTotalDetalle($modificaciones, true);
 
-        /*
-        if ($cP != null && $cC != null) {
-            return $detalle;
+        if ($nYear != null && $nCodCentro != null && $nCodSubpartida != null && $nCodMeta != null) {
+          return $detalle;
         } else {
-            echo json_encode(array('detalle' => $detalle));
+           
+            if ($connectionType == "odbc_mssql") {              
+              echo json_encode(array('detalle' => $detalle), JSON_UNESCAPED_UNICODE);
+            }else {
+              echo json_encode(array('detalle' => $detalle));
+            }
+                
         }
-        */
-
-        return $detalle;
+        
     }
 
     private function getTipoDocumento($tipo) {
-
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
         $name = "";
         $sql = "SELECT cod_tipo, des_tipo 
                 FROM PRE_TIPOS_DOCUMENTOS_AFECTACION
@@ -352,7 +443,9 @@ class PresupuestoController extends BaseController
 
         $result = $this->execute($sql);
         $data   = $this->getArray($result);
-
+        if ($connectionType == "odbc_mssql") {
+            $data = $this->toUtf8($data);         
+        }  
         $name = $data[0]['des_tipo'];
 
         return $name;
@@ -362,15 +455,23 @@ class PresupuestoController extends BaseController
 
         $fecha = "";
 
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
+
         switch ($tipDocumento) {
 
             // Otros Documentos
             case 2: 
-                    $sql = "SELECT fec_documento, fec_registro 
+					$fecDocumento = "fec_documento";
+					$fecRegistro = "fec_registro";          
+					if ($connectionType == "odbc_mssql") {
+						$fecDocumento = 'CONVERT(VARCHAR(33), fec_documento, 126) as fec_documento';
+						$fecRegistro = 'CONVERT(VARCHAR(33), fec_registro, 126) as fec_registro';
+					}  
+                    $sql = "SELECT $fecDocumento, $fecRegistro  
                             FROM PRE_OTROS_DOCUMENTOS_ENCABEZADO 
                             WHERE num_documento = '$numDocumento'";
-
-                    $result = $this->execute($sql);
+  
+                    $result = $this->execute($sql);                   
                     $data   = $this->getArray($result);
 
                     $fecha = $data[0]['fec_documento'];
@@ -378,7 +479,11 @@ class PresupuestoController extends BaseController
 
             // Ordenes de Compra
             case 3: 
-                    $sql = "SELECT fec_orden 
+					$fecOrden = "fec_orden";
+					if ($connectionType == "odbc_mssql") {
+						$fecOrden = 'CONVERT(VARCHAR(33), fec_orden, 126) as fec_orden';
+					}              
+                    $sql = "SELECT $fecOrden  
                             FROM PRO_ORDENES_COMPRA  
                             WHERE cod_orden = '$numDocumento'";
 
@@ -390,7 +495,11 @@ class PresupuestoController extends BaseController
 
             // Ordenes de Pago
             case 8: 
-                    $sql = "SELECT fec_orden 
+					$fecOrden = "fec_orden";
+					if ($connectionType == "odbc_mssql") {
+						$fecOrden = 'CONVERT(VARCHAR(33), fec_orden, 126) as fec_orden';
+					}             
+                    $sql = "SELECT $fecOrden 
                             FROM TES_ORDEN_PAGO_ENCABEZADO 
                             WHERE cod_orden_pago = '$numDocumento'";
 
@@ -402,7 +511,13 @@ class PresupuestoController extends BaseController
 
             // Cheques
             case 9:
-                    $sql = "SELECT fec_cheque, fec_anulacion, cod_estado
+					$fecCheque = "fec_cheque";
+					$fecAnulacion = "fec_anulacion";          
+					if ($connectionType == "odbc_mssql") {
+						$fecCheque = 'CONVERT(VARCHAR(33), fec_cheque, 126) as fec_cheque';
+						$fecAnulacion = 'CONVERT(VARCHAR(33), fec_anulacion, 126) as fec_anulacion';
+					}              
+                    $sql = "SELECT $fecCheque, $fecAnulacion, cod_estado
                             FROM TES_CHEQUES_ENCABEZADO 
                             WHERE num_cheque = '$numDocumento'";
 
@@ -418,9 +533,13 @@ class PresupuestoController extends BaseController
 
             // Liquidación de Viáticos
             case 11:
-                    $sql = "SELECT fec_comprobante 
+					$fecComprobante = "fec_comprobante";
+					if ($connectionType == "odbc_mssql") {
+						$fecComprobante = 'CONVERT(VARCHAR(33), fec_comprobante, 126) as fec_comprobante';
+					}               
+                    $sql = "SELECT $fecComprobante 
                             FROM TES_CCHV_COMPROBANTE_ENCABEZADO 
-                            WHERE num_comprobante = '$num_documento'";
+                            WHERE num_comprobante = '$numDocumento'";
 
                     $result = $this->execute($sql);
                     $data   = $this->getArray($result);
@@ -430,18 +549,25 @@ class PresupuestoController extends BaseController
 
             //Transferencia Bancaria
             case 18:
-                    $sql = "SELECT fec_aplicacion, ind_estado
+					$fecAplicacion = "fec_aplicacion";
+					if ($connectionType == "odbc_mssql") {
+						$fecAplicacion = 'CONVERT(VARCHAR(33), fec_aplicacion, 126) as fec_aplicacion';
+					}             
+                    $sql = "SELECT $fecAplicacion, ind_estado
                             FROM TES_PLANILLA_TRANSFERENCIAS   
-                            WHERE num_documento = '$num_documento'";
+                            WHERE num_documento = '$numDocumento'";
 
                     $result = $this->execute($sql);
                     $data   = $this->getArray($result);
 
                     if ($data[0]['ind_estado'] == 3 && $monGasto < 0) {
-
-                        $sql = "SELECT fec_anulacion 
+						$fecAnulacion = "fec_anulacion";        
+						if ($connectionType == "odbc_mssql") {
+							$fecAnulacion = 'CONVERT(VARCHAR(33), fec_anulacion, 126) as fec_anulacion';
+						} 
+                        $sql = "SELECT $fecAnulacion 
                                 FROM TES_PLANILLA_TRANS_ANULACION   
-                                WHERE num_documento = '$num_documento'";
+                                WHERE num_documento = '$numDocumento'";
                         $result = $this->execute($sql);
                         $data   = $this->getArray($result);
 
@@ -458,8 +584,8 @@ class PresupuestoController extends BaseController
     }
 
     private function getTipoModificacion($tipo) {
+        $connectionType = $_SESSION["CONNECTION_TYPE"];
         $name = "";
-
         $sql = "SELECT tm.cod_tipo,  
                        tm.des_tipo,  
                        tm.ind_activo 
@@ -469,7 +595,9 @@ class PresupuestoController extends BaseController
 
         $result = $this->execute($sql);
         $data   = $this->getArray($result);
-
+        if ($connectionType == "odbc_mssql") {
+            $data = $this->toUtf8($data);         
+        }  
         $name = $data[0]['des_tipo'];        
 
         return $name;

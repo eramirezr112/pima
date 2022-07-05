@@ -1,18 +1,23 @@
 angular.module("pnlsys", [
-	'Routes', 
+    'Routes', 
     'Home',
-	'Solicitud',
-	'SolicitudService',
+    'Solicitud',
+    'SolicitudService',
     'AddSolicitud',
     'EditSolicitud',
-	'ViewSolicitud',
-	'ProgramaService',
-	'ProveedorService',
-	'PeriodoService',
-	'UsuarioService',
+    'ViewSolicitud',
+    'ProgramaService',
+    'ProveedorService',
+    'PeriodoService',
+    'UsuarioService',
     'CuentaService',
     'PresupuestoService',
     'EjecucionPresupuestaria',
+    'SolicitudRecursos',
+    'SolicitudRecursosService',
+    'ViewSolicitudRecursosAJ',
+    'ViewSolicitudRecursosAG',
+    'ViewSolicitudRecursosAL',
     'DocumentoSolicitud',
     'DocumentoOrdenPago',
     'DocumentoOrdenPagoDirecta',
@@ -45,7 +50,23 @@ angular.module("pnlsys", [
     'LiquidacionViaticos',
     'ViewLiquidacionViaticos',
     'ViaticosService'
-])
+])  .constant('_', window._)
+  .run(function ($rootScope, $templateCache) {
+     $rootScope._ = window._;     
+    // Process to clear cache
+    $rootScope.$on('$viewContentLoaded', function(event, next, current) {
+        if (typeof (current) !== "undefined") {
+            $templateCache.removeAll(current);    
+        }
+    });
+        
+    $rootScope.$on("$routeChangeStart", function(event, next, current) {
+        if (typeof (current) !== "undefined") {
+            $templateCache.remove(current.templateUrl);
+        }
+    });
+
+  })
 .filter('getEstado', function () {
     return function (input) {
         var output = "Confección";
@@ -152,7 +173,10 @@ angular.module("pnlsys", [
 })
 .filter('capitalizeEveryWord', function() {
       return function(input){        
-        var text = input.toString();
+        var text = "";
+        if (input != undefined){
+            text = input.toString();
+        }
         if (text != null) {
 
 
@@ -178,4 +202,57 @@ angular.module("pnlsys", [
           return inputString.substring(0,1).toUpperCase() + inputString.substring(1);
         }
       };
-    });
+    })
+.filter('getNombramiento', function () {
+    return function (input) {
+        var output = "Propiedad";
+        if (input === 'I') {
+            output = "Interino";
+        } else if (input === 'S') {
+            output = "Sustitución";
+        } else if (input === 'E') {
+            output = "Servicios Especiales";
+        }
+
+        return output;
+    }
+})
+.filter('getGradoAcademico', function () {
+    return function (input) {
+        var output = "- sin especificar -";
+        if (input === 'E') {
+            output = "Escolar";
+        } else if (input === 'S') {
+            output = "Secundaria";
+        } else if (input === 'L') {
+            output = "Licenciatura";
+        } else if (input === 'B') {
+            output = "Bachillerato";
+        } else if (input === 'M') {
+            output = "Maestría";
+        } else if (input === 'D') {
+            output = "Doctorado";
+        }
+
+        return output;
+    }
+})
+.filter('getTipoJornada', function () {
+    return function (input) {
+        var output = "- sin especificar -";
+        
+        if (input === 'A') {
+            output = "Acumulativa";
+        } else if (input === 'P') {
+            output = "Ampliada";
+        } else if (input === 'N') {
+            output = "Nocturna";
+        } else if (input === 'M') {
+            output = "Mixta";
+        } else if (input === 'D') {
+            output = "Diurna";
+        }
+
+        return output;
+    }
+});

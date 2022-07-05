@@ -32,7 +32,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.num_adelanto}}" class="form-control input-sm" id="nAdelanto" placeholder="Adelanto No">
+                                    <input type="text" value="{{encabezado.num_adelanto}}" class="form-control input-sm" id="nAdelanto">
                                 </fieldset>
                             </td>
                             <td class="text-left" style="vertical-align: middle;">
@@ -40,7 +40,7 @@
                             </td>
                             <td colspan="3">
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.centro}}" class="form-control input-sm" id="centroCosto" placeholder="Centro Costo">
+                                    <input type="text" value="{{encabezado.centro}}" class="form-control input-sm" id="centroCosto">
                                 </fieldset>
                             </td>
                         </tr>
@@ -50,7 +50,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.fec_adelanto}}" class="form-control input-sm" id="fecha" placeholder="dd/mm/yyyy">
+                                    <input type="text" value="{{encabezado.fec_adelanto | customDate3}}" class="form-control input-sm" id="fecha">
                                 </fieldset>
                             </td>
                             <td class="text-left"  style="vertical-align: middle;">
@@ -58,7 +58,7 @@
                             </td>
                             <td colspan="3">
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.solicitante}}" class="form-control input-sm" id="solicitante" placeholder="Solicitante">
+                                    <input type="text" value="{{encabezado.solicitante}}" class="form-control input-sm" id="solicitante">
                                 </fieldset>
                             </td>
                         </tr>
@@ -68,7 +68,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.mon_adelanto | currency : '&cent;'}}" class="form-control input-sm" id="monto" placeholder="Monto">
+                                    <input type="text" value="{{encabezado.mon_adelanto | currency : '&cent;'}}" class="form-control input-sm" id="monto">
                                 </fieldset>
                             </td>
                             <td class="text-left"  style="vertical-align: middle;">
@@ -76,7 +76,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.cod_presupuesto}}" class="form-control input-sm" id="presupuesto" placeholder="0.00">
+                                    <input type="text" value="{{encabezado.cod_presupuesto}}" class="form-control input-sm" id="presupuesto">
                                 </fieldset>
                             </td>
                             <td class="text-left" style="vertical-align: middle;">
@@ -84,7 +84,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.cod_meta}}" class="form-control input-sm" id="meta" placeholder="Meta">
+                                    <input type="text" value="{{encabezado.cod_meta}}" class="form-control input-sm" id="meta">
                                 </fieldset>
                             </td>
                         </tr>
@@ -94,7 +94,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.clasificacion}}" class="form-control input-sm" id="clasificacion" placeholder="Clasificación">
+                                    <input type="text" value="{{encabezado.clasificacion}}" class="form-control input-sm" id="clasificacion">
                                 </fieldset>
                             </td>
                             <td class="text-left"  style="vertical-align: middle;">
@@ -102,7 +102,7 @@
                             </td>
                             <td>
                                 <fieldset disabled> 
-                                    <input type="text" value="{{encabezado.estado | getEstado}}" class="form-control input-sm" id="estado" placeholder="Estado">
+                                    <input type="text" value="{{encabezado.estado | getEstado}}" class="form-control input-sm" id="estado">
                                 </fieldset>
                             </td>
                         </tr>
@@ -146,8 +146,8 @@
                         <tr ng-repeat="d in detalle">
                             <td>{{d.fec_detalle | customDate3}}</td>
                             <td>{{d.cod_localidad}}</td>
-                            <td>{{d.hor_salida}}</td>
-                            <td>{{d.hor_regreso}}</td>
+                            <td>{{d.hor_salida | formatHour}}</td>
+                            <td>{{d.hor_regreso | formatHour}}</td>
                             <td class="text-right">{{d.mon_desayuno | currency : "&cent;"}}</td>
                             <td class="text-right">{{d.mon_almuerzo | currency : "&cent;"}}</td>
                             <td class="text-right">{{d.mon_cena | currency : "&cent;"}}</td>
