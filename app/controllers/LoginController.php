@@ -329,7 +329,13 @@ class LoginController extends BaseController
 
                     // Se colocan los Funcionarios a Cargo en Session
                     $_SESSION['FUNCIONARIOS_A_CARGO'] = $funcionarios_in_charge;
-                    $_SESSION['COD_EMPLEADO']         = $type_empleado['cod_empleado'];
+
+
+                    $tEmpleado = $type_empleado['cod_empleado'];
+                    if($type_empleado['isMag'] == 'MAG') {
+                        $tEmpleado = "MAG";
+                    }
+                    $_SESSION['COD_EMPLEADO'] = $tEmpleado;
 
                     // Obtencion de los Centros Costo
                     // ======================================
