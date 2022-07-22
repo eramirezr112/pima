@@ -77,7 +77,7 @@ class LoginController extends BaseController
             }
 
             // Usuario con permisos de acceso Web
-            if ($user['rol_web'] != null) {
+            if ($user['rol_web'] != null && $user['rol_web'] != 0) {
 
                 $response = 1;
 
