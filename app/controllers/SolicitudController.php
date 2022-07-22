@@ -117,6 +117,8 @@ class SolicitudController extends BaseController
         $sqlString = $this->getQueryString();
         $solicitudes = $this->getArray($result);
 
+        $solicitudes = $this->toUtf8($solicitudes);
+        
         // NO es ADMIN
         if ($codUsuario != 0) {
             if ($_SESSION["TIPO_FUNCIONARIO"] == "DIR. FINANCIERO" || 
