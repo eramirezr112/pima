@@ -87,6 +87,23 @@ class SolicitudController extends BaseController
 
             }
 
+        /*
+            if ($_SESSION["TIPO_FUNCIONARIO"] == "DIRECTOR") {
+
+                $newCondition = "sv.COD_FUNCIONARIO != ".$_SESSION["COD_FUNCIONARIO"];
+
+                $special_condition = ['special_condition' => 
+                                         ['CONVERT(CHAR(8), sv.fec_salida, 112) = CONVERT(CHAR(8), sv.fec_ingreso, 112)'],
+                                         ['(( (DATEPART(HOUR, sv.fec_salida) < 8 OR DATEPART(HOUR, sv.fec_salida) > 16) AND sv.COD_FUNCIONARIO != 16) OR (DATEPART(HOUR, sv.fec_salida) >= 8 OR DATEPART(HOUR, sv.fec_salida) <= 16))'],
+                                         //['DATEPART(HOUR, sv.fec_salida) >= 16'],
+                                         //[$newCondition]
+                                     ];
+
+                array_push($conditions['where'], $special_condition);
+
+            }
+                  */
+
 
         } else { // ES ADMIN
             $conditions = [
@@ -116,9 +133,7 @@ class SolicitudController extends BaseController
         $result = $this->customExecute($table, $columns, $conditions, $relations);
         $sqlString = $this->getQueryString();
         $solicitudes = $this->getArray($result);
-
         $solicitudes = $this->toUtf8($solicitudes);
-        
         // NO es ADMIN
         if ($codUsuario != 0) {
             if ($_SESSION["TIPO_FUNCIONARIO"] == "DIR. FINANCIERO" || 
@@ -245,7 +260,7 @@ class SolicitudController extends BaseController
         $result = $this->customExecute($table, $columns, $conditions, $relations);
         $sqlString = $this->getQueryString();
         $solicitudes = $this->getArray($result);
-
+        $solicitudes = $this->toUtf8($solicitudes);
         $data_result = array('columns'=>$columns, 
                              'solicitudes'=>$solicitudes, 
                              'sql' => $sqlString

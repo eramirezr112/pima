@@ -69,7 +69,6 @@ class LoginController extends BaseController
             $this->setInactiveLastSession($codigo_usuario);
         }
 
-
         // Usuario Encontrado
         if (is_array($data) && sizeof($data) > 0) {
 
@@ -86,7 +85,7 @@ class LoginController extends BaseController
             }
 
             // Usuario con permisos de acceso Web
-            if ($user['rol_web'] != null) {
+            if ($user['rol_web'] != null && $user['rol_web'] != 0) {
 
                 $response = 1;
 
@@ -206,7 +205,8 @@ class LoginController extends BaseController
                             if (sizeof($isCodEncargado) > 0) {
                                 
                                 //$_SESSION['TIPO_FUNCIONARIO'] = 'DIRECTOR';
-                                $_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeFuncionario('DIRECTOR', $isCodEncargado[0]['cod_centro']);
+                                //$_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeFuncionario('DIRECTOR', $isCodEncargado[0]['cod_centro']);
+                                $_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeFuncionario('DIRECTOR', $user["COD_CENTRO"]);
 
                                 // Se mueve porque no solo aplica  para direcciones sino tambien para jefaturas
                                 // $_SESSION['TIPO_FUNCIONARIO'] = $this->getTypeDirector($isCodEncargado[0]['cod_centro']);
@@ -392,7 +392,7 @@ class LoginController extends BaseController
 
                 $profileData = $this->getProfileData($params['nickname'], $nCodFuncionario, $_SESSION["CONNECTION_TYPE"]);                
                    
-                /*        
+                /*
                 echo "<pre>";
                 print_r($_SESSION);
                 echo "</pre>";
@@ -697,13 +697,12 @@ class LoginController extends BaseController
 
         $typeDirector = $currentTipo;
         foreach ($listTypesDirectores as $tDir) {
-
             // CONFIGURADOR 60
-            if ( (trim($tDir['val_dato']) == $codEncargado) && (trim($tDir['cod_configurador']) == $listConfiguradores[0]) ) {
+            if ( (trim($tDir['val_dato']) == trim($codEncargado)) && (trim($tDir['cod_configurador']) == $listConfiguradores[0]) ) {
                 $typeDirector = "DIR. FINANCIERO";
 
             // CONFIGURADOR 25                
-            } else if ( ($tDir['val_dato'] == $codEncargado) && ($tDir['cod_configurador'] == $listConfiguradores[1]) ) {
+            } else if ( (trim($tDir['val_dato']) == trim($codEncargado)) && ($tDir['cod_configurador'] == $listConfiguradores[1]) ) {
                 $typeDirector = "JEFE SERVICIOS GENERALES";
             }
 
